@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Task Tracker Kepanitiaan</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js">
+    </script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <style>
+        /* Custom styles */
+        * {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+        body {
+            background: #f1f5f9;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .task-card {
+            transition: all 0.2s ease;
+        }
+        .task-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+        }
+        .tag-pill {
+            font-size: 0.65rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            padding: 0.2rem 0.7rem;
+            border-radius: 9999px;
+            background: #e2e8f0;
+            color: #1e293b;
+        }
+        .tag-pill.all {
+            background: #1e293b;
+            color: white;
+        }
+        .status-badge {
+            font-size: 0.6rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            padding: 0.15rem 0.6rem;
+            border-radius: 9999px;
+        }
+        .status-badge.pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        .status-badge.in_progress {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        .status-badge.done {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .status-badge.approved {
+            background: #a7f3d0;
+            color: #065f46;
+        }
+        .status-badge.archived {
+            background: #e5e7eb;
+            color: #374151;
+        }
+        .deadline-warning {
+            animation: pulse-warning 1.8s ease-in-out infinite;
+        }
+        @keyframes pulse-warning {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.4;
+            }
+        }
+        .fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .tab-active {
+            border-bottom: 2px solid #1e293b;
+            color: #1e293b;
+            font-weight: 600;
+        }
+        .scrollbar-thin::-webkit-scrollbar {
+            width: 4px;
+        }
+        .scrollbar-thin::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .scrollbar-thin::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 9999px;
+        }
+        input,
+        select,
+        textarea {
+            transition: all 0.15s ease;
+        }
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            ring: 2px solid #1e293b;
+            border-color: #1e293b;
+        }
+        .btn-primary {
+            background: #1e293b;
+            color: white;
+            padding: 0.5rem 1.2rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            font-size: 0.875rem;
+            transition: all 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+        .btn-primary:hover {
+            background: #0f172a;
+            transform: scale(0.98);
+        }
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .btn-outline {
+            background: transparent;
+            color: #1e293b;
+            border: 1px solid #cbd5e1;
+            padding: 0.5rem 1.2rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            font-size: 0.875rem;
+            transition: all 0.15s ease;
+        }
+        .btn-outline:hover {
+            background: #f1f5f9;
+        }
+        .btn-success {
+            background: #065f46;
+            color: white;
+            padding: 0.5rem 1.2rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            font-size: 0.875rem;
+            transition: all 0.15s ease;
+        }
+        .btn-success:hover {
+            background: #047857;
+        }
+        .btn-danger {
+            background: #991b1b;
+            color: white;
+            padding: 0.5rem 1.2rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            font-size: 0.875rem;
+            transition: all 0.15s ease;
+        }
+        .btn-danger:hover {
+            background: #7f1d1d;
+        }
+        .modal-overlay {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+        }
+        .modal-content {
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .custom-checkbox {
+            width: 1.2rem;
+            height: 1.2rem;
+            border-radius: 0.25rem;
+            border: 2px solid #94a3b8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            flex-shrink: 0;
+        }
+        .custom-checkbox.checked {
+            background: #1e293b;
+            border-color: #1e293b;
+            color: white;
+        }
+        .custom-checkbox:hover {
+            border-color: #1e293b;
+        }
+        .custom-checkbox.checked:hover {
+            background: #0f172a;
+        }
+        .dot-div {
+            width: 10px;
+            height: 10px;
+            border-radius: 9999px;
+            display: inline-block;
+            flex-shrink: 0;
+        }
+        /* Login screen */
+        #loginScreen {
+            display: flex;
+        }
+        #app {
+            display: none;
+        }
+        #loginScreen.hidden {
+            display: none !important;
+        }
+        #app.visible {
+            display: block;
+        }
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: #1e293b;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+            font-size: 0.9rem;
+            z-index: 999;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .toast.success {
+            background: #065f46;
+        }
+        .toast.error {
+            background: #991b1b;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== TOAST ===== -->
+    <div id="toast" class="toast"></div>
+
+    <!-- ===== LOGIN SCREEN ===== -->
+    <div id="loginScreen" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm">
+        <div class="glass-card rounded-2xl p-8 w-full max-w-sm shadow-2xl border border-slate-200/60">
+            <h1 class="text-2xl font-bold text-slate-800 mb-1 text-center">Task Tracker</h1>
+            <p class="text-sm text-slate-500 text-center mb-6">Kepanitiaan • Login Divisi</p>
+            <form id="loginForm" onsubmit="loginWithDivision(event)" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700">Kode Divisi</label>
+                    <input id="loginCode" type="text" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200" placeholder="Contoh: KON" />
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700">Password</label>
+                    <input id="loginPassword" type="password" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200" placeholder="Masukkan password divisi" />
+                </div>
+                <button type="submit" class="btn-primary w-full">Masuk</button>
+                <div id="loginError" class="text-red-500 text-sm text-center hidden"></div>
+            </form>
+            <p class="text-xs text-slate-400 text-center mt-4">Hubungi ketua untuk mendapatkan kode dan password divisi</p>
+        </div>
+    </div>
+
+    <!-- ===== APP ===== -->
+    <div id="app" class="max-w-6xl mx-auto px-4 py-6 md:py-10">
+
+        <!-- ===== HEADER ===== -->
+        <header class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+            <div>
+                <h1 class="text-2xl md:text-3xl font-bold text-slate-800 tracking-tight flex items-center gap-2">
+                    <i class="fas fa-tasks text-slate-700"></i>
+                    Task Tracker
+                    <span class="text-sm font-normal text-slate-400 ml-2">Kepanitiaan</span>
+                </h1>
+                <p class="text-sm text-slate-500 mt-0.5">Kelola tugas divisi, QC, dan arsip dengan mudah</p>
+            </div>
+            <div class="flex items-center gap-3 flex-wrap">
+                <div class="flex items-center gap-2 text-sm bg-white px-3 py-1.5 rounded-full shadow-sm border border-slate-200">
+                    <i class="fas fa-user-circle text-slate-400"></i>
+                    <span id="userRoleDisplay" class="font-medium text-slate-700">Ketua</span>
+                    <button onclick="logout()" class="text-xs text-red-400 hover:text-red-700 underline-offset-2 underline ml-1">logout</button>
+                </div>
+                <button onclick="openTaskModal()" class="btn-primary">
+                    <i class="fas fa-plus text-sm"></i> Tugas Baru
+                </button>
+            </div>
+        </header>
+
+        <!-- ===== FILTER BAR ===== -->
+        <div class="glass-card rounded-2xl shadow-sm p-4 mb-6 flex flex-wrap items-center gap-3 border border-slate-200/60">
+            <div class="flex items-center gap-2 text-sm text-slate-500 mr-2">
+                <i class="fas fa-tags"></i>
+                <span>Divisi:</span>
+            </div>
+            <div id="filterContainer" class="flex flex-wrap gap-1.5">
+                <!-- akan di-render oleh JS -->
+            </div>
+            <div class="ml-auto flex items-center gap-3 text-sm">
+                <span class="text-slate-400">|</span>
+                <span id="taskCount" class="text-slate-600 font-medium">0 tugas</span>
+                <button onclick="refreshData()" class="text-slate-400 hover:text-slate-700 transition">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- ===== TAB NAV ===== -->
+        <div class="flex border-b border-slate-200/70 mb-6 gap-1 overflow-x-auto scrollbar-thin">
+            <button onclick="setTab('active')" data-tab="active" class="tab-btn px-4 py-2.5 text-sm font-medium text-slate-500 hover:text-slate-800 transition border-b-2 border-transparent hover:border-slate-300 whitespace-nowrap">
+                <i class="fas fa-list-ul mr-1.5"></i> Aktif
+            </button>
+            <button onclick="setTab('archive')" data-tab="archive" class="tab-btn px-4 py-2.5 text-sm font-medium text-slate-500 hover:text-slate-800 transition border-b-2 border-transparent hover:border-slate-300 whitespace-nowrap">
+                <i class="fas fa-archive mr-1.5"></i> Arsip
+            </button>
+        </div>
+
+        <!-- ===== TASK LIST / ARCHIVE ===== -->
+        <div id="taskListContainer" class="space-y-3 fade-in">
+            <!-- di-render oleh JS -->
+        </div>
+
+        <!-- ===== EMPTY STATE ===== -->
+        <div id="emptyState" class="hidden text-center py-16">
+            <div class="text-5xl text-slate-300 mb-4">
+                <i class="fas fa-inbox"></i>
+            </div>
+            <h3 class="text-slate-500 font-medium">Belum ada tugas</h3>
+            <p class="text-slate-400 text-sm mt-1">Buat tugas baru dengan tombol di atas</p>
+        </div>
+
+        <!-- ===== MODAL TASK ===== -->
+        <div id="taskModal" class="fixed inset-0 z-50 hidden modal-overlay flex items-center justify-center p-4">
+            <div class="modal-content glass-card rounded-2xl w-full max-w-lg p-6 shadow-2xl border border-slate-200/60 fade-in">
+                <div class="flex justify-between items-center mb-5">
+                    <h2 id="modalTitle" class="text-xl font-bold text-slate-800">
+                        <i class="fas fa-plus-circle text-slate-600 mr-2"></i> Tugas Baru
+                    </h2>
+                    <button onclick="closeTaskModal()" class="text-slate-400 hover:text-slate-700 text-xl">&times;</button>
+                </div>
+                <form id="taskForm" onsubmit="saveTask(event)" class="space-y-4">
+                    <input type="hidden" id="taskId" value="" />
+
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Judul Tugas <span class="text-red-500">*</span></label>
+                        <input id="taskTitle" type="text" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white/70 focus:border-slate-400 text-sm" placeholder="Contoh: Finalisasi Proposal" />
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Deskripsi</label>
+                        <textarea id="taskDesc" rows="2" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white/70 focus:border-slate-400 text-sm" placeholder="Detail tugas..."></textarea>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Divisi <span class="text-red-500">*</span></label>
+                            <select id="taskDivision" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white/70 focus:border-slate-400 text-sm">
+                                <option value="">Pilih divisi</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Deadline <span class="text-red-500">*</span></label>
+                            <input id="taskDeadline" type="date" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white/70 focus:border-slate-400 text-sm" />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Ditugaskan ke</label>
+                        <input id="taskAssigned" type="text" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white/70 focus:border-slate-400 text-sm" placeholder="Nama anggota" />
+                    </div>
+
+                    <div class="flex justify-end gap-3 pt-2">
+                        <button type="button" onclick="closeTaskModal()" class="btn-outline">Batal</button>
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-save mr-1.5"></i> Simpan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- ===== MODAL EVIDENCE ===== -->
+        <div id="evidenceModal" class="fixed inset-0 z-50 hidden modal-overlay flex items-center justify-center p-4">
+            <div class="modal-content glass-card rounded-2xl w-full max-w-md p-6 shadow-2xl border border-slate-200/60 fade-in">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold text-slate-800">
+                        <i class="fas fa-link text-slate-600 mr-2"></i> Kirim Bukti
+                    </h2>
+                    <button onclick="closeEvidenceModal()" class="text-slate-400 hover:text-slate-700 text-xl">&times;</button>
+                </div>
+                <form onsubmit="submitEvidence(event)" class="space-y-4">
+                    <input type="hidden" id="evidenceTaskId" value="" />
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Link Bukti <span class="text-red-500">*</span></label>
+                        <input id="evidenceLink" type="url" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white/70 focus:border-slate-400 text-sm" placeholder="https://drive.google.com/..." />
+                        <p class="text-xs text-slate-400 mt-1.5">Masukkan link dokumen, foto, atau bukti lainnya</p>
+                    </div>
+                    <div class="flex justify-end gap-3 pt-2">
+                        <button type="button" onclick="closeEvidenceModal()" class="btn-outline">Batal</button>
+                        <button type="submit" class="btn-success">
+                            <i class="fas fa-paper-plane mr-1.5"></i> Kirim
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- ===== MODAL APPROVAL ===== -->
+        <div id="approvalModal" class="fixed inset-0 z-50 hidden modal-overlay flex items-center justify-center p-4">
+            <div class="modal-content glass-card rounded-2xl w-full max-w-md p-6 shadow-2xl border border-slate-200/60 fade-in">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold text-slate-800">
+                        <i class="fas fa-check-circle text-emerald-600 mr-2"></i> QC Approval
+                    </h2>
+                    <button onclick="closeApprovalModal()" class="text-slate-400 hover:text-slate-700 text-xl">&times;</button>
+                </div>
+                <div class="space-y-3 text-sm text-slate-600">
+                    <p>Apakah tugas ini sudah sesuai dan layak <strong>disetujui</strong>?</p>
+                    <div class="bg-slate-50 rounded-xl p-3 text-xs">
+                        <p id="approvalTaskPreview" class="text-slate-700">—</p>
+                    </div>
+                    <div class="flex gap-3 pt-2">
+                        <button onclick="approveTask(false)" class="btn-danger flex-1">
+                            <i class="fas fa-times mr-1.5"></i> Tolak
+                        </button>
+                        <button onclick="approveTask(true)" class="btn-success flex-1">
+                            <i class="fas fa-check mr-1.5"></i> Setujui
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // ============================================================
+        //  FIREBASE CONFIG — Ganti dengan config milikmu!
+        // ============================================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyAmuHB9vZIk-SsJnmXktH8HMRJ2NeaBH9s",
+            authDomain: "imd-system.firebaseapp.com",
+            projectId: "imd-system",
+            storageBucket: "imd-system.firebasestorage.app",
+            messagingSenderId: "859930056327",
+            appId: "1:859930056327:web:fe0526b1acb6d650638a22",
+            measurementId: "G-Y9V0HT0KX0"
+        };
+
+        // ============================================================
+        //  INISIALISASI FIREBASE
+        // ============================================================
+        let app, db;
+        try {
+            app = firebase.initializeApp(firebaseConfig);
+            db = firebase.firestore(app);
+            // Enable offline persistence
+            db.enablePersistence({ synchronizeTabs: true }).catch(() => {});
+            console.log('✅ Firebase terhubung');
+        } catch (e) {
+            console.warn('Firebase init error, menggunakan mock data:', e);
+            db = null;
+        }
+
+        // ============================================================
+        //  STATE GLOBAL
+        // ============================================================
+        let currentUserRole = 'anggota';
+        let currentUserDivision = null; // division id
+        let currentFilter = 'all';
+        let currentTab = 'active';
+        let allDivisions = [];
+        let allTasks = [];
+        let editingTaskId = null;
+        let unsubscribeTasks = null;
+
+        // ============================================================
+        //  DOM REFS
+        // ============================================================
+        const $ = id => document.getElementById(id);
+        const taskListContainer = $('taskListContainer');
+        const emptyState = $('emptyState');
+        const filterContainer = $('filterContainer');
+        const taskCount = $('taskCount');
+        const userRoleDisplay = $('userRoleDisplay');
+        const toast = $('toast');
+
+        // ============================================================
+        //  TOAST NOTIFICATION
+        // ============================================================
+        function showToast(msg, type = 'info') {
+            toast.textContent = msg;
+            toast.className = 'toast show ' + type;
+            clearTimeout(toast._timer);
+            toast._timer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3500);
+        }
+
+        // ============================================================
+        //  LOGIN
+        // ============================================================
+        async function loginWithDivision(e) {
+            e.preventDefault();
+            const code = $('loginCode').value.trim().toUpperCase();
+            const password = $('loginPassword').value.trim();
+            const errorEl = $('loginError');
+
+            if (!code || !password) {
+                errorEl.textContent = 'Harap isi kode dan password.';
+                errorEl.classList.remove('hidden');
+                return;
+            }
+
+            if (!db) {
+                // Fallback: hardcode untuk testing
+                if (code === 'KON' && password === 'kon123') {
+                    loginSuccess('div-1', 'anggota');
+                    return;
+                } else if (code === 'CHAIR' && password === 'ketua123') {
+                    loginSuccess('chair', 'ketua');
+                    return;
+                } else {
+                    errorEl.textContent = 'Kode atau password salah (mock).';
+                    errorEl.classList.remove('hidden');
+                    return;
+                }
+            }
+
+            try {
+                const snapshot = await db.collection('divisions')
+                    .where('code', '==', code)
+                    .get();
+
+                if (snapshot.empty) {
+                    errorEl.textContent = 'Kode divisi tidak ditemukan.';
+                    errorEl.classList.remove('hidden');
+                    return;
+                }
+
+                const doc = snapshot.docs[0];
+                const data = doc.data();
+                if (data.password !== password) {
+                    errorEl.textContent = 'Password salah.';
+                    errorEl.classList.remove('hidden');
+                    return;
+                }
+
+                const divisionId = doc.id;
+                const role = data.isChair ? 'ketua' : 'anggota';
+                loginSuccess(divisionId, role);
+
+            } catch (err) {
+                console.error(err);
+                errorEl.textContent = 'Terjadi kesalahan. Coba lagi.';
+                errorEl.classList.remove('hidden');
+            }
+        }
+
+        function loginSuccess(divisionId, role) {
+            localStorage.setItem('userDivision', divisionId);
+            localStorage.setItem('userRole', role);
+            currentUserDivision = divisionId;
+            currentUserRole = role;
+            currentFilter = (role === 'ketua') ? 'all' : divisionId;
+
+            $('loginScreen').classList.add('hidden');
+            $('app').classList.add('visible');
+
+            userRoleDisplay.textContent = (role === 'ketua') ? 'Ketua' : 'Anggota';
+
+            // Load data
+            loadDivisionsAndTasks();
+            showToast(`Selamat datang ${role === 'ketua' ? 'Ketua' : 'Anggota'}!`, 'success');
+        }
+
+        function logout() {
+            localStorage.removeItem('userDivision');
+            localStorage.removeItem('userRole');
+            if (unsubscribeTasks) {
+                unsubscribeTasks();
+                unsubscribeTasks = null;
+            }
+            $('app').classList.remove('visible');
+            $('loginScreen').classList.remove('hidden');
+            $('loginForm').reset();
+            $('loginError').classList.add('hidden');
+            currentUserDivision = null;
+            currentUserRole = 'anggota';
+            allTasks = [];
+            allDivisions = [];
+            renderAll();
+            showToast('Anda telah logout.', 'info');
+        }
+
+        // ============================================================
+        //  LOAD DIVISIONS & TASKS (dengan realtime listener)
+        // ============================================================
+        async function loadDivisionsAndTasks() {
+            if (!db) {
+                loadMockData();
+                return;
+            }
+
+            try {
+                // Load divisions
+                const divSnap = await db.collection('divisions').get();
+                if (!divSnap.empty) {
+                    allDivisions = divSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+                } else {
+                    // Seed default divisions (jika kosong)
+                    const defaultDivs = [
+                        { name: 'Konsumsi', code: 'KON', password: 'kon123', isChair: false },
+                        { name: 'Acara', code: 'ACR', password: 'acr123', isChair: false },
+                        { name: 'Dekorasi', code: 'DEK', password: 'dek123', isChair: false },
+                        { name: 'Dokumentasi', code: 'DOK', password: 'dok123', isChair: false },
+                        { name: 'Kesekretariatan', code: 'SEK', password: 'sek123', isChair: false },
+                        { name: 'Perlengkapan', code: 'PER', password: 'per123', isChair: false },
+                        { name: 'Humas', code: 'HUM', password: 'hum123', isChair: false },
+                        { name: 'Ketua', code: 'CHAIR', password: 'ketua123', isChair: true },
+                    ];
+                    for (const d of defaultDivs) {
+                        await db.collection('divisions').add(d);
+                    }
+                    // reload
+                    const snap2 = await db.collection('divisions').get();
+                    allDivisions = snap2.docs.map(d => ({ id: d.id, ...d.data() }));
+                }
+
+                // Setup realtime listener untuk tasks
+                if (unsubscribeTasks) unsubscribeTasks();
+
+                let query = db.collection('tasks');
+                // Jika bukan ketua, filter berdasarkan divisi
+                if (currentUserRole !== 'ketua' && currentUserDivision) {
+                    query = query.where('divisionId', '==', currentUserDivision);
+                }
+                // Urutkan berdasarkan createdAt
+                query = query.orderBy('createdAt', 'desc');
+
+                unsubscribeTasks = query.onSnapshot((snapshot) => {
+                    allTasks = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+                    renderAll();
+                    showToast('Data diperbarui secara realtime', 'info');
+                }, (error) => {
+                    console.error('Listener error:', error);
+                    showToast('Gagal sinkronisasi realtime', 'error');
+                });
+
+            } catch (err) {
+                console.error('Load data error:', err);
+                loadMockData();
+            }
+        }
+
+        // ============================================================
+        //  MOCK DATA (fallback)
+        // ============================================================
+        function loadMockData() {
+            if (allDivisions.length === 0) {
+                allDivisions = [
+                    { id: 'div-1', name: 'Konsumsi', code: 'KON', password: 'kon123', isChair: false },
+                    { id: 'div-2', name: 'Acara', code: 'ACR', password: 'acr123', isChair: false },
+                    { id: 'div-3', name: 'Dekorasi', code: 'DEK', password: 'dek123', isChair: false },
+                    { id: 'div-4', name: 'Dokumentasi', code: 'DOK', password: 'dok123', isChair: false },
+                    { id: 'div-5', name: 'Kesekretariatan', code: 'SEK', password: 'sek123', isChair: false },
+                    { id: 'div-6', name: 'Perlengkapan', code: 'PER', password: 'per123', isChair: false },
+                    { id: 'div-7', name: 'Humas', code: 'HUM', password: 'hum123', isChair: false },
+                    { id: 'chair', name: 'Ketua', code: 'CHAIR', password: 'ketua123', isChair: true },
+                ];
+            }
+            // Buat beberapa mock tasks
+            const now = new Date();
+            const today = now.toISOString().slice(0, 10);
+            const tomorrow = new Date(now);
+            tomorrow.setDate(now.getDate() + 1);
+            const tomorrowStr = tomorrow.toISOString().slice(0, 10);
+            const nextWeek = new Date(now);
+            nextWeek.setDate(now.getDate() + 7);
+            const nextWeekStr = nextWeek.toISOString().slice(0, 10);
+
+            // Filter berdasarkan divisi jika bukan ketua
+            let divFilter = currentUserDivision || 'all';
+            const sampleTasks = [{
+                id: 'task-1',
+                title: 'Menyusun proposal acara',
+                description: 'Proposal untuk acara besar tahun ini',
+                divisionId: 'div-2',
+                deadline: nextWeekStr,
+                status: 'pending',
+                evidenceLink: '',
+                assignedTo: 'Budi',
+                createdAt: now.toISOString(),
+                updatedAt: now.toISOString(),
+            }, {
+                id: 'task-2',
+                title: 'Desain backdrop panggung',
+                description: 'Konsep visual untuk panggung utama',
+                divisionId: 'div-3',
+                deadline: tomorrowStr,
+                status: 'in_progress',
+                evidenceLink: '',
+                assignedTo: 'Siti',
+                createdAt: now.toISOString(),
+                updatedAt: now.toISOString(),
+            }, {
+                id: 'task-3',
+                title: 'Rapat koordinasi dengan vendor',
+                description: 'Koordinasi teknis dan harga',
+                divisionId: 'div-1',
+                deadline: today,
+                status: 'done',
+                evidenceLink: 'https://drive.google.com/file/d/xxx',
+                assignedTo: 'Andi',
+                createdAt: now.toISOString(),
+                updatedAt: now.toISOString(),
+            }, {
+                id: 'task-4',
+                title: 'Dokumentasi kegiatan hari H',
+                description: 'Foto dan video seluruh rangkaian',
+                divisionId: 'div-4',
+                deadline: nextWeekStr,
+                status: 'approved',
+                evidenceLink: 'https://drive.google.com/folder/yyy',
+                assignedTo: 'Rina',
+                createdAt: now.toISOString(),
+                updatedAt: now.toISOString(),
+            }, {
+                id: 'task-5',
+                title: 'Membuat laporan keuangan',
+                description: 'Rekapitulasi semua pemasukan & pengeluaran',
+                divisionId: 'div-5',
+                deadline: nextWeekStr,
+                status: 'archived',
+                evidenceLink: 'https://docs.google.com/spreadsheets/zzz',
+                assignedTo: 'Dewi',
+                createdAt: now.toISOString(),
+                updatedAt: now.toISOString(),
+            }];
+
+            if (currentUserRole === 'ketua') {
+                allTasks = sampleTasks;
+            } else {
+                allTasks = sampleTasks.filter(t => t.divisionId === currentUserDivision);
+            }
+            renderAll();
+        }
+
+        // ============================================================
+        //  RENDER UTAMA
+        // ============================================================
+        function renderAll() {
+            renderFilters();
+            renderTasks();
+            updateTaskCount();
+        }
+
+        // ============================================================
+        //  RENDER FILTER
+        // ============================================================
+        function renderFilters() {
+            filterContainer.innerHTML = '';
+            // Tombol "All" (hanya untuk ketua, atau tampilkan semua divisi jika anggota hanya divisinya)
+            if (currentUserRole === 'ketua') {
+                const allBtn = document.createElement('button');
+                allBtn.className =
+                    `tag-pill all text-xs px-3 py-1 rounded-full transition ${currentFilter === 'all' ? 'ring-2 ring-slate-700 ring-offset-1' : ''}`;
+                allBtn.textContent = 'All';
+                allBtn.onclick = () => { currentFilter = 'all';
+                    renderAll(); };
+                filterContainer.appendChild(allBtn);
+            }
+
+            // Tampilkan divisi yang relevan
+            let divisionsToShow = allDivisions;
+            if (currentUserRole !== 'ketua' && currentUserDivision) {
+                divisionsToShow = allDivisions.filter(d => d.id === currentUserDivision);
+            }
+
+            divisionsToShow.forEach(div => {
+                const btn = document.createElement('button');
+                const isActive = currentFilter === div.id;
+                btn.className =
+                    `tag-pill text-xs px-3 py-1 rounded-full transition ${isActive ? 'ring-2 ring-slate-700 ring-offset-1 bg-slate-200' : 'bg-slate-100/70'}`;
+                btn.textContent = `${div.code} • ${div.name}`;
+                btn.onclick = () => { currentFilter = div.id;
+                    renderAll(); };
+                filterContainer.appendChild(btn);
+            });
+        }
+
+        // ============================================================
+        //  RENDER TASKS
+        // ============================================================
+        function renderTasks() {
+            const filtered = allTasks.filter(task => {
+                // Filter by tab
+                if (currentTab === 'active') {
+                    if (task.status === 'archived' || task.status === 'approved') return false;
+                } else {
+                    if (task.status !== 'archived' && task.status !== 'approved') return false;
+                }
+                // Filter by division
+                if (currentFilter !== 'all' && task.divisionId !== currentFilter) return false;
+                return true;
+            });
+
+            if (filtered.length === 0) {
+                taskListContainer.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+            emptyState.classList.add('hidden');
+
+            // Sort: deadline terdekat
+            filtered.sort((a, b) => {
+                if (!a.deadline) return 1;
+                if (!b.deadline) return -1;
+                return new Date(a.deadline) - new Date(b.deadline);
+            });
+
+            let html = '';
+            filtered.forEach(task => {
+                const divName = getDivisionName(task.divisionId);
+                const divCode = getDivisionCode(task.divisionId);
+                const statusLabel = getStatusLabel(task.status);
+                const isOver = isOverdue(task.deadline);
+                const daysLeft = daysUntil(task.deadline);
+                const isDone = task.status === 'done' || task.status === 'approved' || task.status === 'archived';
+                const isApproved = task.status === 'approved' || task.status === 'archived';
+                const hasEvidence = task.evidenceLink && task.evidenceLink.trim() !== '';
+
+                const showWarning = !isDone && daysLeft <= 3 && daysLeft >= 0 && task.status !== 'archived';
+
+                let actionsHtml = '';
+
+                // Anggota: mark done + kirim bukti
+                if (currentUserRole === 'anggota' && !isDone && task.status !== 'archived') {
+                    if (task.status === 'pending' || task.status === 'in_progress') {
+                        actionsHtml += `
+                            <button onclick="markDone('${task.id}')" class="text-xs bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-lg hover:bg-emerald-100 transition flex items-center gap-1.5">
+                                <i class="fas fa-check-circle"></i> Selesai
+                            </button>
+                        `;
+                    }
+                    if (task.status === 'done' && !hasEvidence) {
+                        actionsHtml += `
+                            <button onclick="openEvidenceModal('${task.id}')" class="text-xs bg-blue-50 text-blue-700 px-3 py-1.5 rounded-lg hover:bg-blue-100 transition flex items-center gap-1.5">
+                                <i class="fas fa-link"></i> Kirim Bukti
+                            </button>
+                        `;
+                    }
+                }
+
+                // Ketua: QC approve (hanya untuk task dengan status 'done' dan ada evidence)
+                if (currentUserRole === 'ketua' && task.status === 'done' && hasEvidence) {
+                    actionsHtml += `
+                        <button onclick="openApprovalModal('${task.id}')" class="text-xs bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-lg hover:bg-indigo-100 transition flex items-center gap-1.5">
+                            <i class="fas fa-clipboard-check"></i> QC
+                        </button>
+                    `;
+                }
+
+                // Ketua: hapus (hanya untuk belum approved/archived)
+                if (currentUserRole === 'ketua' && task.status !== 'archived' && task.status !== 'approved') {
+                    actionsHtml += `
+                        <button onclick="deleteTask('${task.id}')" class="text-xs bg-red-50 text-red-600 px-3 py-1.5 rounded-lg hover:bg-red-100 transition flex items-center gap-1.5">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    `;
+                }
+
+                // Ketua: edit (hanya untuk belum approved/archived)
+                if (currentUserRole === 'ketua' && task.status !== 'archived' && task.status !== 'approved') {
+                    actionsHtml += `
+                        <button onclick="editTask('${task.id}')" class="text-xs bg-slate-50 text-slate-600 px-3 py-1.5 rounded-lg hover:bg-slate-100 transition flex items-center gap-1.5">
+                            <i class="fas fa-pen"></i>
+                        </button>
+                    `;
+                }
+
+                if (isApproved) {
+                    actionsHtml = `
+                        <span class="text-xs text-emerald-600 font-medium flex items-center gap-1.5">
+                            <i class="fas fa-check-circle"></i> ${task.status === 'archived' ? 'Diarsipkan' : 'Disetujui'}
+                        </span>
+                    `;
+                }
+
+                let evidenceHtml = '';
+                if (hasEvidence) {
+                    evidenceHtml = `
+                        <a href="${task.evidenceLink}" target="_blank" class="text-xs text-blue-600 hover:underline flex items-center gap-1">
+                            <i class="fas fa-external-link-alt"></i> Bukti
+                        </a>
+                    `;
+                }
+
+                let deadlineBadge = '';
+                if (showWarning) {
+                    deadlineBadge = `
+                        <span class="deadline-warning text-xs bg-amber-100 text-amber-800 px-2.5 py-0.5 rounded-full flex items-center gap-1.5 font-medium">
+                            <i class="fas fa-clock"></i> ${daysLeft} hari lagi
+                        </span>
+                    `;
+                } else if (isOver && !isDone && task.status !== 'archived') {
+                    deadlineBadge = `
+                        <span class="text-xs bg-red-100 text-red-700 px-2.5 py-0.5 rounded-full flex items-center gap-1.5 font-medium">
+                            <i class="fas fa-exclamation-circle"></i> Terlambat!
+                        </span>
+                    `;
+                }
+
+                html += `
+                    <div class="task-card glass-card rounded-xl p-4 border border-slate-200/60 shadow-sm fade-in">
+                        <div class="flex flex-col md:flex-row md:items-start gap-3">
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2 flex-wrap mb-1">
+                                    <span class="text-sm font-semibold text-slate-800">${task.title}</span>
+                                    <span class="tag-pill bg-slate-100 text-slate-600 text-[0.6rem]">${divCode}</span>
+                                    <span class="${getStatusBadgeClass(task.status)}">${statusLabel}</span>
+                                    ${deadlineBadge}
+                                </div>
+                                ${task.description ? `<p class="text-sm text-slate-500 mb-1.5">${task.description}</p>` : ''}
+                                <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-400">
+                                    <span><i class="far fa-calendar-alt mr-1"></i> Deadline: ${formatDate(task.deadline)}</span>
+                                    ${task.assignedTo ? `<span><i class="far fa-user mr-1"></i> ${task.assignedTo}</span>` : ''}
+                                    ${evidenceHtml}
+                                    ${task.status === 'done' && !hasEvidence ? `<span class="text-amber-600"><i class="fas fa-exclamation-triangle mr-1"></i> Belum ada bukti</span>` : ''}
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2 flex-wrap md:flex-nowrap">
+                                ${actionsHtml}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            taskListContainer.innerHTML = html;
+        }
+
+        function updateTaskCount() {
+            const active = allTasks.filter(t => t.status !== 'archived' && t.status !== 'approved').length;
+            const archived = allTasks.filter(t => t.status === 'archived' || t.status === 'approved').length;
+            const total = allTasks.length;
+            taskCount.textContent = `${total} tugas • ${active} aktif • ${archived} arsip`;
+        }
+
+        // ============================================================
+        //  UTILITY FUNCTIONS
+        // ============================================================
+        function formatDate(dateStr) {
+            if (!dateStr) return '-';
+            const d = new Date(dateStr + 'T00:00:00');
+            return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+        }
+
+        function isOverdue(deadline) {
+            if (!deadline) return false;
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const d = new Date(deadline + 'T00:00:00');
+            return d < today;
+        }
+
+        function daysUntil(deadline) {
+            if (!deadline) return Infinity;
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const d = new Date(deadline + 'T00:00:00');
+            const diff = Math.ceil((d - today) / (1000 * 60 * 60 * 24));
+            return diff;
+        }
+
+        function getDivisionName(id) {
+            const d = allDivisions.find(dv => dv.id === id);
+            return d ? d.name : id;
+        }
+
+        function getDivisionCode(id) {
+            const d = allDivisions.find(dv => dv.id === id);
+            return d ? d.code : id;
+        }
+
+        function getStatusLabel(status) {
+            const map = {
+                pending: 'Menunggu',
+                in_progress: 'Proses',
+                done: 'Selesai',
+                approved: 'Disetujui',
+                archived: 'Diarsipkan'
+            };
+            return map[status] || status;
+        }
+
+        function getStatusBadgeClass(status) {
+            return 'status-badge ' + (status || 'pending');
+        }
+
+        // ============================================================
+        //  TAB
+        // ============================================================
+        function setTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.toggle('tab-active', el.dataset.tab === tab);
+            });
+            renderTasks();
+        }
+
+        // ============================================================
+        //  CRUD TASK
+        // ============================================================
+        function openTaskModal(taskId) {
+            const modal = $('taskModal');
+            const title = $('modalTitle');
+            const form = $('taskForm');
+            form.reset();
+            $('taskId').value = '';
+            editingTaskId = null;
+
+            const sel = $('taskDivision');
+            sel.innerHTML = '<option value="">Pilih divisi</option>';
+            let divisionsToShow = allDivisions;
+            if (currentUserRole !== 'ketua' && currentUserDivision) {
+                divisionsToShow = allDivisions.filter(d => d.id === currentUserDivision);
+            }
+            divisionsToShow.forEach(d => {
+                const opt = document.createElement('option');
+                opt.value = d.id;
+                opt.textContent = `${d.code} — ${d.name}`;
+                sel.appendChild(opt);
+            });
+
+            if (taskId) {
+                const task = allTasks.find(t => t.id === taskId);
+                if (!task) return;
+                editingTaskId = taskId;
+                title.innerHTML = '<i class="fas fa-pen text-slate-600 mr-2"></i> Edit Tugas';
+                $('taskId').value = taskId;
+                $('taskTitle').value = task.title;
+                $('taskDesc').value = task.description || '';
+                $('taskDivision').value = task.divisionId || '';
+                $('taskDeadline').value = task.deadline || '';
+                $('taskAssigned').value = task.assignedTo || '';
+            } else {
+                title.innerHTML = '<i class="fas fa-plus-circle text-slate-600 mr-2"></i> Tugas Baru';
+                const d = new Date();
+                d.setDate(d.getDate() + 7);
+                $('taskDeadline').value = d.toISOString().slice(0, 10);
+                // Jika anggota, set divisi otomatis
+                if (currentUserRole !== 'ketua' && currentUserDivision) {
+                    $('taskDivision').value = currentUserDivision;
+                    $('taskDivision').disabled = true;
+                } else {
+                    $('taskDivision').disabled = false;
+                }
+            }
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeTaskModal() {
+            $('taskModal').classList.add('hidden');
+            $('taskDivision').disabled = false;
+        }
+
+        async function saveTask(e) {
+            e.preventDefault();
+            const id = $('taskId').value;
+            const title = $('taskTitle').value.trim();
+            const description = $('taskDesc').value.trim();
+            const divisionId = $('taskDivision').value;
+            const deadline = $('taskDeadline').value;
+            const assignedTo = $('taskAssigned').value.trim();
+
+            if (!title || !divisionId || !deadline) {
+                showToast('Harap isi semua field yang wajib!', 'error');
+                return;
+            }
+
+            const taskData = {
+                title,
+                description,
+                divisionId,
+                deadline,
+                assignedTo,
+                updatedAt: new Date().toISOString(),
+            };
+
+            try {
+                if (id) {
+                    // Update
+                    if (db) {
+                        await db.collection('tasks').doc(id).update(taskData);
+                    } else {
+                        const idx = allTasks.findIndex(t => t.id === id);
+                        if (idx >= 0) allTasks[idx] = { ...allTasks[idx], ...taskData };
+                        renderAll();
+                    }
+                    showToast('Tugas berhasil diperbarui', 'success');
+                } else {
+                    // Create
+                    const newTask = {
+                        ...taskData,
+                        status: 'pending',
+                        evidenceLink: '',
+                        createdAt: new Date().toISOString(),
+                    };
+                    if (db) {
+                        const ref = await db.collection('tasks').add(newTask);
+                        newTask.id = ref.id;
+                    } else {
+                        newTask.id = 'task-' + Date.now();
+                        allTasks.push(newTask);
+                        renderAll();
+                    }
+                    showToast('Tugas berhasil dibuat', 'success');
+                }
+                closeTaskModal();
+                // Jika pakai mock, render ulang
+                if (!db) renderAll();
+            } catch (err) {
+                console.error('Save error:', err);
+                showToast('Gagal menyimpan tugas.', 'error');
+            }
+        }
+
+        function editTask(taskId) {
+            openTaskModal(taskId);
+        }
+
+        async function deleteTask(taskId) {
+            if (!confirm('Yakin ingin menghapus tugas ini?')) return;
+            try {
+                if (db) {
+                    await db.collection('tasks').doc(taskId).delete();
+                } else {
+                    allTasks = allTasks.filter(t => t.id !== taskId);
+                    renderAll();
+                }
+                showToast('Tugas dihapus', 'success');
+            } catch (err) {
+                console.error('Delete error:', err);
+                showToast('Gagal menghapus tugas.', 'error');
+            }
+        }
+
+        // ============================================================
+        //  MARK DONE (Anggota)
+        // ============================================================
+        async function markDone(taskId) {
+            try {
+                const task = allTasks.find(t => t.id === taskId);
+                if (!task) return;
+                if (task.status === 'done') {
+                    showToast('Tugas sudah selesai.', 'info');
+                    return;
+                }
+                const update = { status: 'done', updatedAt: new Date().toISOString() };
+                if (db) {
+                    await db.collection('tasks').doc(taskId).update(update);
+                } else {
+                    task.status = 'done';
+                    task.updatedAt = update.updatedAt;
+                    renderAll();
+                }
+                showToast('Tugas ditandai selesai!', 'success');
+            } catch (err) {
+                console.error('Mark done error:', err);
+                showToast('Gagal memperbarui tugas.', 'error');
+            }
+        }
+
+        // ============================================================
+        //  EVIDENCE
+        // ============================================================
+        function openEvidenceModal(taskId) {
+            $('evidenceTaskId').value = taskId;
+            $('evidenceLink').value = '';
+            $('evidenceModal').classList.remove('hidden');
+        }
+
+        function closeEvidenceModal() {
+            $('evidenceModal').classList.add('hidden');
+        }
+
+        async function submitEvidence(e) {
+            e.preventDefault();
+            const taskId = $('evidenceTaskId').value;
+            const link = $('evidenceLink').value.trim();
+            if (!link) {
+                showToast('Masukkan link bukti!', 'error');
+                return;
+            }
+            try {
+                if (db) {
+                    await db.collection('tasks').doc(taskId).update({
+                        evidenceLink: link,
+                        updatedAt: new Date().toISOString()
+                    });
+                } else {
+                    const task = allTasks.find(t => t.id === taskId);
+                    if (task) task.evidenceLink = link;
+                    renderAll();
+                }
+                closeEvidenceModal();
+                showToast('Bukti berhasil dikirim', 'success');
+            } catch (err) {
+                console.error('Evidence error:', err);
+                showToast('Gagal menyimpan bukti.', 'error');
+            }
+        }
+
+        // ============================================================
+        //  APPROVAL (Ketua)
+        // ============================================================
+        let pendingApprovalId = null;
+
+        function openApprovalModal(taskId) {
+            const task = allTasks.find(t => t.id === taskId);
+            if (!task) return;
+            pendingApprovalId = taskId;
+            $('approvalTaskPreview').textContent =
+                `📌 ${task.title} | ${getDivisionName(task.divisionId)} | ${task.assignedTo || '-'}`;
+            $('approvalModal').classList.remove('hidden');
+        }
+
+        function closeApprovalModal() {
+            $('approvalModal').classList.add('hidden');
+            pendingApprovalId = null;
+        }
+
+        async function approveTask(approved) {
+            if (!pendingApprovalId) return;
+            const taskId = pendingApprovalId;
+            try {
+                const status = approved ? 'approved' : 'pending';
+                const update = {
+                    status: status,
+                    updatedAt: new Date().toISOString(),
+                };
+                if (approved) {
+                    update.approvedAt = new Date().toISOString();
+                }
+                if (db) {
+                    await db.collection('tasks').doc(taskId).update(update);
+                    // Jika approved, langsung arsipkan? Kita tanyakan
+                    if (approved) {
+                        if (confirm('Tugas disetujui! Arsipkan sekarang?')) {
+                            await db.collection('tasks').doc(taskId).update({
+                                status: 'archived',
+                                updatedAt: new Date().toISOString()
+                            });
+                        }
+                    }
+                } else {
+                    const task = allTasks.find(t => t.id === taskId);
+                    if (task) {
+                        task.status = status;
+                        task.updatedAt = update.updatedAt;
+                        if (approved) {
+                            task.approvedAt = update.approvedAt;
+                            if (confirm('Tugas disetujui! Arsipkan sekarang?')) {
+                                task.status = 'archived';
+                            }
+                        }
+                    }
+                    renderAll();
+                }
+                closeApprovalModal();
+                showToast(approved ? 'Tugas disetujui!' : 'Tugas ditolak, status kembali ke pending', 'info');
+            } catch (err) {
+                console.error('Approval error:', err);
+                showToast('Gagal memproses approval.', 'error');
+            }
+        }
+
+        // ============================================================
+        //  REFRESH
+        // ============================================================
+        async function refreshData() {
+            if (db && unsubscribeTasks) {
+                // reload divisions
+                try {
+                    const divSnap = await db.collection('divisions').get();
+                    allDivisions = divSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+                    renderAll();
+                    showToast('Data dimuat ulang', 'success');
+                } catch (e) {
+                    showToast('Gagal refresh', 'error');
+                }
+            } else {
+                loadMockData();
+            }
+        }
+
+        // ============================================================
+        //  INIT
+        // ============================================================
+        // Cek session
+        const savedDivision = localStorage.getItem('userDivision');
+        const savedRole = localStorage.getItem('userRole');
+        if (savedDivision && savedRole) {
+            currentUserDivision = savedDivision;
+            currentUserRole = savedRole;
+            currentFilter = (savedRole === 'ketua') ? 'all' : savedDivision;
+            $('loginScreen').classList.add('hidden');
+            $('app').classList.add('visible');
+            userRoleDisplay.textContent = (savedRole === 'ketua') ? 'Ketua' : 'Anggota';
+            loadDivisionsAndTasks();
+        } else {
+            $('loginScreen').classList.remove('hidden');
+            $('app').classList.remove('visible');
+        }
+
+        // Set default tab
+        document.querySelector('.tab-btn[data-tab="active"]')?.classList.add('tab-active');
+
+        // Close modals on outside click
+        document.querySelectorAll('.modal-overlay').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.add('hidden');
+                }
+            });
+        });
+
+        // Keyboard shortcut
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal-overlay:not(.hidden)').forEach(m => m.classList.add('hidden'));
+            }
+        });
+
+        console.log('✅ Task Tracker Kepanitiaan siap!');
+        console.log('📌 Login dengan kode divisi (KON, ACR, CHAIR, dll)');
+        console.log('🔑 Password default: <kode>123 (misal: kon123)');
+        console.log('👤 Role Ketua: CHAIR / ketua123');
+    </script>
+
+</body>
+</html>
