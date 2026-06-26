@@ -3,141 +3,455 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Task Tracker Kepanitiaan</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <title>🎉 IMD 2026 Task Tracker</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js">
+    </script>
+
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
     <style>
-        /* (sama seperti sebelumnya, bisa disalin dari jawaban sebelumnya) */
-        * { font-family: 'Inter', system-ui; }
-        body { background: #f1f5f9; }
-        .glass-card { background: rgba(255,255,255,0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.3); }
-        .task-card { transition: all 0.2s ease; }
-        .task-card:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(0,0,0,0.08); }
-        .tag-pill { font-size: 0.65rem; font-weight: 600; padding: 0.2rem 0.7rem; border-radius: 9999px; background: #e2e8f0; color: #1e293b; }
-        .tag-pill.all { background: #1e293b; color: white; }
-        .status-badge { font-size: 0.6rem; font-weight: 600; text-transform: uppercase; padding: 0.15rem 0.6rem; border-radius: 9999px; }
-        .status-badge.pending { background: #fef3c7; color: #92400e; }
-        .status-badge.in_progress { background: #dbeafe; color: #1e40af; }
-        .status-badge.done { background: #d1fae5; color: #065f46; }
-        .status-badge.approved { background: #a7f3d0; color: #065f46; }
-        .status-badge.archived { background: #e5e7eb; color: #374151; }
-        .deadline-warning { animation: pulse-warning 1.8s ease-in-out infinite; }
-        @keyframes pulse-warning { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
-        .fade-in { animation: fadeIn 0.3s ease-out; }
-        @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
-        .tab-active { border-bottom: 2px solid #1e293b; color: #1e293b; font-weight: 600; }
-        .scrollbar-thin::-webkit-scrollbar { width: 4px; }
-        .scrollbar-thin::-webkit-scrollbar-track { background: #f1f5f9; }
-        .scrollbar-thin::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
-        input, select, textarea { transition: all 0.15s ease; }
-        input:focus, select:focus, textarea:focus { outline: none; ring: 2px solid #1e293b; border-color: #1e293b; }
-        .btn-primary { background: #1e293b; color: white; padding: 0.5rem 1.2rem; border-radius: 0.5rem; font-weight: 500; font-size: 0.875rem; transition: all 0.15s ease; display: inline-flex; align-items: center; gap: 0.5rem; justify-content: center; }
-        .btn-primary:hover { background: #0f172a; transform: scale(0.98); }
-        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-        .btn-outline { background: transparent; color: #1e293b; border: 1px solid #cbd5e1; padding: 0.5rem 1.2rem; border-radius: 0.5rem; font-weight: 500; font-size: 0.875rem; transition: all 0.15s ease; }
-        .btn-outline:hover { background: #f1f5f9; }
-        .btn-success { background: #065f46; color: white; padding: 0.5rem 1.2rem; border-radius: 0.5rem; font-weight: 500; font-size: 0.875rem; transition: all 0.15s ease; }
-        .btn-success:hover { background: #047857; }
-        .btn-danger { background: #991b1b; color: white; padding: 0.5rem 1.2rem; border-radius: 0.5rem; font-weight: 500; font-size: 0.875rem; transition: all 0.15s ease; }
-        .btn-danger:hover { background: #7f1d1d; }
-        .modal-overlay { background: rgba(15,23,42,0.6); backdrop-filter: blur(4px); }
-        .modal-content { max-height: 90vh; overflow-y: auto; }
-        .custom-checkbox { width: 1.2rem; height: 1.2rem; border-radius: 0.25rem; border: 2px solid #94a3b8; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.15s ease; flex-shrink: 0; }
-        .custom-checkbox.checked { background: #1e293b; border-color: #1e293b; color: white; }
-        .custom-checkbox:hover { border-color: #1e293b; }
-        .custom-checkbox.checked:hover { background: #0f172a; }
-        .dot-div { width: 10px; height: 10px; border-radius: 9999px; display: inline-block; flex-shrink: 0; }
-        #loginScreen { display: flex; }
-        #app { display: none; }
-        #loginScreen.hidden { display: none !important; }
-        #app.visible { display: block; }
-        .toast { position: fixed; bottom: 2rem; right: 2rem; background: #1e293b; color: white; padding: 0.8rem 1.5rem; border-radius: 1rem; box-shadow: 0 8px 30px rgba(0,0,0,0.2); font-size: 0.9rem; z-index: 999; opacity: 0; transform: translateY(20px); transition: all 0.3s ease; pointer-events: none; }
-        .toast.show { opacity: 1; transform: translateY(0); }
-        .toast.success { background: #065f46; }
-        .toast.error { background: #991b1b; }
+        /* ===== RAINBOW THEME ===== */
+        * {
+            font-family: 'Poppins', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #fdfcfb 0%, #e2d1c3 100%);
+            min-height: 100vh;
+        }
+
+        .rainbow-text {
+            background: linear-gradient(90deg, #f44336, #ff9800, #ffeb3b, #4caf50, #2196f3, #9c27b0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 800;
+        }
+
+        .rainbow-bg {
+            background: linear-gradient(135deg, #f44336, #ff9800, #ffeb3b, #4caf50, #2196f3, #9c27b0);
+            background-size: 300% 300%;
+            animation: gradientMove 6s ease infinite;
+        }
+
+        @keyframes gradientMove {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+        }
+
+        .btn-rainbow {
+            background: linear-gradient(135deg, #f44336, #ff9800, #ffeb3b, #4caf50, #2196f3, #9c27b0);
+            background-size: 300% 300%;
+            animation: gradientMove 4s ease infinite;
+            color: white;
+            font-weight: 600;
+            border: none;
+            transition: transform 0.2s;
+        }
+        .btn-rainbow:hover {
+            transform: scale(1.03);
+        }
+
+        .tag-pill {
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 0.2rem 0.8rem;
+            border-radius: 9999px;
+            background: rgba(0, 0, 0, 0.06);
+            color: #1e293b;
+            letter-spacing: 0.02em;
+        }
+        .tag-pill.all {
+            background: #1e293b;
+            color: white;
+        }
+
+        .status-badge {
+            font-size: 0.6rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 0.15rem 0.6rem;
+            border-radius: 9999px;
+        }
+        .status-badge.pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        .status-badge.in_progress {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        .status-badge.done {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .status-badge.approved {
+            background: #a7f3d0;
+            color: #065f46;
+        }
+        .status-badge.archived {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .deadline-warning {
+            animation: pulse-warning 1.8s ease-in-out infinite;
+        }
+        @keyframes pulse-warning {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.4;
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .tab-active {
+            border-bottom: 3px solid #f44336;
+            color: #1e293b;
+            font-weight: 700;
+        }
+
+        .countdown-box {
+            background: rgba(0, 0, 0, 0.04);
+            border-radius: 1rem;
+            padding: 0.5rem 1rem;
+            font-weight: 700;
+            font-size: 1.1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .countdown-box span {
+            background: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 0.5rem;
+            color: #1e293b;
+            min-width: 2.2rem;
+            text-align: center;
+        }
+
+        .modal-overlay {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+        }
+        .modal-content {
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        input,
+        select,
+        textarea {
+            transition: all 0.15s ease;
+            border: 1px solid #e2e8f0;
+        }
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            ring: 2px solid #f44336;
+            border-color: #f44336;
+        }
+
+        #loginScreen {
+            display: flex;
+        }
+        #app {
+            display: none;
+        }
+        #loginScreen.hidden {
+            display: none !important;
+        }
+        #app.visible {
+            display: block;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: #1e293b;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+            font-size: 0.9rem;
+            z-index: 999;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .toast.success {
+            background: #065f46;
+        }
+        .toast.error {
+            background: #991b1b;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .countdown-box {
+                font-size: 0.8rem;
+                padding: 0.3rem 0.8rem;
+            }
+            .countdown-box span {
+                min-width: 1.6rem;
+                padding: 0.1rem 0.4rem;
+            }
+        }
     </style>
 </head>
 <body>
 
     <div id="toast" class="toast"></div>
 
-    <!-- LOGIN SCREEN -->
+    <!-- ===== LOGIN SCREEN ===== -->
     <div id="loginScreen" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm">
-        <div class="glass-card rounded-2xl p-8 w-full max-w-sm shadow-2xl border border-slate-200/60">
-            <h1 class="text-2xl font-bold text-slate-800 mb-1 text-center">Task Tracker</h1>
-            <p class="text-sm text-slate-500 text-center mb-6">Kepanitiaan • Login Divisi</p>
+        <div class="glass-card rounded-3xl p-8 w-full max-w-md shadow-2xl border border-slate-200/60">
+            <div class="text-center mb-6">
+                <h1 class="text-3xl font-extrabold rainbow-text">🎉 IMD 2026</h1>
+                <p class="text-sm text-slate-500 mt-1">Task Tracker Kepanitiaan</p>
+                <div class="mt-2 text-xs text-slate-400">
+                    <i class="fas fa-calendar-alt"></i> 1 Juli 2026
+                </div>
+            </div>
             <form id="loginForm" onsubmit="loginWithDivision(event)" class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-slate-700">Kode Divisi</label>
-                    <input id="loginCode" type="text" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200" placeholder="Contoh: KON" />
+                    <input id="loginCode" type="text" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-red-400" placeholder="Contoh: KON, ACR, CHAIR" />
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-slate-700">Password</label>
-                    <input id="loginPassword" type="password" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200" placeholder="Masukkan password divisi" />
+                    <input id="loginPassword" type="password" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-red-400" placeholder="Masukkan password" />
                 </div>
-                <button type="submit" class="btn-primary w-full">Masuk</button>
+                <button type="submit" class="btn-rainbow w-full py-2.5 rounded-xl text-white font-bold text-sm">
+                    <i class="fas fa-sign-in-alt mr-2"></i> Masuk
+                </button>
                 <div id="loginError" class="text-red-500 text-sm text-center hidden"></div>
             </form>
-            <p class="text-xs text-slate-400 text-center mt-4">Hubungi ketua untuk mendapatkan kode dan password divisi</p>
+            <div class="mt-4 text-xs text-slate-400 text-center space-y-1">
+                <p>🔑 <strong>Ketua</strong>: CHAIR / ketua123</p>
+                <p>📌 <strong>Kabid</strong>: KON / kabid123 &nbsp;|&nbsp; ACR / kabid123 &nbsp;|&nbsp; ...</p>
+                <p>👤 <strong>Anggota</strong>: KON / kon123 &nbsp;|&nbsp; ACR / acr123 &nbsp;|&nbsp; ...</p>
+            </div>
         </div>
     </div>
 
-    <!-- APP -->
-    <div id="app" class="max-w-6xl mx-auto px-4 py-6 md:py-10">
-        <!-- header, filter, tab, task list, modals - sama persis seperti sebelumnya -->
-        <!-- (saya singkat agar tidak terlalu panjang, tapi kode lengkap ada di jawaban sebelumnya) -->
-        <!-- Anda bisa salin bagian ini dari jawaban pertama atau gunakan kode di bawah ini -->
-        <header class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
-            <div>
-                <h1 class="text-2xl md:text-3xl font-bold text-slate-800 tracking-tight flex items-center gap-2">
-                    <i class="fas fa-tasks text-slate-700"></i>
-                    Task Tracker
-                    <span class="text-sm font-normal text-slate-400 ml-2">Kepanitiaan</span>
-                </h1>
-                <p class="text-sm text-slate-500 mt-0.5">Kelola tugas divisi, QC, dan arsip dengan mudah</p>
-            </div>
-            <div class="flex items-center gap-3 flex-wrap">
-                <div class="flex items-center gap-2 text-sm bg-white px-3 py-1.5 rounded-full shadow-sm border border-slate-200">
-                    <i class="fas fa-user-circle text-slate-400"></i>
-                    <span id="userRoleDisplay" class="font-medium text-slate-700">Ketua</span>
-                    <button onclick="logout()" class="text-xs text-red-400 hover:text-red-700 underline-offset-2 underline ml-1">logout</button>
+    <!-- ===== APP ===== -->
+    <div id="app" class="max-w-6xl mx-auto px-4 py-4 md:py-8">
+
+        <!-- HEADER RAINBOW -->
+        <header class="glass-card rounded-2xl p-4 md:p-6 mb-6 border-0 shadow-lg">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div>
+                    <h1 class="text-2xl md:text-4xl font-extrabold rainbow-text flex items-center gap-2">
+                        <i class="fas fa-tasks"></i> IMD 2026
+                    </h1>
+                    <p class="text-sm text-slate-500 mt-0.5 flex items-center gap-2 flex-wrap">
+                        <span>🏆 Selamat & Semangat!</span>
+                        <span class="text-xs bg-yellow-100 px-2 py-0.5 rounded-full">#IMD2026</span>
+                    </p>
                 </div>
-                <button onclick="openTaskModal()" class="btn-primary"><i class="fas fa-plus text-sm"></i> Tugas Baru</button>
+                <div class="flex flex-wrap items-center gap-3">
+                    <!-- COUNTDOWN -->
+                    <div class="countdown-box" id="countdownBox">
+                        <i class="fas fa-clock text-slate-400"></i>
+                        <span id="cdDays">00</span>d
+                        <span id="cdHours">00</span>h
+                        <span id="cdMinutes">00</span>m
+                        <span id="cdSeconds">00</span>s
+                    </div>
+                    <div class="flex items-center gap-2 text-sm bg-white px-3 py-1.5 rounded-full shadow-sm border border-slate-200">
+                        <i class="fas fa-user-circle text-slate-400"></i>
+                        <span id="userRoleDisplay" class="font-medium text-slate-700">Ketua</span>
+                        <button onclick="logout()" class="text-xs text-red-400 hover:text-red-700 underline ml-1">logout</button>
+                    </div>
+                    <button onclick="openTaskModal()" id="btnAddTask" class="btn-rainbow px-4 py-2 rounded-xl text-white text-sm font-bold flex items-center gap-2">
+                        <i class="fas fa-plus"></i> Tugas Baru
+                    </button>
+                </div>
             </div>
         </header>
 
+        <!-- FILTER -->
         <div class="glass-card rounded-2xl shadow-sm p-4 mb-6 flex flex-wrap items-center gap-3 border border-slate-200/60">
-            <div class="flex items-center gap-2 text-sm text-slate-500 mr-2"><i class="fas fa-tags"></i><span>Divisi:</span></div>
+            <div class="flex items-center gap-2 text-sm text-slate-500 mr-2">
+                <i class="fas fa-tags"></i>
+                <span>Divisi:</span>
+            </div>
             <div id="filterContainer" class="flex flex-wrap gap-1.5"></div>
             <div class="ml-auto flex items-center gap-3 text-sm">
                 <span class="text-slate-400">|</span>
                 <span id="taskCount" class="text-slate-600 font-medium">0 tugas</span>
-                <button onclick="refreshData()" class="text-slate-400 hover:text-slate-700 transition"><i class="fas fa-sync-alt"></i></button>
+                <button onclick="refreshData()" class="text-slate-400 hover:text-slate-700 transition">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
             </div>
         </div>
 
-        <div class="flex border-b border-slate-200/70 mb-6 gap-1 overflow-x-auto scrollbar-thin">
-            <button onclick="setTab('active')" data-tab="active" class="tab-btn px-4 py-2.5 text-sm font-medium text-slate-500 hover:text-slate-800 transition border-b-2 border-transparent hover:border-slate-300 whitespace-nowrap"><i class="fas fa-list-ul mr-1.5"></i> Aktif</button>
-            <button onclick="setTab('archive')" data-tab="archive" class="tab-btn px-4 py-2.5 text-sm font-medium text-slate-500 hover:text-slate-800 transition border-b-2 border-transparent hover:border-slate-300 whitespace-nowrap"><i class="fas fa-archive mr-1.5"></i> Arsip</button>
+        <!-- TAB -->
+        <div class="flex border-b border-slate-200/70 mb-6 gap-1 overflow-x-auto">
+            <button onclick="setTab('active')" data-tab="active" class="tab-btn px-4 py-2.5 text-sm font-medium text-slate-500 hover:text-slate-800 transition border-b-3 border-transparent hover:border-slate-300 whitespace-nowrap">
+                <i class="fas fa-list-ul mr-1.5"></i> Aktif
+            </button>
+            <button onclick="setTab('archive')" data-tab="archive" class="tab-btn px-4 py-2.5 text-sm font-medium text-slate-500 hover:text-slate-800 transition border-b-3 border-transparent hover:border-slate-300 whitespace-nowrap">
+                <i class="fas fa-archive mr-1.5"></i> Arsip
+            </button>
         </div>
 
+        <!-- TASK LIST -->
         <div id="taskListContainer" class="space-y-3 fade-in"></div>
         <div id="emptyState" class="hidden text-center py-16">
             <div class="text-5xl text-slate-300 mb-4"><i class="fas fa-inbox"></i></div>
-            <h3 class="text-slate-500 font-medium">Belum ada tugas</h3>
+            <h3 class="text-slate-500 font-medium">✨ Belum ada tugas</h3>
             <p class="text-slate-400 text-sm mt-1">Buat tugas baru dengan tombol di atas</p>
         </div>
 
-        <!-- MODALS (sama) -->
-        <div id="taskModal" class="fixed inset-0 z-50 hidden modal-overlay flex items-center justify-center p-4">...</div>
-        <div id="evidenceModal" class="fixed inset-0 z-50 hidden modal-overlay flex items-center justify-center p-4">...</div>
-        <div id="approvalModal" class="fixed inset-0 z-50 hidden modal-overlay flex items-center justify-center p-4">...</div>
+        <!-- ===== MODALS ===== -->
+
+        <!-- TASK MODAL -->
+        <div id="taskModal" class="fixed inset-0 z-50 hidden modal-overlay flex items-center justify-center p-4">
+            <div class="modal-content glass-card rounded-3xl w-full max-w-lg p-6 shadow-2xl border border-slate-200/60 fade-in">
+                <div class="flex justify-between items-center mb-5">
+                    <h2 id="modalTitle" class="text-xl font-bold text-slate-800">
+                        <i class="fas fa-plus-circle text-red-500 mr-2"></i> Tugas Baru
+                    </h2>
+                    <button onclick="closeTaskModal()" class="text-slate-400 hover:text-slate-700 text-2xl">&times;</button>
+                </div>
+                <form id="taskForm" onsubmit="saveTask(event)" class="space-y-4">
+                    <input type="hidden" id="taskId" value="" />
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Judul Tugas <span class="text-red-500">*</span></label>
+                        <input id="taskTitle" type="text" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white/70" placeholder="Contoh: Finalisasi Proposal" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Deskripsi</label>
+                        <textarea id="taskDesc" rows="2" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white/70" placeholder="Detail tugas..."></textarea>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Divisi <span class="text-red-500">*</span></label>
+                            <select id="taskDivision" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white/70">
+                                <option value="">Pilih divisi</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Deadline <span class="text-red-500">*</span></label>
+                            <input id="taskDeadline" type="date" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white/70" />
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Ditugaskan ke</label>
+                        <input id="taskAssigned" type="text" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white/70" placeholder="Nama anggota" />
+                    </div>
+                    <div class="flex justify-end gap-3 pt-2">
+                        <button type="button" onclick="closeTaskModal()" class="btn-outline">Batal</button>
+                        <button type="submit" class="btn-rainbow px-5 py-2 rounded-xl text-white font-bold">
+                            <i class="fas fa-save mr-1.5"></i> Simpan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- EVIDENCE MODAL -->
+        <div id="evidenceModal" class="fixed inset-0 z-50 hidden modal-overlay flex items-center justify-center p-4">
+            <div class="modal-content glass-card rounded-3xl w-full max-w-md p-6 shadow-2xl border border-slate-200/60 fade-in">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold text-slate-800"><i class="fas fa-link text-blue-500 mr-2"></i> Kirim Bukti</h2>
+                    <button onclick="closeEvidenceModal()" class="text-slate-400 hover:text-slate-700 text-2xl">&times;</button>
+                </div>
+                <form onsubmit="submitEvidence(event)" class="space-y-4">
+                    <input type="hidden" id="evidenceTaskId" value="" />
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Link Bukti <span class="text-red-500">*</span></label>
+                        <input id="evidenceLink" type="url" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white/70" placeholder="https://drive.google.com/..." />
+                        <p class="text-xs text-slate-400 mt-1.5">Masukkan link dokumen, foto, atau bukti lainnya</p>
+                    </div>
+                    <div class="flex justify-end gap-3 pt-2">
+                        <button type="button" onclick="closeEvidenceModal()" class="btn-outline">Batal</button>
+                        <button type="submit" class="btn-rainbow px-5 py-2 rounded-xl text-white font-bold">
+                            <i class="fas fa-paper-plane mr-1.5"></i> Kirim
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- APPROVAL MODAL -->
+        <div id="approvalModal" class="fixed inset-0 z-50 hidden modal-overlay flex items-center justify-center p-4">
+            <div class="modal-content glass-card rounded-3xl w-full max-w-md p-6 shadow-2xl border border-slate-200/60 fade-in">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold text-slate-800"><i class="fas fa-check-circle text-emerald-600 mr-2"></i> QC Approval</h2>
+                    <button onclick="closeApprovalModal()" class="text-slate-400 hover:text-slate-700 text-2xl">&times;</button>
+                </div>
+                <div class="space-y-3 text-sm text-slate-600">
+                    <p>Apakah tugas ini sudah sesuai dan layak <strong>disetujui</strong>?</p>
+                    <div class="bg-slate-50 rounded-xl p-3 text-xs">
+                        <p id="approvalTaskPreview" class="text-slate-700">—</p>
+                    </div>
+                    <div class="flex gap-3 pt-2">
+                        <button onclick="approveTask(false)" class="btn-danger flex-1">
+                            <i class="fas fa-times mr-1.5"></i> Tolak
+                        </button>
+                        <button onclick="approveTask(true)" class="btn-success flex-1">
+                            <i class="fas fa-check mr-1.5"></i> Setujui
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script>
-        // FIREBASE CONFIG - ganti dengan milik Anda atau biarkan dummy untuk mode mock
+        // ============================================================
+        //  FIREBASE CONFIG — (milik Anda)
+        // ============================================================
         const firebaseConfig = {
             apiKey: "AIzaSyAmuHB9vZIk-SsJnmXktH8HMRJ2NeaBH9s",
             authDomain: "imd-system.firebaseapp.com",
@@ -148,20 +462,36 @@
             measurementId: "G-Y9V0HT0KX0"
         };
 
-        let app, db;
+        // ============================================================
+        //  INISIALISASI FIREBASE + FALLBACK
+        // ============================================================
+        let db = null;
+        let useMock = false;
+
         try {
-            app = firebase.initializeApp(firebaseConfig);
+            const app = firebase.initializeApp(firebaseConfig);
             db = firebase.firestore(app);
             db.enablePersistence({ synchronizeTabs: true }).catch(() => {});
-            console.log('✅ Firebase terhubung');
+            // Test koneksi
+            db.collection('divisions').limit(1).get()
+                .then(() => console.log('✅ Firebase terhubung'))
+                .catch(() => {
+                    console.warn('⚠️ Firebase tidak dapat diakses, beralih ke mock data');
+                    db = null;
+                    useMock = true;
+                });
         } catch (e) {
-            console.warn('Firebase init error, menggunakan mock data:', e);
+            console.warn('⚠️ Firebase init error, menggunakan mock data:', e);
             db = null;
+            useMock = true;
         }
 
-        // STATE
-        let currentUserRole = 'anggota';
-        let currentUserDivision = null;
+        // ============================================================
+        //  STATE GLOBAL
+        // ============================================================
+        let currentUserRole = 'anggota'; // 'ketua' | 'kabid' | 'anggota'
+        let currentUserDivision = null; // division id
+        let currentUserDivisionCode = null;
         let currentFilter = 'all';
         let currentTab = 'active';
         let allDivisions = [];
@@ -169,7 +499,9 @@
         let editingTaskId = null;
         let unsubscribeTasks = null;
 
-        // DOM helpers
+        // ============================================================
+        //  DOM REFS
+        // ============================================================
         const $ = id => document.getElementById(id);
         const taskListContainer = $('taskListContainer');
         const emptyState = $('emptyState');
@@ -177,6 +509,7 @@
         const taskCount = $('taskCount');
         const userRoleDisplay = $('userRoleDisplay');
         const toast = $('toast');
+        const btnAddTask = $('btnAddTask');
 
         function showToast(msg, type = 'info') {
             toast.textContent = msg;
@@ -185,7 +518,29 @@
             toast._timer = setTimeout(() => { toast.classList.remove('show'); }, 3500);
         }
 
-        // ========== LOGIN ==========
+        // ============================================================
+        //  COUNTDOWN
+        // ============================================================
+        function updateCountdown() {
+            const target = new Date('2026-07-01T00:00:00').getTime();
+            const now = new Date().getTime();
+            let diff = target - now;
+            if (diff < 0) diff = 0;
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            $('cdDays').textContent = String(days).padStart(2, '0');
+            $('cdHours').textContent = String(hours).padStart(2, '0');
+            $('cdMinutes').textContent = String(minutes).padStart(2, '0');
+            $('cdSeconds').textContent = String(seconds).padStart(2, '0');
+        }
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+
+        // ============================================================
+        //  LOGIN
+        // ============================================================
         async function loginWithDivision(e) {
             e.preventDefault();
             const code = $('loginCode').value.trim().toUpperCase();
@@ -198,39 +553,55 @@
                 return;
             }
 
-            // Jika db null, gunakan mock
-            if (!db) {
-                if (code === 'KON' && password === 'kon123') { loginSuccess('div-1', 'anggota'); return; }
-                if (code === 'CHAIR' && password === 'ketua123') { loginSuccess('chair', 'ketua'); return; }
-                errorEl.textContent = 'Kode atau password salah (mock).';
+            // Jika mock, gunakan hardcode
+            if (useMock || !db) {
+                // Ketua
+                if (code === 'CHAIR' && password === 'ketua123') {
+                    loginSuccess('chair', 'ketua', 'CHAIR');
+                    return;
+                }
+                // Kabid: KON, ACR, DEK, DOK, SEK, PER, HUM dengan password kabid123
+                const kabidCodes = ['KON', 'ACR', 'DEK', 'DOK', 'SEK', 'PER', 'HUM'];
+                if (kabidCodes.includes(code) && password === 'kabid123') {
+                    const mockDiv = allDivisions.find(d => d.code === code);
+                    if (mockDiv) {
+                        loginSuccess(mockDiv.id, 'kabid', code);
+                        return;
+                    }
+                }
+                // Anggota: KON/kon123, ACR/acr123, dll.
+                const memberMap = {
+                    'KON': 'kon123',
+                    'ACR': 'acr123',
+                    'DEK': 'dek123',
+                    'DOK': 'dok123',
+                    'SEK': 'sek123',
+                    'PER': 'per123',
+                    'HUM': 'hum123'
+                };
+                if (memberMap[code] && password === memberMap[code]) {
+                    const mockDiv = allDivisions.find(d => d.code === code);
+                    if (mockDiv) {
+                        loginSuccess(mockDiv.id, 'anggota', code);
+                        return;
+                    }
+                }
+                errorEl.textContent = 'Kode atau password salah. (Mock: CHAIR/ketua123, KON/kabid123, KON/kon123)';
                 errorEl.classList.remove('hidden');
                 return;
             }
 
+            // Firebase mode
             try {
-                // Cek apakah koleksi divisions ada, jika tidak, buat default
+                // Cek & buat divisions jika kosong
                 const check = await db.collection('divisions').limit(1).get();
                 if (check.empty) {
-                    // Seed default divisions
-                    const defaults = [
-                        { name: 'Konsumsi', code: 'KON', password: 'kon123', isChair: false },
-                        { name: 'Acara', code: 'ACR', password: 'acr123', isChair: false },
-                        { name: 'Dekorasi', code: 'DEK', password: 'dek123', isChair: false },
-                        { name: 'Dokumentasi', code: 'DOK', password: 'dok123', isChair: false },
-                        { name: 'Kesekretariatan', code: 'SEK', password: 'sek123', isChair: false },
-                        { name: 'Perlengkapan', code: 'PER', password: 'per123', isChair: false },
-                        { name: 'Humas', code: 'HUM', password: 'hum123', isChair: false },
-                        { name: 'Ketua', code: 'CHAIR', password: 'ketua123', isChair: true },
-                    ];
-                    for (const d of defaults) {
-                        await db.collection('divisions').add(d);
-                    }
+                    await seedDivisions();
                     showToast('Divisi default telah dibuat. Silakan login lagi.', 'success');
-                    // reload halaman atau biarkan user mencoba lagi
                     return;
                 }
 
-                // Cari divisi berdasarkan code
+                // Cari divisi berdasarkan kode
                 const snapshot = await db.collection('divisions')
                     .where('code', '==', code)
                     .get();
@@ -243,15 +614,28 @@
 
                 const doc = snapshot.docs[0];
                 const data = doc.data();
-                if (data.password !== password) {
+
+                // Cek password berdasarkan role
+                let role = null;
+                if (data.isChair && password === data.password) {
+                    role = 'ketua';
+                } else if (data.kabidPassword && password === data.kabidPassword) {
+                    role = 'kabid';
+                } else if (data.memberPassword && password === data.memberPassword) {
+                    role = 'anggota';
+                } else if (data.password && password === data.password) {
+                    // fallback: jika hanya ada password biasa, anggap anggota
+                    role = 'anggota';
+                }
+
+                if (!role) {
                     errorEl.textContent = 'Password salah.';
                     errorEl.classList.remove('hidden');
                     return;
                 }
 
                 const divisionId = doc.id;
-                const role = data.isChair ? 'ketua' : 'anggota';
-                loginSuccess(divisionId, role);
+                loginSuccess(divisionId, role, code);
 
             } catch (err) {
                 console.error(err);
@@ -260,42 +644,80 @@
             }
         }
 
-        function loginSuccess(divisionId, role) {
+        async function seedDivisions() {
+            const defaults = [
+                { code: 'CHAIR', name: 'Ketua', password: 'ketua123', isChair: true, kabidPassword: null,
+                    memberPassword: null },
+                { code: 'KON', name: 'Konsumsi', password: 'kon123', isChair: false, kabidPassword: 'kabid123',
+                    memberPassword: 'kon123' },
+                { code: 'ACR', name: 'Acara', password: 'acr123', isChair: false, kabidPassword: 'kabid123',
+                    memberPassword: 'acr123' },
+                { code: 'DEK', name: 'Dekorasi', password: 'dek123', isChair: false, kabidPassword: 'kabid123',
+                    memberPassword: 'dek123' },
+                { code: 'DOK', name: 'Dokumentasi', password: 'dok123', isChair: false, kabidPassword: 'kabid123',
+                    memberPassword: 'dok123' },
+                { code: 'SEK', name: 'Kesekretariatan', password: 'sek123', isChair: false, kabidPassword: 'kabid123',
+                    memberPassword: 'sek123' },
+                { code: 'PER', name: 'Perlengkapan', password: 'per123', isChair: false, kabidPassword: 'kabid123',
+                    memberPassword: 'per123' },
+                { code: 'HUM', name: 'Humas', password: 'hum123', isChair: false, kabidPassword: 'kabid123',
+                    memberPassword: 'hum123' },
+            ];
+            for (const d of defaults) {
+                await db.collection('divisions').add(d);
+            }
+        }
+
+        function loginSuccess(divisionId, role, code) {
             localStorage.setItem('userDivision', divisionId);
             localStorage.setItem('userRole', role);
+            localStorage.setItem('userCode', code);
             currentUserDivision = divisionId;
             currentUserRole = role;
+            currentUserDivisionCode = code;
             currentFilter = (role === 'ketua') ? 'all' : divisionId;
 
             $('loginScreen').classList.add('hidden');
             $('app').classList.add('visible');
-            userRoleDisplay.textContent = (role === 'ketua') ? 'Ketua' : 'Anggota';
+
+            const roleLabel = role === 'ketua' ? '👑 Ketua' : role === 'kabid' ? '📋 Kabid' : '👤 Anggota';
+            userRoleDisplay.textContent = `${roleLabel} (${code})`;
+
+            // Sembunyikan tombol tambah tugas jika anggota
+            btnAddTask.style.display = (role === 'anggota') ? 'none' : 'inline-flex';
+
             loadDivisionsAndTasks();
-            showToast(`Selamat datang ${role === 'ketua' ? 'Ketua' : 'Anggota'}!`, 'success');
+            showToast(`Selamat datang ${roleLabel}! 🎉`, 'success');
         }
 
         function logout() {
             localStorage.removeItem('userDivision');
             localStorage.removeItem('userRole');
-            if (unsubscribeTasks) { unsubscribeTasks(); unsubscribeTasks = null; }
+            localStorage.removeItem('userCode');
+            if (unsubscribeTasks) { unsubscribeTasks();
+                unsubscribeTasks = null; }
             $('app').classList.remove('visible');
             $('loginScreen').classList.remove('hidden');
             $('loginForm').reset();
             $('loginError').classList.add('hidden');
             currentUserDivision = null;
             currentUserRole = 'anggota';
+            currentUserDivisionCode = null;
             allTasks = [];
             allDivisions = [];
             renderAll();
             showToast('Anda telah logout.', 'info');
         }
 
-        // ========== LOAD DATA ==========
+        // ============================================================
+        //  LOAD DATA
+        // ============================================================
         async function loadDivisionsAndTasks() {
-            if (!db) {
+            if (useMock || !db) {
                 loadMockData();
                 return;
             }
+
             try {
                 const divSnap = await db.collection('divisions').get();
                 allDivisions = divSnap.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -306,60 +728,110 @@
                     query = query.where('divisionId', '==', currentUserDivision);
                 }
                 query = query.orderBy('createdAt', 'desc');
+
                 unsubscribeTasks = query.onSnapshot((snapshot) => {
                     allTasks = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
                     renderAll();
                 }, (error) => {
                     console.error('Listener error:', error);
                     showToast('Gagal sinkronisasi realtime', 'error');
+                    loadMockData();
                 });
+
             } catch (err) {
                 console.error('Load data error:', err);
                 loadMockData();
             }
         }
 
+        // ============================================================
+        //  MOCK DATA
+        // ============================================================
         function loadMockData() {
-            // sama seperti sebelumnya
             if (allDivisions.length === 0) {
                 allDivisions = [
-                    { id: 'div-1', name: 'Konsumsi', code: 'KON', password: 'kon123', isChair: false },
-                    { id: 'div-2', name: 'Acara', code: 'ACR', password: 'acr123', isChair: false },
-                    { id: 'div-3', name: 'Dekorasi', code: 'DEK', password: 'dek123', isChair: false },
-                    { id: 'div-4', name: 'Dokumentasi', code: 'DOK', password: 'dok123', isChair: false },
-                    { id: 'div-5', name: 'Kesekretariatan', code: 'SEK', password: 'sek123', isChair: false },
-                    { id: 'div-6', name: 'Perlengkapan', code: 'PER', password: 'per123', isChair: false },
-                    { id: 'div-7', name: 'Humas', code: 'HUM', password: 'hum123', isChair: false },
-                    { id: 'chair', name: 'Ketua', code: 'CHAIR', password: 'ketua123', isChair: true },
+                    { id: 'chair', code: 'CHAIR', name: 'Ketua', password: 'ketua123', isChair: true },
+                    { id: 'div-1', code: 'KON', name: 'Konsumsi', password: 'kon123', kabidPassword: 'kabid123',
+                        memberPassword: 'kon123', isChair: false },
+                    { id: 'div-2', code: 'ACR', name: 'Acara', password: 'acr123', kabidPassword: 'kabid123',
+                        memberPassword: 'acr123', isChair: false },
+                    { id: 'div-3', code: 'DEK', name: 'Dekorasi', password: 'dek123', kabidPassword: 'kabid123',
+                        memberPassword: 'dek123', isChair: false },
+                    { id: 'div-4', code: 'DOK', name: 'Dokumentasi', password: 'dok123', kabidPassword: 'kabid123',
+                        memberPassword: 'dok123', isChair: false },
+                    { id: 'div-5', code: 'SEK', name: 'Kesekretariatan', password: 'sek123', kabidPassword: 'kabid123',
+                        memberPassword: 'sek123', isChair: false },
+                    { id: 'div-6', code: 'PER', name: 'Perlengkapan', password: 'per123', kabidPassword: 'kabid123',
+                        memberPassword: 'per123', isChair: false },
+                    { id: 'div-7', code: 'HUM', name: 'Humas', password: 'hum123', kabidPassword: 'kabid123',
+                        memberPassword: 'hum123', isChair: false },
                 ];
             }
-            // Buat sample tasks (sama)
+
             const now = new Date();
-            const tomorrow = new Date(now); tomorrow.setDate(now.getDate()+1);
-            const nextWeek = new Date(now); nextWeek.setDate(now.getDate()+7);
-            const sample = [
-                { id: 'task-1', title: 'Menyusun proposal', description: 'Proposal acara besar', divisionId: 'div-2', deadline: nextWeek.toISOString().slice(0,10), status: 'pending', evidenceLink: '', assignedTo: 'Budi', createdAt: now.toISOString(), updatedAt: now.toISOString() },
-                { id: 'task-2', title: 'Desain backdrop', description: 'Konsep panggung', divisionId: 'div-3', deadline: tomorrow.toISOString().slice(0,10), status: 'in_progress', evidenceLink: '', assignedTo: 'Siti', createdAt: now.toISOString(), updatedAt: now.toISOString() },
-                { id: 'task-3', title: 'Rapat vendor', description: 'Koordinasi teknis', divisionId: 'div-1', deadline: now.toISOString().slice(0,10), status: 'done', evidenceLink: 'https://drive.google.com/xxx', assignedTo: 'Andi', createdAt: now.toISOString(), updatedAt: now.toISOString() },
-            ];
-            allTasks = (currentUserRole === 'ketua') ? sample : sample.filter(t => t.divisionId === currentUserDivision);
+            const tomorrow = new Date(now);
+            tomorrow.setDate(now.getDate() + 1);
+            const nextWeek = new Date(now);
+            nextWeek.setDate(now.getDate() + 7);
+            const sample = [{
+                id: 'task-1',
+                title: 'Menyusun proposal',
+                description: 'Proposal acara IMD 2026',
+                divisionId: 'div-2',
+                deadline: nextWeek.toISOString().slice(0, 10),
+                status: 'pending',
+                evidenceLink: '',
+                assignedTo: 'Budi',
+                createdAt: now.toISOString(),
+                updatedAt: now.toISOString()
+            }, {
+                id: 'task-2',
+                title: 'Desain backdrop panggung',
+                description: 'Konsep visual panggung utama',
+                divisionId: 'div-3',
+                deadline: tomorrow.toISOString().slice(0, 10),
+                status: 'in_progress',
+                evidenceLink: '',
+                assignedTo: 'Siti',
+                createdAt: now.toISOString(),
+                updatedAt: now.toISOString()
+            }, {
+                id: 'task-3',
+                title: 'Rapat koordinasi vendor',
+                description: 'Koordinasi teknis dan harga',
+                divisionId: 'div-1',
+                deadline: now.toISOString().slice(0, 10),
+                status: 'done',
+                evidenceLink: 'https://drive.google.com/xxx',
+                assignedTo: 'Andi',
+                createdAt: now.toISOString(),
+                updatedAt: now.toISOString()
+            }];
+
+            if (currentUserRole === 'ketua') {
+                allTasks = sample;
+            } else {
+                allTasks = sample.filter(t => t.divisionId === currentUserDivision);
+            }
             renderAll();
         }
 
-        // ========== RENDER (sama seperti sebelumnya) ==========
-        function renderAll() {
-            renderFilters();
+        // ============================================================
+        //  RENDER
+        // ============================================================
+        function renderAll() { renderFilters();
             renderTasks();
-            updateTaskCount();
-        }
+            updateTaskCount(); }
 
         function renderFilters() {
             filterContainer.innerHTML = '';
             if (currentUserRole === 'ketua') {
                 const allBtn = document.createElement('button');
-                allBtn.className = `tag-pill all text-xs px-3 py-1 rounded-full transition ${currentFilter === 'all' ? 'ring-2 ring-slate-700 ring-offset-1' : ''}`;
+                allBtn.className =
+                    `tag-pill all text-xs px-3 py-1 rounded-full transition ${currentFilter === 'all' ? 'ring-2 ring-slate-700 ring-offset-1' : ''}`;
                 allBtn.textContent = 'All';
-                allBtn.onclick = () => { currentFilter = 'all'; renderAll(); };
+                allBtn.onclick = () => { currentFilter = 'all';
+                    renderAll(); };
                 filterContainer.appendChild(allBtn);
             }
             let divisionsToShow = allDivisions;
@@ -369,9 +841,11 @@
             divisionsToShow.forEach(div => {
                 const btn = document.createElement('button');
                 const isActive = currentFilter === div.id;
-                btn.className = `tag-pill text-xs px-3 py-1 rounded-full transition ${isActive ? 'ring-2 ring-slate-700 ring-offset-1 bg-slate-200' : 'bg-slate-100/70'}`;
+                btn.className =
+                    `tag-pill text-xs px-3 py-1 rounded-full transition ${isActive ? 'ring-2 ring-slate-700 ring-offset-1 bg-slate-200' : 'bg-slate-100/70'}`;
                 btn.textContent = `${div.code} • ${div.name}`;
-                btn.onclick = () => { currentFilter = div.id; renderAll(); };
+                btn.onclick = () => { currentFilter = div.id;
+                    renderAll(); };
                 filterContainer.appendChild(btn);
             });
         }
@@ -386,13 +860,15 @@
                 if (currentFilter !== 'all' && task.divisionId !== currentFilter) return false;
                 return true;
             });
+
             if (filtered.length === 0) {
                 taskListContainer.innerHTML = '';
                 emptyState.classList.remove('hidden');
                 return;
             }
             emptyState.classList.add('hidden');
-            filtered.sort((a,b) => new Date(a.deadline) - new Date(b.deadline));
+
+            filtered.sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
             let html = '';
             filtered.forEach(task => {
                 const divCode = getDivisionCode(task.divisionId);
@@ -402,29 +878,66 @@
                 const isDone = task.status === 'done' || task.status === 'approved' || task.status === 'archived';
                 const hasEvidence = task.evidenceLink && task.evidenceLink.trim() !== '';
                 const showWarning = !isDone && daysLeft <= 3 && daysLeft >= 0 && task.status !== 'archived';
+
                 let actionsHtml = '';
+
+                // Anggota: mark done + kirim bukti
                 if (currentUserRole === 'anggota' && !isDone && task.status !== 'archived') {
                     if (task.status === 'pending' || task.status === 'in_progress') {
-                        actionsHtml += `<button onclick="markDone('${task.id}')" class="text-xs bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-lg hover:bg-emerald-100 transition flex items-center gap-1.5"><i class="fas fa-check-circle"></i> Selesai</button>`;
+                        actionsHtml +=
+                            `<button onclick="markDone('${task.id}')" class="text-xs bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-lg hover:bg-emerald-100 transition flex items-center gap-1.5"><i class="fas fa-check-circle"></i> Selesai</button>`;
                     }
                     if (task.status === 'done' && !hasEvidence) {
-                        actionsHtml += `<button onclick="openEvidenceModal('${task.id}')" class="text-xs bg-blue-50 text-blue-700 px-3 py-1.5 rounded-lg hover:bg-blue-100 transition flex items-center gap-1.5"><i class="fas fa-link"></i> Kirim Bukti</button>`;
+                        actionsHtml +=
+                            `<button onclick="openEvidenceModal('${task.id}')" class="text-xs bg-blue-50 text-blue-700 px-3 py-1.5 rounded-lg hover:bg-blue-100 transition flex items-center gap-1.5"><i class="fas fa-link"></i> Kirim Bukti</button>`;
                     }
                 }
+
+                // Kabid: tambah aksi tambahan (edit, hapus, QC tidak)
+                if (currentUserRole === 'kabid' && !isDone && task.status !== 'archived') {
+                    if (task.status === 'pending' || task.status === 'in_progress') {
+                        actionsHtml +=
+                            `<button onclick="markDone('${task.id}')" class="text-xs bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-lg hover:bg-emerald-100 transition flex items-center gap-1.5"><i class="fas fa-check-circle"></i> Selesai</button>`;
+                    }
+                    if (task.status === 'done' && !hasEvidence) {
+                        actionsHtml +=
+                            `<button onclick="openEvidenceModal('${task.id}')" class="text-xs bg-blue-50 text-blue-700 px-3 py-1.5 rounded-lg hover:bg-blue-100 transition flex items-center gap-1.5"><i class="fas fa-link"></i> Kirim Bukti</button>`;
+                    }
+                    // Kabid bisa edit/hapus tugas di divisinya sendiri (belum approved/archived)
+                    if (task.divisionId === currentUserDivision) {
+                        actionsHtml +=
+                            `<button onclick="editTask('${task.id}')" class="text-xs bg-slate-50 text-slate-600 px-3 py-1.5 rounded-lg hover:bg-slate-100 transition flex items-center gap-1.5"><i class="fas fa-pen"></i></button>`;
+                        actionsHtml +=
+                            `<button onclick="deleteTask('${task.id}')" class="text-xs bg-red-50 text-red-600 px-3 py-1.5 rounded-lg hover:bg-red-100 transition flex items-center gap-1.5"><i class="fas fa-trash-alt"></i></button>`;
+                    }
+                }
+
+                // Ketua: full akses
                 if (currentUserRole === 'ketua' && task.status === 'done' && hasEvidence) {
-                    actionsHtml += `<button onclick="openApprovalModal('${task.id}')" class="text-xs bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-lg hover:bg-indigo-100 transition flex items-center gap-1.5"><i class="fas fa-clipboard-check"></i> QC</button>`;
+                    actionsHtml +=
+                        `<button onclick="openApprovalModal('${task.id}')" class="text-xs bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-lg hover:bg-indigo-100 transition flex items-center gap-1.5"><i class="fas fa-clipboard-check"></i> QC</button>`;
                 }
                 if (currentUserRole === 'ketua' && task.status !== 'archived' && task.status !== 'approved') {
-                    actionsHtml += `<button onclick="deleteTask('${task.id}')" class="text-xs bg-red-50 text-red-600 px-3 py-1.5 rounded-lg hover:bg-red-100 transition flex items-center gap-1.5"><i class="fas fa-trash-alt"></i></button>`;
-                    actionsHtml += `<button onclick="editTask('${task.id}')" class="text-xs bg-slate-50 text-slate-600 px-3 py-1.5 rounded-lg hover:bg-slate-100 transition flex items-center gap-1.5"><i class="fas fa-pen"></i></button>`;
+                    actionsHtml +=
+                        `<button onclick="editTask('${task.id}')" class="text-xs bg-slate-50 text-slate-600 px-3 py-1.5 rounded-lg hover:bg-slate-100 transition flex items-center gap-1.5"><i class="fas fa-pen"></i></button>`;
+                    actionsHtml +=
+                        `<button onclick="deleteTask('${task.id}')" class="text-xs bg-red-50 text-red-600 px-3 py-1.5 rounded-lg hover:bg-red-100 transition flex items-center gap-1.5"><i class="fas fa-trash-alt"></i></button>`;
                 }
+
                 if (task.status === 'approved' || task.status === 'archived') {
-                    actionsHtml = `<span class="text-xs text-emerald-600 font-medium flex items-center gap-1.5"><i class="fas fa-check-circle"></i> ${task.status === 'archived' ? 'Diarsipkan' : 'Disetujui'}</span>`;
+                    actionsHtml =
+                        `<span class="text-xs text-emerald-600 font-medium flex items-center gap-1.5"><i class="fas fa-check-circle"></i> ${task.status === 'archived' ? 'Diarsipkan' : 'Disetujui'}</span>`;
                 }
-                let evidenceHtml = hasEvidence ? `<a href="${task.evidenceLink}" target="_blank" class="text-xs text-blue-600 hover:underline flex items-center gap-1"><i class="fas fa-external-link-alt"></i> Bukti</a>` : '';
+
+                let evidenceHtml = hasEvidence ?
+                    `<a href="${task.evidenceLink}" target="_blank" class="text-xs text-blue-600 hover:underline flex items-center gap-1"><i class="fas fa-external-link-alt"></i> Bukti</a>` :
+                    '';
                 let deadlineBadge = '';
-                if (showWarning) deadlineBadge = `<span class="deadline-warning text-xs bg-amber-100 text-amber-800 px-2.5 py-0.5 rounded-full flex items-center gap-1.5 font-medium"><i class="fas fa-clock"></i> ${daysLeft} hari lagi</span>`;
-                else if (isOver && !isDone && task.status !== 'archived') deadlineBadge = `<span class="text-xs bg-red-100 text-red-700 px-2.5 py-0.5 rounded-full flex items-center gap-1.5 font-medium"><i class="fas fa-exclamation-circle"></i> Terlambat!</span>`;
+                if (showWarning) deadlineBadge =
+                    `<span class="deadline-warning text-xs bg-amber-100 text-amber-800 px-2.5 py-0.5 rounded-full flex items-center gap-1.5 font-medium"><i class="fas fa-clock"></i> ${daysLeft} hari lagi</span>`;
+                else if (isOver && !isDone && task.status !== 'archived') deadlineBadge =
+                    `<span class="text-xs bg-red-100 text-red-700 px-2.5 py-0.5 rounded-full flex items-center gap-1.5 font-medium"><i class="fas fa-exclamation-circle"></i> Terlambat!</span>`;
+
                 html += `
                     <div class="task-card glass-card rounded-xl p-4 border border-slate-200/60 shadow-sm fade-in">
                         <div class="flex flex-col md:flex-row md:items-start gap-3">
@@ -457,54 +970,265 @@
             taskCount.textContent = `${allTasks.length} tugas • ${active} aktif • ${archived} arsip`;
         }
 
-        // ========== UTILITY ==========
-        function formatDate(d) { if(!d) return '-'; return new Date(d+'T00:00:00').toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'}); }
-        function isOverdue(d) { if(!d) return false; const today=new Date(); today.setHours(0,0,0,0); return new Date(d+'T00:00:00') < today; }
-        function daysUntil(d) { if(!d) return Infinity; const today=new Date(); today.setHours(0,0,0,0); return Math.ceil((new Date(d+'T00:00:00') - today)/(1000*60*60*24)); }
-        function getDivisionName(id) { const d=allDivisions.find(dv=>dv.id===id); return d?d.name:id; }
-        function getDivisionCode(id) { const d=allDivisions.find(dv=>dv.id===id); return d?d.code:id; }
-        function getStatusLabel(s) { const map={pending:'Menunggu', in_progress:'Proses', done:'Selesai', approved:'Disetujui', archived:'Diarsipkan'}; return map[s]||s; }
-        function getStatusBadgeClass(s) { return 'status-badge '+(s||'pending'); }
+        // ============================================================
+        //  UTILITY
+        // ============================================================
+        function formatDate(d) { if (!d) return '-'; return new Date(d + 'T00:00:00').toLocaleDateString('id-ID', { day: 'numeric',
+                month: 'short', year: 'numeric' }); }
 
-        // ========== TAB ==========
-        function setTab(tab) { currentTab=tab; document.querySelectorAll('.tab-btn').forEach(el=>el.classList.toggle('tab-active',el.dataset.tab===tab)); renderTasks(); }
+        function isOverdue(d) { if (!d) return false; const today = new Date();
+            today.setHours(0, 0, 0, 0); return new Date(d + 'T00:00:00') < today; }
 
-        // ========== CRUD (sama) ==========
-        function openTaskModal(taskId) { /* ... */ }
-        function closeTaskModal() { /* ... */ }
-        async function saveTask(e) { /* ... */ }
-        function editTask(taskId) { openTaskModal(taskId); }
-        async function deleteTask(taskId) { /* ... */ }
-        async function markDone(taskId) { /* ... */ }
-        function openEvidenceModal(taskId) { /* ... */ }
-        function closeEvidenceModal() { /* ... */ }
-        async function submitEvidence(e) { /* ... */ }
-        function openApprovalModal(taskId) { /* ... */ }
-        function closeApprovalModal() { /* ... */ }
-        async function approveTask(approved) { /* ... */ }
-        async function refreshData() { /* ... */ }
+        function daysUntil(d) { if (!d) return Infinity; const today = new Date();
+            today.setHours(0, 0, 0, 0); return Math.ceil((new Date(d + 'T00:00:00') - today) / (1000 * 60 * 60 * 24)); }
 
-        // ========== INIT ==========
+        function getDivisionCode(id) { const d = allDivisions.find(dv => dv.id === id); return d ? d.code : id; }
+
+        function getStatusLabel(s) { const map = { pending: 'Menunggu', in_progress: 'Proses', done: 'Selesai',
+                approved: 'Disetujui', archived: 'Diarsipkan' }; return map[s] || s; }
+
+        function getStatusBadgeClass(s) { return 'status-badge ' + (s || 'pending'); }
+
+        // ============================================================
+        //  TAB
+        // ============================================================
+        function setTab(tab) { currentTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.toggle('tab-active', el.dataset.tab === tab));
+            renderTasks(); }
+
+        // ============================================================
+        //  CRUD
+        // ============================================================
+        function openTaskModal(taskId) {
+            // Cek izin: hanya ketua & kabid yang bisa tambah
+            if (currentUserRole === 'anggota') {
+                showToast('Hanya Ketua & Kabid yang dapat menambah tugas.', 'error');
+                return;
+            }
+            const modal = $('taskModal');
+            const title = $('modalTitle');
+            const form = $('taskForm');
+            form.reset();
+            $('taskId').value = '';
+            editingTaskId = null;
+
+            const sel = $('taskDivision');
+            sel.innerHTML = '<option value="">Pilih divisi</option>';
+            let divisionsToShow = allDivisions;
+            if (currentUserRole === 'kabid' && currentUserDivision) {
+                divisionsToShow = allDivisions.filter(d => d.id === currentUserDivision);
+            }
+            divisionsToShow.forEach(d => {
+                const opt = document.createElement('option');
+                opt.value = d.id;
+                opt.textContent = `${d.code} — ${d.name}`;
+                sel.appendChild(opt);
+            });
+
+            if (taskId) {
+                const task = allTasks.find(t => t.id === taskId);
+                if (!task) return;
+                editingTaskId = taskId;
+                title.innerHTML = '<i class="fas fa-pen text-slate-600 mr-2"></i> Edit Tugas';
+                $('taskId').value = taskId;
+                $('taskTitle').value = task.title;
+                $('taskDesc').value = task.description || '';
+                $('taskDivision').value = task.divisionId || '';
+                $('taskDeadline').value = task.deadline || '';
+                $('taskAssigned').value = task.assignedTo || '';
+            } else {
+                title.innerHTML = '<i class="fas fa-plus-circle text-red-500 mr-2"></i> Tugas Baru';
+                const d = new Date();
+                d.setDate(d.getDate() + 7);
+                $('taskDeadline').value = d.toISOString().slice(0, 10);
+                if (currentUserRole === 'kabid' && currentUserDivision) {
+                    $('taskDivision').value = currentUserDivision;
+                    $('taskDivision').disabled = true;
+                } else {
+                    $('taskDivision').disabled = false;
+                }
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeTaskModal() { $('taskModal').classList.add('hidden');
+            $('taskDivision').disabled = false; }
+
+        async function saveTask(e) {
+            e.preventDefault();
+            const id = $('taskId').value;
+            const title = $('taskTitle').value.trim();
+            const description = $('taskDesc').value.trim();
+            const divisionId = $('taskDivision').value;
+            const deadline = $('taskDeadline').value;
+            const assignedTo = $('taskAssigned').value.trim();
+
+            if (!title || !divisionId || !deadline) { showToast('Harap isi semua field yang wajib!', 'error'); return; }
+
+            const taskData = { title, description, divisionId, deadline, assignedTo, updatedAt: new Date().toISOString() };
+
+            try {
+                if (id) {
+                    if (db) { await db.collection('tasks').doc(id).update(taskData); } else { const idx = allTasks.findIndex(t =>
+                            t.id === id); if (idx >= 0) allTasks[idx] = { ...allTasks[idx], ...taskData };
+                        renderAll(); }
+                    showToast('Tugas diperbarui ✅', 'success');
+                } else {
+                    const newTask = { ...taskData, status: 'pending', evidenceLink: '', createdAt: new Date()
+                        .toISOString() };
+                    if (db) { const ref = await db.collection('tasks').add(newTask);
+                        newTask.id = ref.id; } else { newTask.id = 'task-' + Date.now();
+                        allTasks.push(newTask);
+                        renderAll(); }
+                    showToast('Tugas berhasil dibuat 🎉', 'success');
+                }
+                closeTaskModal();
+                if (!db) renderAll();
+            } catch (err) { console.error(err);
+                showToast('Gagal menyimpan.', 'error'); }
+        }
+
+        function editTask(taskId) {
+            // Cek izin: hanya ketua atau kabid di divisinya sendiri
+            const task = allTasks.find(t => t.id === taskId);
+            if (!task) return;
+            if (currentUserRole === 'anggota') { showToast('Tidak diizinkan.', 'error'); return; }
+            if (currentUserRole === 'kabid' && task.divisionId !== currentUserDivision) {
+                showToast('Anda hanya bisa edit tugas di divisi sendiri.', 'error');
+                return;
+            }
+            openTaskModal(taskId);
+        }
+
+        async function deleteTask(taskId) {
+            if (!confirm('Yakin hapus tugas ini?')) return;
+            const task = allTasks.find(t => t.id === taskId);
+            if (currentUserRole === 'kabid' && task && task.divisionId !== currentUserDivision) {
+                showToast('Anda hanya bisa hapus tugas di divisi sendiri.', 'error');
+                return;
+            }
+            try {
+                if (db) { await db.collection('tasks').doc(taskId).delete(); } else { allTasks = allTasks.filter(t => t.id !==
+                        taskId);
+                    renderAll(); }
+                showToast('Tugas dihapus 🗑️', 'success');
+            } catch (err) { showToast('Gagal hapus.', 'error'); }
+        }
+
+        async function markDone(taskId) {
+            try {
+                const task = allTasks.find(t => t.id === taskId);
+                if (!task || task.status === 'done') { showToast('Sudah selesai.', 'info'); return; }
+                const update = { status: 'done', updatedAt: new Date().toISOString() };
+                if (db) { await db.collection('tasks').doc(taskId).update(update); } else { task.status = 'done';
+                    task.updatedAt = update.updatedAt;
+                    renderAll(); }
+                showToast('Tugas selesai! ✅', 'success');
+            } catch (err) { showToast('Gagal update.', 'error'); }
+        }
+
+        function openEvidenceModal(taskId) { $('evidenceTaskId').value = taskId;
+            $('evidenceLink').value = '';
+            $('evidenceModal').classList.remove('hidden'); }
+
+        function closeEvidenceModal() { $('evidenceModal').classList.add('hidden'); }
+
+        async function submitEvidence(e) {
+            e.preventDefault();
+            const taskId = $('evidenceTaskId').value;
+            const link = $('evidenceLink').value.trim();
+            if (!link) { showToast('Masukkan link bukti!', 'error'); return; }
+            try {
+                if (db) { await db.collection('tasks').doc(taskId).update({ evidenceLink: link, updatedAt: new Date()
+                        .toISOString() }); } else { const task = allTasks.find(t => t.id === taskId); if (task) task
+                        .evidenceLink = link;
+                    renderAll(); }
+                closeEvidenceModal();
+                showToast('Bukti terkirim 📎', 'success');
+            } catch (err) { showToast('Gagal kirim bukti.', 'error'); }
+        }
+
+        let pendingApprovalId = null;
+
+        function openApprovalModal(taskId) {
+            const task = allTasks.find(t => t.id === taskId);
+            if (!task) return;
+            pendingApprovalId = taskId;
+            $('approvalTaskPreview').textContent = `📌 ${task.title} | ${getDivisionCode(task.divisionId)} | ${task.assignedTo || '-'}`;
+            $('approvalModal').classList.remove('hidden');
+        }
+
+        function closeApprovalModal() { $('approvalModal').classList.add('hidden');
+            pendingApprovalId = null; }
+
+        async function approveTask(approved) {
+            if (!pendingApprovalId) return;
+            const taskId = pendingApprovalId;
+            try {
+                const status = approved ? 'approved' : 'pending';
+                const update = { status, updatedAt: new Date().toISOString() };
+                if (approved) update.approvedAt = new Date().toISOString();
+                if (db) {
+                    await db.collection('tasks').doc(taskId).update(update);
+                    if (approved && confirm('Tugas disetujui! Arsipkan sekarang?')) {
+                        await db.collection('tasks').doc(taskId).update({ status: 'archived', updatedAt: new Date()
+                            .toISOString() });
+                    }
+                } else {
+                    const task = allTasks.find(t => t.id === taskId);
+                    if (task) { task.status = status;
+                        task.updatedAt = update.updatedAt; if (approved) { task.approvedAt = update.approvedAt; if (confirm(
+                                'Tugas disetujui! Arsipkan sekarang?')) task.status = 'archived'; }
+                        renderAll(); }
+                }
+                closeApprovalModal();
+                showToast(approved ? 'Tugas disetujui! 🎉' : 'Tugas ditolak.', 'info');
+            } catch (err) { showToast('Gagal approval.', 'error'); }
+        }
+
+        async function refreshData() {
+            if (db) {
+                try { const divSnap = await db.collection('divisions').get();
+                    allDivisions = divSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+                    renderAll();
+                    showToast('Data dimuat ulang 🔄', 'success'); } catch (e) { showToast('Gagal refresh', 'error'); }
+            } else { loadMockData(); }
+        }
+
+        // ============================================================
+        //  INIT
+        // ============================================================
         const savedDivision = localStorage.getItem('userDivision');
         const savedRole = localStorage.getItem('userRole');
+        const savedCode = localStorage.getItem('userCode');
         if (savedDivision && savedRole) {
             currentUserDivision = savedDivision;
             currentUserRole = savedRole;
+            currentUserDivisionCode = savedCode;
             currentFilter = (savedRole === 'ketua') ? 'all' : savedDivision;
             $('loginScreen').classList.add('hidden');
             $('app').classList.add('visible');
-            userRoleDisplay.textContent = (savedRole === 'ketua') ? 'Ketua' : 'Anggota';
+            const roleLabel = savedRole === 'ketua' ? '👑 Ketua' : savedRole === 'kabid' ? '📋 Kabid' : '👤 Anggota';
+            userRoleDisplay.textContent = `${roleLabel} (${savedCode || ''})`;
+            btnAddTask.style.display = (savedRole === 'anggota') ? 'none' : 'inline-flex';
             loadDivisionsAndTasks();
         } else {
             $('loginScreen').classList.remove('hidden');
             $('app').classList.remove('visible');
         }
+
         document.querySelector('.tab-btn[data-tab="active"]')?.classList.add('tab-active');
         document.querySelectorAll('.modal-overlay').forEach(modal => {
             modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.add('hidden'); });
         });
-        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') document.querySelectorAll('.modal-overlay:not(.hidden)').forEach(m => m.classList.add('hidden')); });
-        console.log('✅ Task Tracker siap!');
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') document.querySelectorAll(
+                '.modal-overlay:not(.hidden)').forEach(m => m.classList.add('hidden')); });
+
+        console.log('🎉 IMD 2026 Task Tracker siap!');
+        console.log('👑 Ketua: CHAIR / ketua123');
+        console.log('📋 Kabid: KON / kabid123, ACR / kabid123, ...');
+        console.log('👤 Anggota: KON / kon123, ACR / acr123, ...');
     </script>
+
 </body>
 </html>
