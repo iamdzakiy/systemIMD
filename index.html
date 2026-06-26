@@ -9,20 +9,24 @@
     <script src="https://cdn.tailwindcss.com">
     </script>
 
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js">
+    </script>
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
     <style>
-        /* ===== RAINBOW THEME ===== */
+        /* ===== RAINBOW THEME (sama) ===== */
         * {
             font-family: 'Poppins', system-ui, -apple-system, sans-serif;
         }
-
         body {
             background: linear-gradient(135deg, #fdfcfb 0%, #e2d1c3 100%);
             min-height: 100vh;
         }
-
         .rainbow-text {
             background: linear-gradient(90deg, #f44336, #ff9800, #ffeb3b, #4caf50, #2196f3, #9c27b0);
             -webkit-background-clip: text;
@@ -30,13 +34,11 @@
             background-clip: text;
             font-weight: 800;
         }
-
         .rainbow-bg {
             background: linear-gradient(135deg, #f44336, #ff9800, #ffeb3b, #4caf50, #2196f3, #9c27b0);
             background-size: 300% 300%;
             animation: gradientMove 6s ease infinite;
         }
-
         @keyframes gradientMove {
             0% {
                 background-position: 0% 50%;
@@ -48,14 +50,12 @@
                 background-position: 0% 50%;
             }
         }
-
         .glass-card {
             background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.4);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
         }
-
         .btn-rainbow {
             background: linear-gradient(135deg, #f44336, #ff9800, #ffeb3b, #4caf50, #2196f3, #9c27b0);
             background-size: 300% 300%;
@@ -68,7 +68,6 @@
         .btn-rainbow:hover {
             transform: scale(1.03);
         }
-
         .tag-pill {
             font-size: 0.65rem;
             font-weight: 700;
@@ -82,7 +81,6 @@
             background: #1e293b;
             color: white;
         }
-
         .status-badge {
             font-size: 0.6rem;
             font-weight: 700;
@@ -110,7 +108,6 @@
             background: #e5e7eb;
             color: #374151;
         }
-
         .deadline-warning {
             animation: pulse-warning 1.8s ease-in-out infinite;
         }
@@ -123,7 +120,6 @@
                 opacity: 0.4;
             }
         }
-
         .fade-in {
             animation: fadeIn 0.3s ease-out;
         }
@@ -137,13 +133,11 @@
                 transform: translateY(0);
             }
         }
-
         .tab-active {
             border-bottom: 3px solid #f44336;
             color: #1e293b;
             font-weight: 700;
         }
-
         .countdown-box {
             background: rgba(0, 0, 0, 0.04);
             border-radius: 1rem;
@@ -162,7 +156,6 @@
             min-width: 2.2rem;
             text-align: center;
         }
-
         .modal-overlay {
             background: rgba(15, 23, 42, 0.6);
             backdrop-filter: blur(4px);
@@ -171,7 +164,6 @@
             max-height: 90vh;
             overflow-y: auto;
         }
-
         input,
         select,
         textarea {
@@ -185,7 +177,6 @@
             ring: 2px solid #f44336;
             border-color: #f44336;
         }
-
         #loginScreen {
             display: flex;
         }
@@ -198,7 +189,6 @@
         #app.visible {
             display: block;
         }
-
         .toast {
             position: fixed;
             bottom: 2rem;
@@ -225,7 +215,6 @@
         .toast.error {
             background: #991b1b;
         }
-
         @media (max-width: 640px) {
             .countdown-box {
                 font-size: 0.8rem;
@@ -277,7 +266,7 @@
     <!-- ===== APP ===== -->
     <div id="app" class="max-w-6xl mx-auto px-4 py-4 md:py-8">
 
-        <!-- HEADER -->
+        <!-- HEADER RAINBOW -->
         <header class="glass-card rounded-2xl p-4 md:p-6 mb-6 border-0 shadow-lg">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>
@@ -290,6 +279,7 @@
                     </p>
                 </div>
                 <div class="flex flex-wrap items-center gap-3">
+                    <!-- COUNTDOWN -->
                     <div class="countdown-box" id="countdownBox">
                         <i class="fas fa-clock text-slate-400"></i>
                         <span id="cdDays">00</span>d
@@ -343,8 +333,7 @@
             <p class="text-slate-400 text-sm mt-1">Buat tugas baru dengan tombol di atas</p>
         </div>
 
-        <!-- ===== MODALS ===== -->
-
+        <!-- ===== MODALS (sama) ===== -->
         <!-- TASK MODAL -->
         <div id="taskModal" class="fixed inset-0 z-50 hidden modal-overlay flex items-center justify-center p-4">
             <div class="modal-content glass-card rounded-3xl w-full max-w-lg p-6 shadow-2xl border border-slate-200/60 fade-in">
@@ -442,7 +431,7 @@
 
     <script>
         // ============================================================
-        //  FIREBASE CONFIG (optional)
+        //  FIREBASE CONFIG — (milik Anda)
         // ============================================================
         const firebaseConfig = {
             apiKey: "AIzaSyAmuHB9vZIk-SsJnmXktH8HMRJ2NeaBH9s",
@@ -455,17 +444,44 @@
         };
 
         // ============================================================
-        //  STATE GLOBAL — selalu gunakan mode MOCK (data lokal)
-        //  agar tidak ada error "Kode divisi tidak ditemukan"
+        //  INISIALISASI FIREBASE + FALLBACK
         // ============================================================
-        let currentUserRole = 'anggota';
-        let currentUserDivision = null;
+        let db = null;
+        let useMock = false;
+
+        try {
+            const app = firebase.initializeApp(firebaseConfig);
+            db = firebase.firestore(app);
+            db.enablePersistence({ synchronizeTabs: true }).catch(() => {});
+            // Test koneksi
+            db.collection('divisions').limit(1).get()
+                .then(() => console.log('✅ Firebase terhubung'))
+                .catch(() => {
+                    console.warn('⚠️ Firebase tidak dapat diakses, beralih ke mock data');
+                    db = null;
+                    useMock = true;
+                    // Muat data mock segera
+                    loadMockData();
+                });
+        } catch (e) {
+            console.warn('⚠️ Firebase init error, menggunakan mock data:', e);
+            db = null;
+            useMock = true;
+            loadMockData();
+        }
+
+        // ============================================================
+        //  STATE GLOBAL
+        // ============================================================
+        let currentUserRole = 'anggota'; // 'ketua' | 'kabid' | 'anggota'
+        let currentUserDivision = null; // division id
         let currentUserDivisionCode = null;
         let currentFilter = 'all';
         let currentTab = 'active';
         let allDivisions = [];
         let allTasks = [];
         let editingTaskId = null;
+        let unsubscribeTasks = null;
 
         // ============================================================
         //  DOM REFS
@@ -507,32 +523,81 @@
         updateCountdown();
 
         // ============================================================
-        //  DIVISI DEFAULT (hardcoded)
+        //  MOCK DATA (dipanggil di awal jika useMock)
         // ============================================================
-        function getDefaultDivisions() {
-            return [
-                { id: 'chair', code: 'CHAIR', name: 'Ketua', password: 'ketua123', isChair: true },
-                { id: 'div-1', code: 'KON', name: 'Konsumsi', password: 'kon123', kabidPassword: 'kabid123',
-                    memberPassword: 'kon123', isChair: false },
-                { id: 'div-2', code: 'ACR', name: 'Acara', password: 'acr123', kabidPassword: 'kabid123',
-                    memberPassword: 'acr123', isChair: false },
-                { id: 'div-3', code: 'DEK', name: 'Dekorasi', password: 'dek123', kabidPassword: 'kabid123',
-                    memberPassword: 'dek123', isChair: false },
-                { id: 'div-4', code: 'DOK', name: 'Dokumentasi', password: 'dok123', kabidPassword: 'kabid123',
-                    memberPassword: 'dok123', isChair: false },
-                { id: 'div-5', code: 'SEK', name: 'Kesekretariatan', password: 'sek123', kabidPassword: 'kabid123',
-                    memberPassword: 'sek123', isChair: false },
-                { id: 'div-6', code: 'PER', name: 'Perlengkapan', password: 'per123', kabidPassword: 'kabid123',
-                    memberPassword: 'per123', isChair: false },
-                { id: 'div-7', code: 'HUM', name: 'Humas', password: 'hum123', kabidPassword: 'kabid123',
-                    memberPassword: 'hum123', isChair: false },
-            ];
+        function loadMockData() {
+            if (allDivisions.length === 0) {
+                allDivisions = [
+                    { id: 'chair', code: 'CHAIR', name: 'Ketua', password: 'ketua123', isChair: true },
+                    { id: 'div-1', code: 'KON', name: 'Konsumsi', password: 'kon123', kabidPassword: 'kabid123',
+                        memberPassword: 'kon123', isChair: false },
+                    { id: 'div-2', code: 'ACR', name: 'Acara', password: 'acr123', kabidPassword: 'kabid123',
+                        memberPassword: 'acr123', isChair: false },
+                    { id: 'div-3', code: 'DEK', name: 'Dekorasi', password: 'dek123', kabidPassword: 'kabid123',
+                        memberPassword: 'dek123', isChair: false },
+                    { id: 'div-4', code: 'DOK', name: 'Dokumentasi', password: 'dok123', kabidPassword: 'kabid123',
+                        memberPassword: 'dok123', isChair: false },
+                    { id: 'div-5', code: 'SEK', name: 'Kesekretariatan', password: 'sek123', kabidPassword: 'kabid123',
+                        memberPassword: 'sek123', isChair: false },
+                    { id: 'div-6', code: 'PER', name: 'Perlengkapan', password: 'per123', kabidPassword: 'kabid123',
+                        memberPassword: 'per123', isChair: false },
+                    { id: 'div-7', code: 'HUM', name: 'Humas', password: 'hum123', kabidPassword: 'kabid123',
+                        memberPassword: 'hum123', isChair: false },
+                ];
+            }
+
+            const now = new Date();
+            const tomorrow = new Date(now);
+            tomorrow.setDate(now.getDate() + 1);
+            const nextWeek = new Date(now);
+            nextWeek.setDate(now.getDate() + 7);
+            const sample = [{
+                id: 'task-1',
+                title: 'Menyusun proposal',
+                description: 'Proposal acara IMD 2026',
+                divisionId: 'div-2',
+                deadline: nextWeek.toISOString().slice(0, 10),
+                status: 'pending',
+                evidenceLink: '',
+                assignedTo: 'Budi',
+                createdAt: now.toISOString(),
+                updatedAt: now.toISOString()
+            }, {
+                id: 'task-2',
+                title: 'Desain backdrop panggung',
+                description: 'Konsep visual panggung utama',
+                divisionId: 'div-3',
+                deadline: tomorrow.toISOString().slice(0, 10),
+                status: 'in_progress',
+                evidenceLink: '',
+                assignedTo: 'Siti',
+                createdAt: now.toISOString(),
+                updatedAt: now.toISOString()
+            }, {
+                id: 'task-3',
+                title: 'Rapat koordinasi vendor',
+                description: 'Koordinasi teknis dan harga',
+                divisionId: 'div-1',
+                deadline: now.toISOString().slice(0, 10),
+                status: 'done',
+                evidenceLink: 'https://drive.google.com/xxx',
+                assignedTo: 'Andi',
+                createdAt: now.toISOString(),
+                updatedAt: now.toISOString()
+            }];
+
+            if (currentUserRole === 'ketua') {
+                allTasks = sample;
+            } else {
+                allTasks = sample.filter(t => t.divisionId === currentUserDivision);
+            }
+            renderAll();
         }
 
         // ============================================================
-        //  LOGIN (mode MOCK)
+        //  LOGIN (diperbaiki untuk mock)
         // ============================================================
-        function loginWithDivision(e) {
+        async function loginWithDivision(e) {
             e.preventDefault();
             const code = $('loginCode').value.trim().toUpperCase();
             const password = $('loginPassword').value.trim();
@@ -544,40 +609,98 @@
                 return;
             }
 
-            // Inisialisasi divisi jika belum
-            if (allDivisions.length === 0) {
-                allDivisions = getDefaultDivisions();
-            }
+            // Jika menggunakan mock
+            if (useMock || !db) {
+                // Pastikan allDivisions sudah terisi
+                if (allDivisions.length === 0) loadMockData();
 
-            // Cari divisi berdasarkan kode
-            const division = allDivisions.find(d => d.code === code);
-            if (!division) {
-                errorEl.textContent = 'Kode divisi tidak ditemukan.';
-                errorEl.classList.remove('hidden');
+                const div = allDivisions.find(d => d.code === code);
+                if (!div) {
+                    errorEl.textContent = 'Kode divisi tidak ditemukan.';
+                    errorEl.classList.remove('hidden');
+                    return;
+                }
+
+                let role = null;
+                if (div.isChair && password === div.password) role = 'ketua';
+                else if (div.kabidPassword && password === div.kabidPassword) role = 'kabid';
+                else if (div.memberPassword && password === div.memberPassword) role = 'anggota';
+                else if (div.password && password === div.password) role = 'anggota';
+
+                if (!role) {
+                    errorEl.textContent = 'Password salah.';
+                    errorEl.classList.remove('hidden');
+                    return;
+                }
+                loginSuccess(div.id, role, code);
                 return;
             }
 
-            // Cek password berdasarkan role
-            let role = null;
-            if (division.isChair && password === division.password) {
-                role = 'ketua';
-            } else if (division.kabidPassword && password === division.kabidPassword) {
-                role = 'kabid';
-            } else if (division.memberPassword && password === division.memberPassword) {
-                role = 'anggota';
-            } else if (password === division.password) {
-                // fallback: jika hanya ada password biasa, anggap anggota
-                role = 'anggota';
-            }
+            // Firebase mode
+            try {
+                // Cek & buat divisions jika kosong
+                const check = await db.collection('divisions').limit(1).get();
+                if (check.empty) {
+                    await seedDivisions();
+                    showToast('Divisi default telah dibuat. Silakan login lagi.', 'success');
+                    return;
+                }
 
-            if (!role) {
-                errorEl.textContent = 'Password salah.';
+                const snapshot = await db.collection('divisions')
+                    .where('code', '==', code)
+                    .get();
+
+                if (snapshot.empty) {
+                    errorEl.textContent = 'Kode divisi tidak ditemukan.';
+                    errorEl.classList.remove('hidden');
+                    return;
+                }
+
+                const doc = snapshot.docs[0];
+                const data = doc.data();
+
+                let role = null;
+                if (data.isChair && password === data.password) role = 'ketua';
+                else if (data.kabidPassword && password === data.kabidPassword) role = 'kabid';
+                else if (data.memberPassword && password === data.memberPassword) role = 'anggota';
+                else if (data.password && password === data.password) role = 'anggota';
+
+                if (!role) {
+                    errorEl.textContent = 'Password salah.';
+                    errorEl.classList.remove('hidden');
+                    return;
+                }
+
+                loginSuccess(doc.id, role, code);
+
+            } catch (err) {
+                console.error(err);
+                errorEl.textContent = 'Terjadi kesalahan. Coba lagi.';
                 errorEl.classList.remove('hidden');
-                return;
             }
+        }
 
-            // Login sukses
-            loginSuccess(division.id, role, code);
+        async function seedDivisions() {
+            const defaults = [
+                { code: 'CHAIR', name: 'Ketua', password: 'ketua123', isChair: true },
+                { code: 'KON', name: 'Konsumsi', password: 'kon123', isChair: false, kabidPassword: 'kabid123',
+                    memberPassword: 'kon123' },
+                { code: 'ACR', name: 'Acara', password: 'acr123', isChair: false, kabidPassword: 'kabid123',
+                    memberPassword: 'acr123' },
+                { code: 'DEK', name: 'Dekorasi', password: 'dek123', isChair: false, kabidPassword: 'kabid123',
+                    memberPassword: 'dek123' },
+                { code: 'DOK', name: 'Dokumentasi', password: 'dok123', isChair: false, kabidPassword: 'kabid123',
+                    memberPassword: 'dok123' },
+                { code: 'SEK', name: 'Kesekretariatan', password: 'sek123', isChair: false, kabidPassword: 'kabid123',
+                    memberPassword: 'sek123' },
+                { code: 'PER', name: 'Perlengkapan', password: 'per123', isChair: false, kabidPassword: 'kabid123',
+                    memberPassword: 'per123' },
+                { code: 'HUM', name: 'Humas', password: 'hum123', isChair: false, kabidPassword: 'kabid123',
+                    memberPassword: 'hum123' },
+            ];
+            for (const d of defaults) {
+                await db.collection('divisions').add(d);
+            }
         }
 
         function loginSuccess(divisionId, role, code) {
@@ -594,10 +717,9 @@
 
             const roleLabel = role === 'ketua' ? '👑 Ketua' : role === 'kabid' ? '📋 Kabid' : '👤 Anggota';
             userRoleDisplay.textContent = `${roleLabel} (${code})`;
-
             btnAddTask.style.display = (role === 'anggota') ? 'none' : 'inline-flex';
 
-            loadTasks();
+            loadDivisionsAndTasks();
             showToast(`Selamat datang ${roleLabel}! 🎉`, 'success');
         }
 
@@ -605,6 +727,8 @@
             localStorage.removeItem('userDivision');
             localStorage.removeItem('userRole');
             localStorage.removeItem('userCode');
+            if (unsubscribeTasks) { unsubscribeTasks();
+                unsubscribeTasks = null; }
             $('app').classList.remove('visible');
             $('loginScreen').classList.remove('hidden');
             $('loginForm').reset();
@@ -619,79 +743,42 @@
         }
 
         // ============================================================
-        //  LOAD TASKS (dari localStorage)
+        //  LOAD DATA
         // ============================================================
-        function loadTasks() {
-            // Inisialisasi divisi jika belum
-            if (allDivisions.length === 0) {
-                allDivisions = getDefaultDivisions();
+        async function loadDivisionsAndTasks() {
+            if (useMock || !db) {
+                loadMockData();
+                return;
             }
 
-            // Ambil tasks dari localStorage
-            const stored = localStorage.getItem('imd_tasks');
-            if (stored) {
-                try {
-                    allTasks = JSON.parse(stored);
-                } catch (e) {
-                    allTasks = [];
+            try {
+                const divSnap = await db.collection('divisions').get();
+                allDivisions = divSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+                if (unsubscribeTasks) unsubscribeTasks();
+                let query = db.collection('tasks');
+                if (currentUserRole !== 'ketua' && currentUserDivision) {
+                    query = query.where('divisionId', '==', currentUserDivision);
                 }
-            } else {
-                // Buat sample tasks jika belum ada
-                const now = new Date();
-                const tomorrow = new Date(now);
-                tomorrow.setDate(now.getDate() + 1);
-                const nextWeek = new Date(now);
-                nextWeek.setDate(now.getDate() + 7);
-                allTasks = [{
-                    id: 'task-1',
-                    title: 'Menyusun proposal',
-                    description: 'Proposal acara IMD 2026',
-                    divisionId: 'div-2',
-                    deadline: nextWeek.toISOString().slice(0, 10),
-                    status: 'pending',
-                    evidenceLink: '',
-                    assignedTo: 'Budi',
-                    createdAt: now.toISOString(),
-                    updatedAt: now.toISOString()
-                }, {
-                    id: 'task-2',
-                    title: 'Desain backdrop panggung',
-                    description: 'Konsep visual panggung utama',
-                    divisionId: 'div-3',
-                    deadline: tomorrow.toISOString().slice(0, 10),
-                    status: 'in_progress',
-                    evidenceLink: '',
-                    assignedTo: 'Siti',
-                    createdAt: now.toISOString(),
-                    updatedAt: now.toISOString()
-                }, {
-                    id: 'task-3',
-                    title: 'Rapat koordinasi vendor',
-                    description: 'Koordinasi teknis dan harga',
-                    divisionId: 'div-1',
-                    deadline: now.toISOString().slice(0, 10),
-                    status: 'done',
-                    evidenceLink: 'https://drive.google.com/xxx',
-                    assignedTo: 'Andi',
-                    createdAt: now.toISOString(),
-                    updatedAt: now.toISOString()
-                }];
-                saveTasksToStorage();
-            }
+                query = query.orderBy('createdAt', 'desc');
 
-            // Filter tasks based on role (ketua melihat semua, lainnya hanya divisi sendiri)
-            if (currentUserRole !== 'ketua' && currentUserDivision) {
-                allTasks = allTasks.filter(t => t.divisionId === currentUserDivision);
-            }
-            renderAll();
-        }
+                unsubscribeTasks = query.onSnapshot((snapshot) => {
+                    allTasks = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+                    renderAll();
+                }, (error) => {
+                    console.error('Listener error:', error);
+                    showToast('Gagal sinkronisasi realtime', 'error');
+                    loadMockData();
+                });
 
-        function saveTasksToStorage() {
-            localStorage.setItem('imd_tasks', JSON.stringify(allTasks));
+            } catch (err) {
+                console.error('Load data error:', err);
+                loadMockData();
+            }
         }
 
         // ============================================================
-        //  RENDER
+        //  RENDER (sama seperti sebelumnya)
         // ============================================================
         function renderAll() { renderFilters();
             renderTasks();
@@ -777,6 +864,7 @@
                         actionsHtml +=
                             `<button onclick="openEvidenceModal('${task.id}')" class="text-xs bg-blue-50 text-blue-700 px-3 py-1.5 rounded-lg hover:bg-blue-100 transition flex items-center gap-1.5"><i class="fas fa-link"></i> Kirim Bukti</button>`;
                     }
+                    // Kabid bisa edit/hapus tugas di divisinya sendiri (belum approved/archived)
                     if (task.divisionId === currentUserDivision) {
                         actionsHtml +=
                             `<button onclick="editTask('${task.id}')" class="text-xs bg-slate-50 text-slate-600 px-3 py-1.5 rounded-lg hover:bg-slate-100 transition flex items-center gap-1.5"><i class="fas fa-pen"></i></button>`;
@@ -870,7 +958,7 @@
             renderTasks(); }
 
         // ============================================================
-        //  CRUD
+        //  CRUD (sama seperti sebelumnya)
         // ============================================================
         function openTaskModal(taskId) {
             if (currentUserRole === 'anggota') {
@@ -941,18 +1029,21 @@
 
             try {
                 if (id) {
-                    const idx = allTasks.findIndex(t => t.id === id);
-                    if (idx >= 0) allTasks[idx] = { ...allTasks[idx], ...taskData };
+                    if (db) { await db.collection('tasks').doc(id).update(taskData); } else { const idx = allTasks.findIndex(t =>
+                            t.id === id); if (idx >= 0) allTasks[idx] = { ...allTasks[idx], ...taskData };
+                        renderAll(); }
                     showToast('Tugas diperbarui ✅', 'success');
                 } else {
                     const newTask = { ...taskData, status: 'pending', evidenceLink: '', createdAt: new Date()
-                        .toISOString(), id: 'task-' + Date.now() };
-                    allTasks.push(newTask);
+                        .toISOString() };
+                    if (db) { const ref = await db.collection('tasks').add(newTask);
+                        newTask.id = ref.id; } else { newTask.id = 'task-' + Date.now();
+                        allTasks.push(newTask);
+                        renderAll(); }
                     showToast('Tugas berhasil dibuat 🎉', 'success');
                 }
-                saveTasksToStorage();
                 closeTaskModal();
-                renderAll();
+                if (!db) renderAll();
             } catch (err) { console.error(err);
                 showToast('Gagal menyimpan.', 'error'); }
         }
@@ -976,9 +1067,9 @@
                 return;
             }
             try {
-                allTasks = allTasks.filter(t => t.id !== taskId);
-                saveTasksToStorage();
-                renderAll();
+                if (db) { await db.collection('tasks').doc(taskId).delete(); } else { allTasks = allTasks.filter(t => t.id !==
+                        taskId);
+                    renderAll(); }
                 showToast('Tugas dihapus 🗑️', 'success');
             } catch (err) { showToast('Gagal hapus.', 'error'); }
         }
@@ -987,10 +1078,10 @@
             try {
                 const task = allTasks.find(t => t.id === taskId);
                 if (!task || task.status === 'done') { showToast('Sudah selesai.', 'info'); return; }
-                task.status = 'done';
-                task.updatedAt = new Date().toISOString();
-                saveTasksToStorage();
-                renderAll();
+                const update = { status: 'done', updatedAt: new Date().toISOString() };
+                if (db) { await db.collection('tasks').doc(taskId).update(update); } else { task.status = 'done';
+                    task.updatedAt = update.updatedAt;
+                    renderAll(); }
                 showToast('Tugas selesai! ✅', 'success');
             } catch (err) { showToast('Gagal update.', 'error'); }
         }
@@ -1007,10 +1098,9 @@
             const link = $('evidenceLink').value.trim();
             if (!link) { showToast('Masukkan link bukti!', 'error'); return; }
             try {
-                const task = allTasks.find(t => t.id === taskId);
-                if (task) { task.evidenceLink = link;
-                    task.updatedAt = new Date().toISOString();
-                    saveTasksToStorage();
+                if (db) { await db.collection('tasks').doc(taskId).update({ evidenceLink: link, updatedAt: new Date()
+                        .toISOString() }); } else { const task = allTasks.find(t => t.id === taskId); if (task) task
+                        .evidenceLink = link;
                     renderAll(); }
                 closeEvidenceModal();
                 showToast('Bukti terkirim 📎', 'success');
@@ -1034,35 +1124,39 @@
             if (!pendingApprovalId) return;
             const taskId = pendingApprovalId;
             try {
-                const task = allTasks.find(t => t.id === taskId);
-                if (!task) return;
                 const status = approved ? 'approved' : 'pending';
-                task.status = status;
-                task.updatedAt = new Date().toISOString();
-                if (approved) {
-                    task.approvedAt = new Date().toISOString();
-                    if (confirm('Tugas disetujui! Arsipkan sekarang?')) {
-                        task.status = 'archived';
+                const update = { status, updatedAt: new Date().toISOString() };
+                if (approved) update.approvedAt = new Date().toISOString();
+                if (db) {
+                    await db.collection('tasks').doc(taskId).update(update);
+                    if (approved && confirm('Tugas disetujui! Arsipkan sekarang?')) {
+                        await db.collection('tasks').doc(taskId).update({ status: 'archived', updatedAt: new Date()
+                            .toISOString() });
                     }
+                } else {
+                    const task = allTasks.find(t => t.id === taskId);
+                    if (task) { task.status = status;
+                        task.updatedAt = update.updatedAt; if (approved) { task.approvedAt = update.approvedAt; if (confirm(
+                                'Tugas disetujui! Arsipkan sekarang?')) task.status = 'archived'; }
+                        renderAll(); }
                 }
-                saveTasksToStorage();
-                renderAll();
                 closeApprovalModal();
                 showToast(approved ? 'Tugas disetujui! 🎉' : 'Tugas ditolak.', 'info');
             } catch (err) { showToast('Gagal approval.', 'error'); }
         }
 
         async function refreshData() {
-            loadTasks();
-            showToast('Data dimuat ulang 🔄', 'success');
+            if (db) {
+                try { const divSnap = await db.collection('divisions').get();
+                    allDivisions = divSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+                    renderAll();
+                    showToast('Data dimuat ulang 🔄', 'success'); } catch (e) { showToast('Gagal refresh', 'error'); }
+            } else { loadMockData(); }
         }
 
         // ============================================================
         //  INIT
         // ============================================================
-        // Inisialisasi divisi
-        allDivisions = getDefaultDivisions();
-
         const savedDivision = localStorage.getItem('userDivision');
         const savedRole = localStorage.getItem('userRole');
         const savedCode = localStorage.getItem('userCode');
@@ -1076,8 +1170,10 @@
             const roleLabel = savedRole === 'ketua' ? '👑 Ketua' : savedRole === 'kabid' ? '📋 Kabid' : '👤 Anggota';
             userRoleDisplay.textContent = `${roleLabel} (${savedCode || ''})`;
             btnAddTask.style.display = (savedRole === 'anggota') ? 'none' : 'inline-flex';
-            loadTasks();
+            loadDivisionsAndTasks();
         } else {
+            // Pastikan mock data siap jika useMock true
+            if (useMock && allDivisions.length === 0) loadMockData();
             $('loginScreen').classList.remove('hidden');
             $('app').classList.remove('visible');
         }
@@ -1089,7 +1185,7 @@
         document.addEventListener('keydown', (e) => { if (e.key === 'Escape') document.querySelectorAll(
                 '.modal-overlay:not(.hidden)').forEach(m => m.classList.add('hidden')); });
 
-        console.log('🎉 IMD 2026 Task Tracker (MOCK mode) siap!');
+        console.log('🎉 IMD 2026 Task Tracker siap!');
         console.log('👑 Ketua: CHAIR / ketua123');
         console.log('📋 Kabid: KON / kabid123, ACR / kabid123, ...');
         console.log('👤 Anggota: KON / kon123, ACR / acr123, ...');
