@@ -9,12 +9,6 @@
     <script src="https://cdn.tailwindcss.com">
     </script>
 
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js">
-    </script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js">
-    </script>
-
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
@@ -232,7 +226,6 @@
             background: #991b1b;
         }
 
-        /* Responsive */
         @media (max-width: 640px) {
             .countdown-box {
                 font-size: 0.8rem;
@@ -284,7 +277,7 @@
     <!-- ===== APP ===== -->
     <div id="app" class="max-w-6xl mx-auto px-4 py-4 md:py-8">
 
-        <!-- HEADER RAINBOW -->
+        <!-- HEADER -->
         <header class="glass-card rounded-2xl p-4 md:p-6 mb-6 border-0 shadow-lg">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>
@@ -297,7 +290,6 @@
                     </p>
                 </div>
                 <div class="flex flex-wrap items-center gap-3">
-                    <!-- COUNTDOWN -->
                     <div class="countdown-box" id="countdownBox">
                         <i class="fas fa-clock text-slate-400"></i>
                         <span id="cdDays">00</span>d
@@ -450,7 +442,7 @@
 
     <script>
         // ============================================================
-        //  FIREBASE CONFIG — (milik Anda)
+        //  FIREBASE CONFIG (optional)
         // ============================================================
         const firebaseConfig = {
             apiKey: "AIzaSyAmuHB9vZIk-SsJnmXktH8HMRJ2NeaBH9s",
@@ -463,41 +455,17 @@
         };
 
         // ============================================================
-        //  INISIALISASI FIREBASE + FALLBACK
+        //  STATE GLOBAL — selalu gunakan mode MOCK (data lokal)
+        //  agar tidak ada error "Kode divisi tidak ditemukan"
         // ============================================================
-        let db = null;
-        let useMock = false;
-
-        try {
-            const app = firebase.initializeApp(firebaseConfig);
-            db = firebase.firestore(app);
-            db.enablePersistence({ synchronizeTabs: true }).catch(() => {});
-            // Test koneksi
-            db.collection('divisions').limit(1).get()
-                .then(() => console.log('✅ Firebase terhubung'))
-                .catch(() => {
-                    console.warn('⚠️ Firebase tidak dapat diakses, beralih ke mock data');
-                    db = null;
-                    useMock = true;
-                });
-        } catch (e) {
-            console.warn('⚠️ Firebase init error, menggunakan mock data:', e);
-            db = null;
-            useMock = true;
-        }
-
-        // ============================================================
-        //  STATE GLOBAL
-        // ============================================================
-        let currentUserRole = 'anggota'; // 'ketua' | 'kabid' | 'anggota'
-        let currentUserDivision = null; // division id
+        let currentUserRole = 'anggota';
+        let currentUserDivision = null;
         let currentUserDivisionCode = null;
         let currentFilter = 'all';
         let currentTab = 'active';
         let allDivisions = [];
         let allTasks = [];
         let editingTaskId = null;
-        let unsubscribeTasks = null;
 
         // ============================================================
         //  DOM REFS
@@ -539,9 +507,32 @@
         updateCountdown();
 
         // ============================================================
-        //  LOGIN
+        //  DIVISI DEFAULT (hardcoded)
         // ============================================================
-        async function loginWithDivision(e) {
+        function getDefaultDivisions() {
+            return [
+                { id: 'chair', code: 'CHAIR', name: 'Ketua', password: 'ketua123', isChair: true },
+                { id: 'div-1', code: 'KON', name: 'Konsumsi', password: 'kon123', kabidPassword: 'kabid123',
+                    memberPassword: 'kon123', isChair: false },
+                { id: 'div-2', code: 'ACR', name: 'Acara', password: 'acr123', kabidPassword: 'kabid123',
+                    memberPassword: 'acr123', isChair: false },
+                { id: 'div-3', code: 'DEK', name: 'Dekorasi', password: 'dek123', kabidPassword: 'kabid123',
+                    memberPassword: 'dek123', isChair: false },
+                { id: 'div-4', code: 'DOK', name: 'Dokumentasi', password: 'dok123', kabidPassword: 'kabid123',
+                    memberPassword: 'dok123', isChair: false },
+                { id: 'div-5', code: 'SEK', name: 'Kesekretariatan', password: 'sek123', kabidPassword: 'kabid123',
+                    memberPassword: 'sek123', isChair: false },
+                { id: 'div-6', code: 'PER', name: 'Perlengkapan', password: 'per123', kabidPassword: 'kabid123',
+                    memberPassword: 'per123', isChair: false },
+                { id: 'div-7', code: 'HUM', name: 'Humas', password: 'hum123', kabidPassword: 'kabid123',
+                    memberPassword: 'hum123', isChair: false },
+            ];
+        }
+
+        // ============================================================
+        //  LOGIN (mode MOCK)
+        // ============================================================
+        function loginWithDivision(e) {
             e.preventDefault();
             const code = $('loginCode').value.trim().toUpperCase();
             const password = $('loginPassword').value.trim();
@@ -553,119 +544,40 @@
                 return;
             }
 
-            // Jika mock, gunakan hardcode
-            if (useMock || !db) {
-                // Ketua
-                if (code === 'CHAIR' && password === 'ketua123') {
-                    loginSuccess('chair', 'ketua', 'CHAIR');
-                    return;
-                }
-                // Kabid: KON, ACR, DEK, DOK, SEK, PER, HUM dengan password kabid123
-                const kabidCodes = ['KON', 'ACR', 'DEK', 'DOK', 'SEK', 'PER', 'HUM'];
-                if (kabidCodes.includes(code) && password === 'kabid123') {
-                    const mockDiv = allDivisions.find(d => d.code === code);
-                    if (mockDiv) {
-                        loginSuccess(mockDiv.id, 'kabid', code);
-                        return;
-                    }
-                }
-                // Anggota: KON/kon123, ACR/acr123, dll.
-                const memberMap = {
-                    'KON': 'kon123',
-                    'ACR': 'acr123',
-                    'DEK': 'dek123',
-                    'DOK': 'dok123',
-                    'SEK': 'sek123',
-                    'PER': 'per123',
-                    'HUM': 'hum123'
-                };
-                if (memberMap[code] && password === memberMap[code]) {
-                    const mockDiv = allDivisions.find(d => d.code === code);
-                    if (mockDiv) {
-                        loginSuccess(mockDiv.id, 'anggota', code);
-                        return;
-                    }
-                }
-                errorEl.textContent = 'Kode atau password salah. (Mock: CHAIR/ketua123, KON/kabid123, KON/kon123)';
+            // Inisialisasi divisi jika belum
+            if (allDivisions.length === 0) {
+                allDivisions = getDefaultDivisions();
+            }
+
+            // Cari divisi berdasarkan kode
+            const division = allDivisions.find(d => d.code === code);
+            if (!division) {
+                errorEl.textContent = 'Kode divisi tidak ditemukan.';
                 errorEl.classList.remove('hidden');
                 return;
             }
 
-            // Firebase mode
-            try {
-                // Cek & buat divisions jika kosong
-                const check = await db.collection('divisions').limit(1).get();
-                if (check.empty) {
-                    await seedDivisions();
-                    showToast('Divisi default telah dibuat. Silakan login lagi.', 'success');
-                    return;
-                }
+            // Cek password berdasarkan role
+            let role = null;
+            if (division.isChair && password === division.password) {
+                role = 'ketua';
+            } else if (division.kabidPassword && password === division.kabidPassword) {
+                role = 'kabid';
+            } else if (division.memberPassword && password === division.memberPassword) {
+                role = 'anggota';
+            } else if (password === division.password) {
+                // fallback: jika hanya ada password biasa, anggap anggota
+                role = 'anggota';
+            }
 
-                // Cari divisi berdasarkan kode
-                const snapshot = await db.collection('divisions')
-                    .where('code', '==', code)
-                    .get();
-
-                if (snapshot.empty) {
-                    errorEl.textContent = 'Kode divisi tidak ditemukan.';
-                    errorEl.classList.remove('hidden');
-                    return;
-                }
-
-                const doc = snapshot.docs[0];
-                const data = doc.data();
-
-                // Cek password berdasarkan role
-                let role = null;
-                if (data.isChair && password === data.password) {
-                    role = 'ketua';
-                } else if (data.kabidPassword && password === data.kabidPassword) {
-                    role = 'kabid';
-                } else if (data.memberPassword && password === data.memberPassword) {
-                    role = 'anggota';
-                } else if (data.password && password === data.password) {
-                    // fallback: jika hanya ada password biasa, anggap anggota
-                    role = 'anggota';
-                }
-
-                if (!role) {
-                    errorEl.textContent = 'Password salah.';
-                    errorEl.classList.remove('hidden');
-                    return;
-                }
-
-                const divisionId = doc.id;
-                loginSuccess(divisionId, role, code);
-
-            } catch (err) {
-                console.error(err);
-                errorEl.textContent = 'Terjadi kesalahan. Coba lagi.';
+            if (!role) {
+                errorEl.textContent = 'Password salah.';
                 errorEl.classList.remove('hidden');
+                return;
             }
-        }
 
-        async function seedDivisions() {
-            const defaults = [
-                { code: 'CHAIR', name: 'Ketua', password: 'ketua123', isChair: true, kabidPassword: null,
-                    memberPassword: null },
-                { code: 'KON', name: 'Konsumsi', password: 'kon123', isChair: false, kabidPassword: 'kabid123',
-                    memberPassword: 'kon123' },
-                { code: 'ACR', name: 'Acara', password: 'acr123', isChair: false, kabidPassword: 'kabid123',
-                    memberPassword: 'acr123' },
-                { code: 'DEK', name: 'Dekorasi', password: 'dek123', isChair: false, kabidPassword: 'kabid123',
-                    memberPassword: 'dek123' },
-                { code: 'DOK', name: 'Dokumentasi', password: 'dok123', isChair: false, kabidPassword: 'kabid123',
-                    memberPassword: 'dok123' },
-                { code: 'SEK', name: 'Kesekretariatan', password: 'sek123', isChair: false, kabidPassword: 'kabid123',
-                    memberPassword: 'sek123' },
-                { code: 'PER', name: 'Perlengkapan', password: 'per123', isChair: false, kabidPassword: 'kabid123',
-                    memberPassword: 'per123' },
-                { code: 'HUM', name: 'Humas', password: 'hum123', isChair: false, kabidPassword: 'kabid123',
-                    memberPassword: 'hum123' },
-            ];
-            for (const d of defaults) {
-                await db.collection('divisions').add(d);
-            }
+            // Login sukses
+            loginSuccess(division.id, role, code);
         }
 
         function loginSuccess(divisionId, role, code) {
@@ -683,10 +595,9 @@
             const roleLabel = role === 'ketua' ? '👑 Ketua' : role === 'kabid' ? '📋 Kabid' : '👤 Anggota';
             userRoleDisplay.textContent = `${roleLabel} (${code})`;
 
-            // Sembunyikan tombol tambah tugas jika anggota
             btnAddTask.style.display = (role === 'anggota') ? 'none' : 'inline-flex';
 
-            loadDivisionsAndTasks();
+            loadTasks();
             showToast(`Selamat datang ${roleLabel}! 🎉`, 'success');
         }
 
@@ -694,8 +605,6 @@
             localStorage.removeItem('userDivision');
             localStorage.removeItem('userRole');
             localStorage.removeItem('userCode');
-            if (unsubscribeTasks) { unsubscribeTasks();
-                unsubscribeTasks = null; }
             $('app').classList.remove('visible');
             $('loginScreen').classList.remove('hidden');
             $('loginForm').reset();
@@ -710,110 +619,75 @@
         }
 
         // ============================================================
-        //  LOAD DATA
+        //  LOAD TASKS (dari localStorage)
         // ============================================================
-        async function loadDivisionsAndTasks() {
-            if (useMock || !db) {
-                loadMockData();
-                return;
-            }
-
-            try {
-                const divSnap = await db.collection('divisions').get();
-                allDivisions = divSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-
-                if (unsubscribeTasks) unsubscribeTasks();
-                let query = db.collection('tasks');
-                if (currentUserRole !== 'ketua' && currentUserDivision) {
-                    query = query.where('divisionId', '==', currentUserDivision);
-                }
-                query = query.orderBy('createdAt', 'desc');
-
-                unsubscribeTasks = query.onSnapshot((snapshot) => {
-                    allTasks = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-                    renderAll();
-                }, (error) => {
-                    console.error('Listener error:', error);
-                    showToast('Gagal sinkronisasi realtime', 'error');
-                    loadMockData();
-                });
-
-            } catch (err) {
-                console.error('Load data error:', err);
-                loadMockData();
-            }
-        }
-
-        // ============================================================
-        //  MOCK DATA
-        // ============================================================
-        function loadMockData() {
+        function loadTasks() {
+            // Inisialisasi divisi jika belum
             if (allDivisions.length === 0) {
-                allDivisions = [
-                    { id: 'chair', code: 'CHAIR', name: 'Ketua', password: 'ketua123', isChair: true },
-                    { id: 'div-1', code: 'KON', name: 'Konsumsi', password: 'kon123', kabidPassword: 'kabid123',
-                        memberPassword: 'kon123', isChair: false },
-                    { id: 'div-2', code: 'ACR', name: 'Acara', password: 'acr123', kabidPassword: 'kabid123',
-                        memberPassword: 'acr123', isChair: false },
-                    { id: 'div-3', code: 'DEK', name: 'Dekorasi', password: 'dek123', kabidPassword: 'kabid123',
-                        memberPassword: 'dek123', isChair: false },
-                    { id: 'div-4', code: 'DOK', name: 'Dokumentasi', password: 'dok123', kabidPassword: 'kabid123',
-                        memberPassword: 'dok123', isChair: false },
-                    { id: 'div-5', code: 'SEK', name: 'Kesekretariatan', password: 'sek123', kabidPassword: 'kabid123',
-                        memberPassword: 'sek123', isChair: false },
-                    { id: 'div-6', code: 'PER', name: 'Perlengkapan', password: 'per123', kabidPassword: 'kabid123',
-                        memberPassword: 'per123', isChair: false },
-                    { id: 'div-7', code: 'HUM', name: 'Humas', password: 'hum123', kabidPassword: 'kabid123',
-                        memberPassword: 'hum123', isChair: false },
-                ];
+                allDivisions = getDefaultDivisions();
             }
 
-            const now = new Date();
-            const tomorrow = new Date(now);
-            tomorrow.setDate(now.getDate() + 1);
-            const nextWeek = new Date(now);
-            nextWeek.setDate(now.getDate() + 7);
-            const sample = [{
-                id: 'task-1',
-                title: 'Menyusun proposal',
-                description: 'Proposal acara IMD 2026',
-                divisionId: 'div-2',
-                deadline: nextWeek.toISOString().slice(0, 10),
-                status: 'pending',
-                evidenceLink: '',
-                assignedTo: 'Budi',
-                createdAt: now.toISOString(),
-                updatedAt: now.toISOString()
-            }, {
-                id: 'task-2',
-                title: 'Desain backdrop panggung',
-                description: 'Konsep visual panggung utama',
-                divisionId: 'div-3',
-                deadline: tomorrow.toISOString().slice(0, 10),
-                status: 'in_progress',
-                evidenceLink: '',
-                assignedTo: 'Siti',
-                createdAt: now.toISOString(),
-                updatedAt: now.toISOString()
-            }, {
-                id: 'task-3',
-                title: 'Rapat koordinasi vendor',
-                description: 'Koordinasi teknis dan harga',
-                divisionId: 'div-1',
-                deadline: now.toISOString().slice(0, 10),
-                status: 'done',
-                evidenceLink: 'https://drive.google.com/xxx',
-                assignedTo: 'Andi',
-                createdAt: now.toISOString(),
-                updatedAt: now.toISOString()
-            }];
-
-            if (currentUserRole === 'ketua') {
-                allTasks = sample;
+            // Ambil tasks dari localStorage
+            const stored = localStorage.getItem('imd_tasks');
+            if (stored) {
+                try {
+                    allTasks = JSON.parse(stored);
+                } catch (e) {
+                    allTasks = [];
+                }
             } else {
-                allTasks = sample.filter(t => t.divisionId === currentUserDivision);
+                // Buat sample tasks jika belum ada
+                const now = new Date();
+                const tomorrow = new Date(now);
+                tomorrow.setDate(now.getDate() + 1);
+                const nextWeek = new Date(now);
+                nextWeek.setDate(now.getDate() + 7);
+                allTasks = [{
+                    id: 'task-1',
+                    title: 'Menyusun proposal',
+                    description: 'Proposal acara IMD 2026',
+                    divisionId: 'div-2',
+                    deadline: nextWeek.toISOString().slice(0, 10),
+                    status: 'pending',
+                    evidenceLink: '',
+                    assignedTo: 'Budi',
+                    createdAt: now.toISOString(),
+                    updatedAt: now.toISOString()
+                }, {
+                    id: 'task-2',
+                    title: 'Desain backdrop panggung',
+                    description: 'Konsep visual panggung utama',
+                    divisionId: 'div-3',
+                    deadline: tomorrow.toISOString().slice(0, 10),
+                    status: 'in_progress',
+                    evidenceLink: '',
+                    assignedTo: 'Siti',
+                    createdAt: now.toISOString(),
+                    updatedAt: now.toISOString()
+                }, {
+                    id: 'task-3',
+                    title: 'Rapat koordinasi vendor',
+                    description: 'Koordinasi teknis dan harga',
+                    divisionId: 'div-1',
+                    deadline: now.toISOString().slice(0, 10),
+                    status: 'done',
+                    evidenceLink: 'https://drive.google.com/xxx',
+                    assignedTo: 'Andi',
+                    createdAt: now.toISOString(),
+                    updatedAt: now.toISOString()
+                }];
+                saveTasksToStorage();
+            }
+
+            // Filter tasks based on role (ketua melihat semua, lainnya hanya divisi sendiri)
+            if (currentUserRole !== 'ketua' && currentUserDivision) {
+                allTasks = allTasks.filter(t => t.divisionId === currentUserDivision);
             }
             renderAll();
+        }
+
+        function saveTasksToStorage() {
+            localStorage.setItem('imd_tasks', JSON.stringify(allTasks));
         }
 
         // ============================================================
@@ -903,7 +777,6 @@
                         actionsHtml +=
                             `<button onclick="openEvidenceModal('${task.id}')" class="text-xs bg-blue-50 text-blue-700 px-3 py-1.5 rounded-lg hover:bg-blue-100 transition flex items-center gap-1.5"><i class="fas fa-link"></i> Kirim Bukti</button>`;
                     }
-                    // Kabid bisa edit/hapus tugas di divisinya sendiri (belum approved/archived)
                     if (task.divisionId === currentUserDivision) {
                         actionsHtml +=
                             `<button onclick="editTask('${task.id}')" class="text-xs bg-slate-50 text-slate-600 px-3 py-1.5 rounded-lg hover:bg-slate-100 transition flex items-center gap-1.5"><i class="fas fa-pen"></i></button>`;
@@ -1000,7 +873,6 @@
         //  CRUD
         // ============================================================
         function openTaskModal(taskId) {
-            // Cek izin: hanya ketua & kabid yang bisa tambah
             if (currentUserRole === 'anggota') {
                 showToast('Hanya Ketua & Kabid yang dapat menambah tugas.', 'error');
                 return;
@@ -1069,27 +941,23 @@
 
             try {
                 if (id) {
-                    if (db) { await db.collection('tasks').doc(id).update(taskData); } else { const idx = allTasks.findIndex(t =>
-                            t.id === id); if (idx >= 0) allTasks[idx] = { ...allTasks[idx], ...taskData };
-                        renderAll(); }
+                    const idx = allTasks.findIndex(t => t.id === id);
+                    if (idx >= 0) allTasks[idx] = { ...allTasks[idx], ...taskData };
                     showToast('Tugas diperbarui ✅', 'success');
                 } else {
                     const newTask = { ...taskData, status: 'pending', evidenceLink: '', createdAt: new Date()
-                        .toISOString() };
-                    if (db) { const ref = await db.collection('tasks').add(newTask);
-                        newTask.id = ref.id; } else { newTask.id = 'task-' + Date.now();
-                        allTasks.push(newTask);
-                        renderAll(); }
+                        .toISOString(), id: 'task-' + Date.now() };
+                    allTasks.push(newTask);
                     showToast('Tugas berhasil dibuat 🎉', 'success');
                 }
+                saveTasksToStorage();
                 closeTaskModal();
-                if (!db) renderAll();
+                renderAll();
             } catch (err) { console.error(err);
                 showToast('Gagal menyimpan.', 'error'); }
         }
 
         function editTask(taskId) {
-            // Cek izin: hanya ketua atau kabid di divisinya sendiri
             const task = allTasks.find(t => t.id === taskId);
             if (!task) return;
             if (currentUserRole === 'anggota') { showToast('Tidak diizinkan.', 'error'); return; }
@@ -1108,9 +976,9 @@
                 return;
             }
             try {
-                if (db) { await db.collection('tasks').doc(taskId).delete(); } else { allTasks = allTasks.filter(t => t.id !==
-                        taskId);
-                    renderAll(); }
+                allTasks = allTasks.filter(t => t.id !== taskId);
+                saveTasksToStorage();
+                renderAll();
                 showToast('Tugas dihapus 🗑️', 'success');
             } catch (err) { showToast('Gagal hapus.', 'error'); }
         }
@@ -1119,10 +987,10 @@
             try {
                 const task = allTasks.find(t => t.id === taskId);
                 if (!task || task.status === 'done') { showToast('Sudah selesai.', 'info'); return; }
-                const update = { status: 'done', updatedAt: new Date().toISOString() };
-                if (db) { await db.collection('tasks').doc(taskId).update(update); } else { task.status = 'done';
-                    task.updatedAt = update.updatedAt;
-                    renderAll(); }
+                task.status = 'done';
+                task.updatedAt = new Date().toISOString();
+                saveTasksToStorage();
+                renderAll();
                 showToast('Tugas selesai! ✅', 'success');
             } catch (err) { showToast('Gagal update.', 'error'); }
         }
@@ -1139,9 +1007,10 @@
             const link = $('evidenceLink').value.trim();
             if (!link) { showToast('Masukkan link bukti!', 'error'); return; }
             try {
-                if (db) { await db.collection('tasks').doc(taskId).update({ evidenceLink: link, updatedAt: new Date()
-                        .toISOString() }); } else { const task = allTasks.find(t => t.id === taskId); if (task) task
-                        .evidenceLink = link;
+                const task = allTasks.find(t => t.id === taskId);
+                if (task) { task.evidenceLink = link;
+                    task.updatedAt = new Date().toISOString();
+                    saveTasksToStorage();
                     renderAll(); }
                 closeEvidenceModal();
                 showToast('Bukti terkirim 📎', 'success');
@@ -1165,39 +1034,35 @@
             if (!pendingApprovalId) return;
             const taskId = pendingApprovalId;
             try {
+                const task = allTasks.find(t => t.id === taskId);
+                if (!task) return;
                 const status = approved ? 'approved' : 'pending';
-                const update = { status, updatedAt: new Date().toISOString() };
-                if (approved) update.approvedAt = new Date().toISOString();
-                if (db) {
-                    await db.collection('tasks').doc(taskId).update(update);
-                    if (approved && confirm('Tugas disetujui! Arsipkan sekarang?')) {
-                        await db.collection('tasks').doc(taskId).update({ status: 'archived', updatedAt: new Date()
-                            .toISOString() });
+                task.status = status;
+                task.updatedAt = new Date().toISOString();
+                if (approved) {
+                    task.approvedAt = new Date().toISOString();
+                    if (confirm('Tugas disetujui! Arsipkan sekarang?')) {
+                        task.status = 'archived';
                     }
-                } else {
-                    const task = allTasks.find(t => t.id === taskId);
-                    if (task) { task.status = status;
-                        task.updatedAt = update.updatedAt; if (approved) { task.approvedAt = update.approvedAt; if (confirm(
-                                'Tugas disetujui! Arsipkan sekarang?')) task.status = 'archived'; }
-                        renderAll(); }
                 }
+                saveTasksToStorage();
+                renderAll();
                 closeApprovalModal();
                 showToast(approved ? 'Tugas disetujui! 🎉' : 'Tugas ditolak.', 'info');
             } catch (err) { showToast('Gagal approval.', 'error'); }
         }
 
         async function refreshData() {
-            if (db) {
-                try { const divSnap = await db.collection('divisions').get();
-                    allDivisions = divSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-                    renderAll();
-                    showToast('Data dimuat ulang 🔄', 'success'); } catch (e) { showToast('Gagal refresh', 'error'); }
-            } else { loadMockData(); }
+            loadTasks();
+            showToast('Data dimuat ulang 🔄', 'success');
         }
 
         // ============================================================
         //  INIT
         // ============================================================
+        // Inisialisasi divisi
+        allDivisions = getDefaultDivisions();
+
         const savedDivision = localStorage.getItem('userDivision');
         const savedRole = localStorage.getItem('userRole');
         const savedCode = localStorage.getItem('userCode');
@@ -1211,7 +1076,7 @@
             const roleLabel = savedRole === 'ketua' ? '👑 Ketua' : savedRole === 'kabid' ? '📋 Kabid' : '👤 Anggota';
             userRoleDisplay.textContent = `${roleLabel} (${savedCode || ''})`;
             btnAddTask.style.display = (savedRole === 'anggota') ? 'none' : 'inline-flex';
-            loadDivisionsAndTasks();
+            loadTasks();
         } else {
             $('loginScreen').classList.remove('hidden');
             $('app').classList.remove('visible');
@@ -1224,7 +1089,7 @@
         document.addEventListener('keydown', (e) => { if (e.key === 'Escape') document.querySelectorAll(
                 '.modal-overlay:not(.hidden)').forEach(m => m.classList.add('hidden')); });
 
-        console.log('🎉 IMD 2026 Task Tracker siap!');
+        console.log('🎉 IMD 2026 Task Tracker (MOCK mode) siap!');
         console.log('👑 Ketua: CHAIR / ketua123');
         console.log('📋 Kabid: KON / kabid123, ACR / kabid123, ...');
         console.log('👤 Anggota: KON / kon123, ACR / acr123, ...');
