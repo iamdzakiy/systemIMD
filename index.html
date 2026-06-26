@@ -2,8 +2,8 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>IMD 2026 Task Tracker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>IMD 2026 · Task Tracker</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com">
@@ -18,142 +18,244 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
+    <!-- Google Font (Helvetica fallback) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
     <style>
-        /* ===== IMD 2026 COLOR PALETTE ===== */
+        /* ===== ROOT ===== */
         :root {
-            --cyan: #00b4d8;
-            --cyan-dark: #0077b6;
-            --cyan-light: #90e0ef;
-            --dark: #023e8a;
-            --white: #ffffff;
-            --gray: #f8f9fa;
-            --text: #1e293b;
+            --blue: #4b6eff;
+            --cyan: #00d4ff;
+            --mint: #7cffcb;
+            --purple: #ab7cff;
+            --dark: #0a0e27;
+            --glass-bg: rgba(255, 255, 255, 0.12);
+            --glass-border: rgba(255, 255, 255, 0.18);
+            --glass-shadow: 0 8px 40px rgba(0, 0, 0, 0.2);
+            --radius: 20px;
         }
 
         * {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            font-family: 'Helvetica', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            box-sizing: border-box;
         }
 
         body {
-            background: var(--gray);
-            color: var(--text);
+            background: var(--dark);
+            background-image:
+                radial-gradient(ellipse at 10% 20%, rgba(75, 110, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 90% 80%, rgba(171, 124, 255, 0.12) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(0, 212, 255, 0.06) 0%, transparent 70%);
             min-height: 100vh;
+            padding: 0;
+            margin: 0;
+            -webkit-font-smoothing: antialiased;
+            color: #fff;
         }
 
-        .bg-cyan {
-            background-color: var(--cyan);
+        /* ===== GLASSMORPHISM ===== */
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius);
         }
-        .bg-cyan-dark {
-            background-color: var(--cyan-dark);
-        }
-        .text-cyan {
-            color: var(--cyan);
-        }
-        .border-cyan {
-            border-color: var(--cyan);
+
+        .glass-heavy {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(32px) saturate(200%);
+            -webkit-backdrop-filter: blur(32px) saturate(200%);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 8px 48px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+            border-radius: var(--radius);
         }
 
         .glass-card {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            box-shadow: 0 4px 20px rgba(0, 180, 216, 0.08);
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+            border-radius: 16px;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
-        .btn-primary {
-            background: var(--cyan);
-            color: white;
-            padding: 0.5rem 1.5rem;
-            border-radius: 0.5rem;
+        .glass-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(0, 212, 255, 0.2);
+            box-shadow: 0 12px 48px rgba(75, 110, 255, 0.10);
+        }
+
+        /* ===== TYPOGRAPHY ===== */
+        .heading {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, var(--blue), var(--cyan), var(--mint));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .subheading {
+            font-size: 1.25rem;
             font-weight: 600;
-            transition: all 0.2s;
+            color: rgba(255, 255, 255, 0.85);
+            letter-spacing: -0.01em;
+        }
+        .stinger {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--cyan);
+            background: rgba(0, 212, 255, 0.10);
+            padding: 0.2rem 0.8rem;
+            border-radius: 9999px;
+            display: inline-block;
+            border: 1px solid rgba(0, 212, 255, 0.15);
+        }
+        .body-text {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.65);
+            line-height: 1.7;
+        }
+
+        /* ===== BUTTONS ===== */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--blue), var(--cyan));
+            color: white;
+            padding: 0.6rem 1.6rem;
+            border-radius: 14px;
+            font-weight: 600;
+            font-size: 0.875rem;
             border: none;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 20px rgba(75, 110, 255, 0.3);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
         }
         .btn-primary:hover {
-            background: var(--cyan-dark);
             transform: scale(0.97);
+            box-shadow: 0 6px 28px rgba(75, 110, 255, 0.4);
         }
 
-        .btn-outline {
-            background: transparent;
-            color: var(--cyan-dark);
-            border: 1px solid var(--cyan);
-            padding: 0.5rem 1.5rem;
-            border-radius: 0.5rem;
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #fff;
+            padding: 0.6rem 1.6rem;
+            border-radius: 14px;
             font-weight: 600;
-            transition: all 0.2s;
+            font-size: 0.875rem;
+            transition: all 0.25s ease;
+            cursor: pointer;
         }
-        .btn-outline:hover {
-            background: var(--cyan);
-            color: white;
-        }
-
-        .btn-danger {
-            background: #dc3545;
-            color: white;
-            padding: 0.5rem 1.5rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            transition: all 0.2s;
-            border: none;
-        }
-        .btn-danger:hover {
-            background: #c82333;
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.12);
         }
 
         .btn-success {
-            background: #28a745;
-            color: white;
-            padding: 0.5rem 1.5rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            transition: all 0.2s;
+            background: linear-gradient(135deg, var(--mint), #4ade80);
+            color: var(--dark);
+            padding: 0.5rem 1.2rem;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.8rem;
             border: none;
+            transition: all 0.25s ease;
+            cursor: pointer;
         }
         .btn-success:hover {
-            background: #218838;
+            transform: scale(0.97);
+            box-shadow: 0 4px 16px rgba(124, 255, 203, 0.3);
         }
 
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            padding: 0.5rem 1.2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            border: none;
+            transition: all 0.25s ease;
+            cursor: pointer;
+        }
+        .btn-danger:hover {
+            transform: scale(0.97);
+        }
+
+        .btn-purple {
+            background: linear-gradient(135deg, var(--purple), #8b5cf6);
+            color: white;
+            padding: 0.5rem 1.2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            border: none;
+            transition: all 0.25s ease;
+            cursor: pointer;
+        }
+        .btn-purple:hover {
+            transform: scale(0.97);
+        }
+
+        /* ===== TAGS & BADGES ===== */
         .tag-pill {
-            font-size: 0.65rem;
+            font-size: 0.6rem;
             font-weight: 700;
             padding: 0.2rem 0.8rem;
             border-radius: 9999px;
-            background: var(--cyan-light);
-            color: var(--dark);
+            background: rgba(75, 110, 255, 0.15);
+            color: var(--cyan);
             letter-spacing: 0.02em;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(75, 110, 255, 0.15);
         }
         .tag-pill.all {
-            background: var(--dark);
+            background: linear-gradient(135deg, var(--blue), var(--purple));
             color: white;
+            border-color: transparent;
         }
 
         .status-badge {
-            font-size: 0.6rem;
+            font-size: 0.55rem;
             font-weight: 700;
             text-transform: uppercase;
             padding: 0.15rem 0.6rem;
             border-radius: 9999px;
+            letter-spacing: 0.04em;
+            backdrop-filter: blur(4px);
         }
         .status-badge.pending {
-            background: #fef3c7;
-            color: #92400e;
+            background: rgba(251, 191, 36, 0.15);
+            color: #fbbf24;
+            border: 1px solid rgba(251, 191, 36, 0.15);
         }
         .status-badge.in_progress {
-            background: #dbeafe;
-            color: #1e40af;
+            background: rgba(75, 110, 255, 0.15);
+            color: var(--blue);
+            border: 1px solid rgba(75, 110, 255, 0.15);
         }
         .status-badge.done {
-            background: #d1fae5;
-            color: #065f46;
+            background: rgba(124, 255, 203, 0.12);
+            color: var(--mint);
+            border: 1px solid rgba(124, 255, 203, 0.12);
         }
         .status-badge.approved {
-            background: #a7f3d0;
-            color: #065f46;
+            background: rgba(124, 255, 203, 0.18);
+            color: var(--mint);
+            border: 1px solid rgba(124, 255, 203, 0.2);
         }
         .status-badge.archived {
-            background: #e5e7eb;
-            color: #374151;
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .deadline-warning {
@@ -170,69 +272,98 @@
         }
 
         .fade-in {
-            animation: fadeIn 0.3s ease-out;
+            animation: fadeIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
         @keyframes fadeIn {
             from {
                 opacity: 0;
-                transform: translateY(8px);
+                transform: translateY(12px) scale(0.98);
             }
             to {
                 opacity: 1;
-                transform: translateY(0);
+                transform: translateY(0) scale(1);
             }
         }
 
         .tab-active {
             border-bottom: 3px solid var(--cyan);
-            color: var(--dark);
+            color: #fff;
             font-weight: 700;
         }
 
+        /* ===== COUNTDOWN ===== */
         .countdown-box {
-            background: var(--white);
-            border-radius: 1rem;
-            padding: 0.5rem 1.2rem;
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(12px);
+            border-radius: 16px;
+            padding: 0.4rem 1rem;
             font-weight: 700;
-            font-size: 1.1rem;
+            font-size: 1rem;
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
-            box-shadow: 0 2px 10px rgba(0, 180, 216, 0.1);
-            border: 1px solid var(--cyan-light);
+            gap: 0.4rem;
+            border: 1px solid rgba(255, 255, 255, 0.06);
         }
         .countdown-box span {
-            background: var(--gray);
-            padding: 0.2rem 0.6rem;
-            border-radius: 0.5rem;
-            color: var(--dark);
-            min-width: 2.2rem;
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(4px);
+            padding: 0.15rem 0.5rem;
+            border-radius: 8px;
+            color: var(--cyan);
+            min-width: 2rem;
             text-align: center;
+            font-variant-numeric: tabular-nums;
+        }
+        .countdown-box .label {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.7rem;
+            font-weight: 400;
         }
 
+        /* ===== MODAL ===== */
         .modal-overlay {
-            background: rgba(2, 62, 138, 0.4);
-            backdrop-filter: blur(4px);
+            background: rgba(10, 14, 39, 0.7);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
         }
         .modal-content {
             max-height: 90vh;
             overflow-y: auto;
+            scroll-behavior: smooth;
         }
 
+        /* ===== INPUT ===== */
         input,
         select,
         textarea {
-            transition: all 0.15s ease;
-            border: 1px solid #e2e8f0;
+            transition: all 0.2s ease;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(8px);
+            border-radius: 14px;
+            padding: 0.75rem 1rem;
+            font-size: 0.9rem;
+            width: 100%;
+            color: #fff;
+        }
+        input::placeholder,
+        textarea::placeholder {
+            color: rgba(255, 255, 255, 0.3);
         }
         input:focus,
         select:focus,
         textarea:focus {
             outline: none;
-            ring: 2px solid var(--cyan);
             border-color: var(--cyan);
+            box-shadow: 0 0 0 4px rgba(0, 212, 255, 0.08);
+            background: rgba(255, 255, 255, 0.06);
+        }
+        select option {
+            background: var(--dark);
+            color: #fff;
         }
 
+        /* ===== LOGIN ===== */
         #loginScreen {
             display: flex;
         }
@@ -246,186 +377,565 @@
             display: block;
         }
 
+        /* ===== TOAST ===== */
         .toast {
             position: fixed;
             bottom: 2rem;
             right: 2rem;
-            background: var(--dark);
+            background: rgba(10, 14, 39, 0.85);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
             color: white;
-            padding: 0.8rem 1.5rem;
-            border-radius: 1rem;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+            padding: 0.8rem 1.6rem;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
             font-size: 0.9rem;
             z-index: 999;
             opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.3s ease;
+            transform: translateY(20px) scale(0.96);
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             pointer-events: none;
+            border: 1px solid rgba(255, 255, 255, 0.06);
         }
         .toast.show {
             opacity: 1;
-            transform: translateY(0);
+            transform: translateY(0) scale(1);
         }
         .toast.success {
-            background: #28a745;
+            background: rgba(124, 255, 203, 0.15);
+            border-color: rgba(124, 255, 203, 0.2);
+            color: var(--mint);
         }
         .toast.error {
-            background: #dc3545;
+            background: rgba(239, 68, 68, 0.15);
+            border-color: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
         }
 
+        /* ===== GAMIFICATION ===== */
+        .xp-bar {
+            height: 4px;
+            border-radius: 9999px;
+            background: rgba(255, 255, 255, 0.06);
+            overflow: hidden;
+        }
+        .xp-bar-fill {
+            height: 100%;
+            border-radius: 9999px;
+            background: linear-gradient(90deg, var(--blue), var(--cyan), var(--mint));
+            transition: width 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            width: 0%;
+        }
+
+        .badge-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(4px);
+            transition: all 0.3s ease;
+        }
+        .badge-icon.earned {
+            background: linear-gradient(135deg, rgba(124, 255, 203, 0.15), rgba(0, 212, 255, 0.10));
+            border-color: rgba(124, 255, 203, 0.2);
+        }
+        .badge-icon.locked {
+            opacity: 0.3;
+            filter: grayscale(0.8);
+        }
+
+        /* ===== CONFETTI CANVAS ===== */
+        #confettiCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* ===== CELEBRATION OVERLAY ===== */
+        .celebration-text {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.5);
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: white;
+            text-shadow: 0 4px 40px rgba(0, 0, 0, 0.3);
+            z-index: 10000;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            text-align: center;
+            background: rgba(10, 14, 39, 0.6);
+            backdrop-filter: blur(24px);
+            padding: 2rem 3rem;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .celebration-text.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+        .celebration-text .sub {
+            font-size: 0.9rem;
+            font-weight: 500;
+            opacity: 0.6;
+            display: block;
+            margin-top: 0.5rem;
+        }
+
+        /* ===== RESPONSIVE ===== */
         @media (max-width: 640px) {
             .countdown-box {
-                font-size: 0.8rem;
+                font-size: 0.75rem;
                 padding: 0.3rem 0.8rem;
             }
             .countdown-box span {
                 min-width: 1.6rem;
-                padding: 0.1rem 0.4rem;
+                padding: 0.1rem 0.3rem;
             }
+            .celebration-text {
+                font-size: 1.8rem;
+                padding: 1.5rem 2rem;
+            }
+            .celebration-text .sub {
+                font-size: 0.8rem;
+            }
+            .glass {
+                border-radius: 16px;
+            }
+            .glass-card {
+                border-radius: 14px;
+            }
+            .heading {
+                font-size: 1.5rem;
+            }
+            .subheading {
+                font-size: 1rem;
+            }
+        }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 212, 255, 0.2);
+            border-radius: 9999px;
+        }
+
+        /* ===== TASK CARD ANIMATION ===== */
+        .task-card {
+            transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .task-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(0, 212, 255, 0.15);
+        }
+        .task-card.completing {
+            animation: taskComplete 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes taskComplete {
+            0% {
+                transform: scale(1);
+            }
+            30% {
+                transform: scale(1.03);
+                background: rgba(124, 255, 203, 0.05);
+                border-color: rgba(124, 255, 203, 0.2);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* ===== INFO GRID ===== */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        .info-item {
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .info-item .label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: rgba(255, 255, 255, 0.3);
+        }
+        .info-item .value {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+            margin-top: 0.2rem;
+        }
+
+        /* Timeline */
+        .timeline-item {
+            display: flex;
+            gap: 1rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .timeline-item:last-child {
+            border-bottom: none;
+        }
+        .timeline-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-top: 0.4rem;
+            flex-shrink: 0;
+        }
+        .timeline-dot.blue {
+            background: var(--blue);
+        }
+        .timeline-dot.cyan {
+            background: var(--cyan);
+        }
+        .timeline-dot.mint {
+            background: var(--mint);
+        }
+        .timeline-dot.purple {
+            background: var(--purple);
         }
     </style>
 </head>
 <body>
 
+    <!-- ===== CONFETTI CANVAS ===== -->
+    <canvas id="confettiCanvas"></canvas>
+
+    <!-- ===== CELEBRATION TEXT ===== -->
+    <div id="celebrationText" class="celebration-text">
+        🎉
+        <span id="celebrationMsg">Luar Biasa!</span>
+        <span class="sub" id="celebrationSub">+10 XP 🏆</span>
+    </div>
+
+    <!-- ===== TOAST ===== -->
     <div id="toast" class="toast"></div>
 
     <!-- ===== LOGIN SCREEN ===== -->
-    <div id="loginScreen" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm">
-        <div class="glass-card rounded-3xl p-8 w-full max-w-md shadow-2xl border border-cyan-200">
+    <div id="loginScreen" class="fixed inset-0 z-50 flex items-center justify-center p-4" style="background: var(--dark);">
+        <div class="glass-heavy w-full max-w-md p-8" style="border-radius: 32px;">
             <div class="text-center mb-6">
-                <h1 class="text-3xl font-extrabold text-cyan-dark">IMD 2026</h1>
-                <p class="text-sm text-slate-500 mt-1">Task Tracker Kepanitiaan</p>
-                <div class="mt-2 text-xs text-slate-400">
-                    <i class="fas fa-calendar-alt"></i> 14 November 2025
+                <div class="text-5xl mb-3">🧬</div>
+                <h1 class="heading text-3xl">IMD 2026</h1>
+                <p class="text-sm text-white/40 mt-1">Task Tracker · Kepanitiaan</p>
+                <div class="mt-3 flex items-center justify-center gap-2 text-xs text-white/30">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>14 November 2025</span>
+                    <span class="w-px h-3 bg-white/10"></span>
+                    <span>🏛️ ITB Ganesha</span>
                 </div>
             </div>
             <form id="loginForm" onsubmit="loginWithDivision(event)" class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium text-slate-700">Kode Divisi</label>
-                    <input id="loginCode" type="text" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-cyan-400" placeholder="Contoh: CHR, HR, FIN" />
+                    <label class="block text-sm font-medium text-white/60 mb-1.5">Kode Divisi</label>
+                    <input id="loginCode" type="text" required placeholder="Contoh: CHR, HR, FIN" class="w-full" />
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-slate-700">Password</label>
-                    <input id="loginPassword" type="password" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-cyan-400" placeholder="Masukkan password" />
+                    <label class="block text-sm font-medium text-white/60 mb-1.5">Password</label>
+                    <input id="loginPassword" type="password" required placeholder="Masukkan password" class="w-full" />
                 </div>
-                <button type="submit" class="btn-primary w-full py-2.5 rounded-xl text-white font-bold text-sm">
-                    <i class="fas fa-sign-in-alt mr-2"></i> Masuk
+                <button type="submit" class="btn-primary w-full justify-center py-3 text-base">
+                    <i class="fas fa-sign-in-alt"></i> Masuk
                 </button>
-                <div id="loginError" class="text-red-500 text-sm text-center hidden"></div>
+                <div id="loginError" class="text-red-400 text-sm text-center hidden"></div>
             </form>
+            <div class="mt-4 text-[10px] text-white/20 text-center">
+                <span class="block">🔑 CHR / chair123 · HR / hr123 · FIN / fin123</span>
+                <span class="block text-white/10">Semua divisi: <kode> / <kode>123</span>
+            </div>
         </div>
     </div>
 
     <!-- ===== APP ===== -->
-    <div id="app" class="max-w-6xl mx-auto px-4 py-4 md:py-8">
+    <div id="app" class="max-w-6xl mx-auto px-4 py-4 md:py-6">
 
-        <!-- HEADER -->
-        <header class="glass-card rounded-2xl p-4 md:p-6 mb-6 border border-cyan-200 shadow-sm">
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                <div>
-                    <h1 class="text-2xl md:text-3xl font-extrabold text-cyan-dark flex items-center gap-2">
-                        <i class="fas fa-tasks text-cyan"></i> IMD 2026
-                    </h1>
-                    <p class="text-sm text-slate-500 mt-0.5 flex items-center gap-2 flex-wrap">
-                        <span>🏆 Selamat & Semangat!</span>
-                        <span class="text-xs bg-cyan-light text-dark px-2 py-0.5 rounded-full">#IMD2026</span>
-                    </p>
+        <!-- ===== HEADER ===== -->
+        <header class="glass p-4 md:p-5 mb-5">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <div class="text-3xl">🧬</div>
+                    <div>
+                        <h1 class="heading text-xl md:text-2xl">IMD 2026</h1>
+                        <p class="text-xs text-white/40 flex items-center gap-2">
+                            <span>🏆 The Great Microbial Odyssey</span>
+                            <span class="stinger text-[8px]">#IMD2026</span>
+                        </p>
+                    </div>
                 </div>
-                <div class="flex flex-wrap items-center gap-3">
+                <div class="flex flex-wrap items-center gap-2 md:gap-3">
                     <!-- COUNTDOWN -->
-                    <div class="countdown-box" id="countdownBox">
+                    <div class="countdown-box text-xs md:text-sm">
                         <i class="fas fa-clock text-cyan"></i>
-                        <span id="cdDays">00</span>d
-                        <span id="cdHours">00</span>h
-                        <span id="cdMinutes">00</span>m
-                        <span id="cdSeconds">00</span>s
+                        <span id="cdDays">00</span><span class="label">d</span>
+                        <span id="cdHours">00</span><span class="label">h</span>
+                        <span id="cdMinutes">00</span><span class="label">m</span>
+                        <span id="cdSeconds">00</span><span class="label">s</span>
                     </div>
-                    <div class="flex items-center gap-2 text-sm bg-white px-3 py-1.5 rounded-full shadow-sm border border-slate-200">
+
+                    <!-- XP -->
+                    <div class="flex items-center gap-2 glass px-3 py-1.5 rounded-full">
+                        <span class="text-xs font-bold text-cyan">⭐</span>
+                        <span id="userPoints" class="text-xs font-bold text-white/80">0 XP</span>
+                        <span class="w-px h-3 bg-white/10"></span>
+                        <span id="userLevel" class="text-xs font-bold text-white/80">Lv.1</span>
+                    </div>
+
+                    <!-- User -->
+                    <div class="flex items-center gap-2 glass px-3 py-1.5 rounded-full">
                         <i class="fas fa-user-circle text-cyan"></i>
-                        <span id="userRoleDisplay" class="font-medium text-slate-700">Ketua</span>
-                        <button onclick="logout()" class="text-xs text-red-400 hover:text-red-700 underline ml-1">logout</button>
+                        <span id="userRoleDisplay" class="text-xs font-medium text-white/80">Ketua</span>
+                        <button onclick="logout()" class="text-[10px] text-red-400/60 hover:text-red-400 underline ml-0.5">logout</button>
                     </div>
-                    <button onclick="openTaskModal()" id="btnAddTask" class="btn-primary rounded-xl text-sm font-bold flex items-center gap-2">
-                        <i class="fas fa-plus"></i> Tugas Baru
+
+                    <button onclick="openTaskModal()" id="btnAddTask" class="btn-primary text-sm py-2 px-4">
+                        <i class="fas fa-plus"></i> Tugas
                     </button>
                 </div>
             </div>
+
+            <!-- XP BAR -->
+            <div class="mt-3 flex items-center gap-3">
+                <span class="text-[10px] font-bold text-white/30 w-12">Lv.<span id="levelNum">1</span></span>
+                <div class="xp-bar flex-1">
+                    <div class="xp-bar-fill" id="xpBarFill" style="width:0%"></div>
+                </div>
+                <span class="text-[10px] font-bold text-white/30" id="xpText">0 / 100 XP</span>
+            </div>
+
+            <!-- BADGES -->
+            <div class="mt-2 flex gap-1.5 flex-wrap items-center" id="badgeContainer">
+                <span class="text-[10px] text-white/20 mr-1">🏅</span>
+            </div>
         </header>
 
-        <!-- FILTER -->
-        <div class="glass-card rounded-2xl shadow-sm p-4 mb-6 flex flex-wrap items-center gap-3 border border-slate-200/60">
-            <div class="flex items-center gap-2 text-sm text-slate-500 mr-2">
+        <!-- ===== TABS ===== -->
+        <div class="flex border-b border-white/5 mb-5 gap-1 overflow-x-auto">
+            <button onclick="setTab('active')" data-tab="active" class="tab-btn px-4 py-2.5 text-sm font-medium text-white/40 hover:text-white/80 transition border-b-3 border-transparent hover:border-cyan/30 whitespace-nowrap">
+                <i class="fas fa-list-ul mr-1.5"></i> Aktif
+            </button>
+            <button onclick="setTab('archive')" data-tab="archive" class="tab-btn px-4 py-2.5 text-sm font-medium text-white/40 hover:text-white/80 transition border-b-3 border-transparent hover:border-cyan/30 whitespace-nowrap">
+                <i class="fas fa-archive mr-1.5"></i> Arsip
+            </button>
+            <button onclick="setTab('badges')" data-tab="badges" class="tab-btn px-4 py-2.5 text-sm font-medium text-white/40 hover:text-white/80 transition border-b-3 border-transparent hover:border-cyan/30 whitespace-nowrap">
+                <i class="fas fa-medal mr-1.5"></i> Prestasi
+            </button>
+            <button onclick="setTab('info')" data-tab="info" class="tab-btn px-4 py-2.5 text-sm font-medium text-white/40 hover:text-white/80 transition border-b-3 border-transparent hover:border-cyan/30 whitespace-nowrap">
+                <i class="fas fa-info-circle mr-1.5"></i> Info
+            </button>
+        </div>
+
+        <!-- ===== FILTER ===== -->
+        <div class="glass p-3 md:p-4 mb-5 flex flex-wrap items-center gap-2">
+            <div class="flex items-center gap-1.5 text-xs text-white/40 mr-1">
                 <i class="fas fa-tags"></i>
                 <span>Divisi:</span>
             </div>
-            <div id="filterContainer" class="flex flex-wrap gap-1.5"></div>
-            <div class="ml-auto flex items-center gap-3 text-sm">
-                <span class="text-slate-400">|</span>
-                <span id="taskCount" class="text-slate-600 font-medium">0 tugas</span>
-                <button onclick="refreshData()" class="text-slate-400 hover:text-slate-700 transition">
-                    <i class="fas fa-sync-alt"></i>
+            <div id="filterContainer" class="flex flex-wrap gap-1"></div>
+            <div class="ml-auto flex items-center gap-2 text-xs text-white/30">
+                <span>|</span>
+                <span id="taskCount" class="text-white/60 font-medium">0 tugas</span>
+                <button onclick="refreshData()" class="text-white/20 hover:text-white/60 transition">
+                    <i class="fas fa-sync-alt text-xs"></i>
                 </button>
             </div>
         </div>
 
-        <!-- TAB -->
-        <div class="flex border-b border-slate-200/70 mb-6 gap-1 overflow-x-auto">
-            <button onclick="setTab('active')" data-tab="active" class="tab-btn px-4 py-2.5 text-sm font-medium text-slate-500 hover:text-slate-800 transition border-b-3 border-transparent hover:border-cyan-300 whitespace-nowrap">
-                <i class="fas fa-list-ul mr-1.5"></i> Aktif
-            </button>
-            <button onclick="setTab('archive')" data-tab="archive" class="tab-btn px-4 py-2.5 text-sm font-medium text-slate-500 hover:text-slate-800 transition border-b-3 border-transparent hover:border-cyan-300 whitespace-nowrap">
-                <i class="fas fa-archive mr-1.5"></i> Arsip
-            </button>
-        </div>
-
-        <!-- TASK LIST -->
+        <!-- ===== TASK LIST ===== -->
         <div id="taskListContainer" class="space-y-3 fade-in"></div>
         <div id="emptyState" class="hidden text-center py-16">
-            <div class="text-5xl text-slate-300 mb-4"><i class="fas fa-inbox"></i></div>
-            <h3 class="text-slate-500 font-medium">✨ Belum ada tugas</h3>
-            <p class="text-slate-400 text-sm mt-1">Buat tugas baru dengan tombol di atas</p>
+            <div class="text-5xl text-white/10 mb-4">📭</div>
+            <h3 class="text-white/40 font-medium">✨ Belum ada tugas</h3>
+            <p class="text-white/20 text-sm mt-1">Buat tugas baru dengan tombol di atas</p>
+        </div>
+
+        <!-- ===== BADGES TAB ===== -->
+        <div id="badgesTabContent" class="hidden glass p-6">
+            <h3 class="subheading mb-4">🏅 Koleksi Prestasi</h3>
+            <div id="badgesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3"></div>
+        </div>
+
+        <!-- ===== INFO TAB ===== -->
+        <div id="infoTabContent" class="hidden glass p-6 space-y-6">
+            <div>
+                <span class="stinger">TENTANG ACARA</span>
+                <h2 class="heading text-2xl mt-2">International Microorganism Day 2026</h2>
+                <p class="body-text mt-2 max-w-2xl">
+                    <strong class="text-white/80">"The Great Microbial Odyssey: Decoding the Earth's Dark Matter to Orchestrate a Sustainable Future"</strong>
+                    — Mengajak seluruh elemen masyarakat untuk mengeksplorasi keberagaman mikroorganisme yang hingga saat ini sebagian besar masih belum teridentifikasi (microbial dark matter).
+                </p>
+            </div>
+
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="label">📅 Tanggal</div>
+                    <div class="value">14–15 November 2025</div>
+                </div>
+                <div class="info-item">
+                    <div class="label">📍 Tempat</div>
+                    <div class="value">ITB Kampus Ganesha</div>
+                </div>
+                <div class="info-item">
+                    <div class="label">👥 Peserta</div>
+                    <div class="value">SMA/sederajat & Mahasiswa S1</div>
+                </div>
+                <div class="info-item">
+                    <div class="label">🎯 Tema</div>
+                    <div class="value" style="font-size:0.8rem;">Decoding Earth's Dark Matter</div>
+                </div>
+            </div>
+
+            <div>
+                <span class="stinger">RANGKAIAN ACARA</span>
+                <div class="mt-3 space-y-1">
+                    <div class="timeline-item">
+                        <div class="timeline-dot purple"></div>
+                        <div>
+                            <div class="text-white/80 font-semibold text-sm">Pre-Event · Petri Dish Art</div>
+                            <div class="text-white/30 text-xs">26 September 2026 · Lab SITH ITB</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot blue"></div>
+                        <div>
+                            <div class="text-white/80 font-semibold text-sm">Opening Ceremony</div>
+                            <div class="text-white/30 text-xs">14 November 2026 · Aula Barat ITB</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot cyan"></div>
+                        <div>
+                            <div class="text-white/80 font-semibold text-sm">Final Pitching · SPC & NEC</div>
+                            <div class="text-white/30 text-xs">14 November 2026 · Ruang Seminar & Sidang SITH</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot mint"></div>
+                        <div>
+                            <div class="text-white/80 font-semibold text-sm">Microbiology Olympiad Final</div>
+                            <div class="text-white/30 text-xs">14 November 2026 · Lab SITH ITB</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot purple"></div>
+                        <div>
+                            <div class="text-white/80 font-semibold text-sm">ITB Day · Fun Games & Eksplorasi</div>
+                            <div class="text-white/30 text-xs">15 November 2026 · Landmark ITB</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot blue"></div>
+                        <div>
+                            <div class="text-white/80 font-semibold text-sm">Exhibition & Symposium</div>
+                            <div class="text-white/30 text-xs">15 November 2026 · Multipurpose Hall CRCS</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot cyan"></div>
+                        <div>
+                            <div class="text-white/80 font-semibold text-sm">Gala Dinner & Awarding Night</div>
+                            <div class="text-white/30 text-xs">15 November 2026 · Multipurpose Hall CRCS</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <span class="stinger">KOMPETISI</span>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-3">
+                    <div class="info-item">
+                        <div class="value text-cyan">🧪 Microbiology Olympiad</div>
+                        <div class="text-white/30 text-xs">SMA/sederajat · Teori & Praktik</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="value text-mint">🔬 Science Project Competition</div>
+                        <div class="text-white/30 text-xs">SMA/sederajat · Prototype Inovasi</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="value text-purple">📝 National Essay Competition</div>
+                        <div class="text-white/30 text-xs">Mahasiswa S1 · Esai Ilmiah</div>
+                    </div>
+                </div>
+                <div class="text-white/20 text-xs mt-2">
+                    <i class="fas fa-calendar-alt"></i> Registrasi: 1–31 Juli 2026
+                </div>
+            </div>
+
+            <div>
+                <span class="stinger">KEPANITIAAN</span>
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 mt-3 text-xs">
+                    <div><span class="text-white/30">Project Manager</span><br><span class="text-white/70">Dzakiy Muhammad Urwah</span></div>
+                    <div><span class="text-white/30">Director of Finance</span><br><span class="text-white/70">Ida Ayu Purnabawati</span></div>
+                    <div><span class="text-white/30">Director of Admin</span><br><span class="text-white/70">Nathanael Manzo</span></div>
+                    <div><span class="text-white/30">Director of HR</span><br><span class="text-white/70">Celeste Widiastuti</span></div>
+                    <div><span class="text-white/30">Director of Event</span><br><span class="text-white/70">Lourdes Kayla</span></div>
+                    <div><span class="text-white/30">Director of Competition</span><br><span class="text-white/70">M. Kevin Rizsya</span></div>
+                    <div><span class="text-white/30">Director of Operational</span><br><span class="text-white/70">M. Raia Rafid</span></div>
+                    <div><span class="text-white/30">Director of Relation</span><br><span class="text-white/70">Hazkia Adhwaa</span></div>
+                </div>
+            </div>
         </div>
 
         <!-- ===== MODALS ===== -->
 
         <!-- TASK MODAL -->
         <div id="taskModal" class="fixed inset-0 z-50 hidden modal-overlay flex items-center justify-center p-4">
-            <div class="modal-content glass-card rounded-3xl w-full max-w-lg p-6 shadow-2xl border border-cyan-200">
+            <div class="modal-content glass-heavy w-full max-w-lg p-6" style="border-radius: 28px;">
                 <div class="flex justify-between items-center mb-5">
-                    <h2 id="modalTitle" class="text-xl font-bold text-slate-800">
+                    <h2 id="modalTitle" class="subheading text-xl">
                         <i class="fas fa-plus-circle text-cyan mr-2"></i> Tugas Baru
                     </h2>
-                    <button onclick="closeTaskModal()" class="text-slate-400 hover:text-slate-700 text-2xl">&times;</button>
+                    <button onclick="closeTaskModal()" class="text-white/40 hover:text-white/80 text-2xl">&times;</button>
                 </div>
                 <form id="taskForm" onsubmit="saveTask(event)" class="space-y-4">
                     <input type="hidden" id="taskId" value="" />
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Judul Tugas <span class="text-red-500">*</span></label>
-                        <input id="taskTitle" type="text" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white/70" placeholder="Contoh: Finalisasi Proposal" />
+                        <label class="block text-sm font-medium text-white/60 mb-1.5">Judul Tugas <span class="text-red-400">*</span></label>
+                        <input id="taskTitle" type="text" required placeholder="Contoh: Finalisasi Proposal" />
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Deskripsi</label>
-                        <textarea id="taskDesc" rows="2" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white/70" placeholder="Detail tugas..."></textarea>
+                        <label class="block text-sm font-medium text-white/60 mb-1.5">Deskripsi</label>
+                        <textarea id="taskDesc" rows="2" placeholder="Detail tugas..."></textarea>
                     </div>
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Divisi <span class="text-red-500">*</span></label>
-                            <select id="taskDivision" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white/70">
+                            <label class="block text-sm font-medium text-white/60 mb-1.5">Divisi <span class="text-red-400">*</span></label>
+                            <select id="taskDivision" required>
                                 <option value="">Pilih divisi</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Deadline <span class="text-red-500">*</span></label>
-                            <input id="taskDeadline" type="date" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white/70" />
+                            <label class="block text-sm font-medium text-white/60 mb-1.5">Deadline <span class="text-red-400">*</span></label>
+                            <input id="taskDeadline" type="date" required />
                         </div>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Ditugaskan ke</label>
-                        <input id="taskAssigned" type="text" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white/70" placeholder="Nama anggota" />
+                        <label class="block text-sm font-medium text-white/60 mb-1.5">Ditugaskan ke</label>
+                        <input id="taskAssigned" type="text" placeholder="Nama anggota" />
                     </div>
                     <div class="flex justify-end gap-3 pt-2">
-                        <button type="button" onclick="closeTaskModal()" class="btn-outline">Batal</button>
-                        <button type="submit" class="btn-primary rounded-xl font-bold">
+                        <button type="button" onclick="closeTaskModal()" class="btn-secondary">Batal</button>
+                        <button type="submit" class="btn-primary">
                             <i class="fas fa-save mr-1.5"></i> Simpan
                         </button>
                     </div>
@@ -435,21 +945,21 @@
 
         <!-- EVIDENCE MODAL -->
         <div id="evidenceModal" class="fixed inset-0 z-50 hidden modal-overlay flex items-center justify-center p-4">
-            <div class="modal-content glass-card rounded-3xl w-full max-w-md p-6 shadow-2xl border border-cyan-200">
+            <div class="modal-content glass-heavy w-full max-w-md p-6" style="border-radius: 28px;">
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-bold text-slate-800"><i class="fas fa-link text-cyan mr-2"></i> Kirim Bukti</h2>
-                    <button onclick="closeEvidenceModal()" class="text-slate-400 hover:text-slate-700 text-2xl">&times;</button>
+                    <h2 class="subheading text-xl"><i class="fas fa-link text-cyan mr-2"></i> Kirim Bukti</h2>
+                    <button onclick="closeEvidenceModal()" class="text-white/40 hover:text-white/80 text-2xl">&times;</button>
                 </div>
                 <form onsubmit="submitEvidence(event)" class="space-y-4">
                     <input type="hidden" id="evidenceTaskId" value="" />
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Bukti (Link atau Tulisan) <span class="text-red-500">*</span></label>
-                        <input id="evidenceLink" type="text" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white/70" placeholder="https://drive.google.com/... atau deskripsi bukti" />
-                        <p class="text-xs text-slate-400 mt-1.5">Masukkan link dokumen, foto, atau tulis keterangan bukti</p>
+                        <label class="block text-sm font-medium text-white/60 mb-1.5">Bukti (Link atau Tulisan) <span class="text-red-400">*</span></label>
+                        <input id="evidenceLink" type="text" required placeholder="https://... atau deskripsi bukti" />
+                        <p class="text-xs text-white/20 mt-1.5">📎 Masukkan link dokumen, foto, atau tulis keterangan bukti</p>
                     </div>
                     <div class="flex justify-end gap-3 pt-2">
-                        <button type="button" onclick="closeEvidenceModal()" class="btn-outline">Batal</button>
-                        <button type="submit" class="btn-primary rounded-xl font-bold">
+                        <button type="button" onclick="closeEvidenceModal()" class="btn-secondary">Batal</button>
+                        <button type="submit" class="btn-primary">
                             <i class="fas fa-paper-plane mr-1.5"></i> Kirim
                         </button>
                     </div>
@@ -459,15 +969,15 @@
 
         <!-- APPROVAL MODAL -->
         <div id="approvalModal" class="fixed inset-0 z-50 hidden modal-overlay flex items-center justify-center p-4">
-            <div class="modal-content glass-card rounded-3xl w-full max-w-md p-6 shadow-2xl border border-cyan-200">
+            <div class="modal-content glass-heavy w-full max-w-md p-6" style="border-radius: 28px;">
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-bold text-slate-800"><i class="fas fa-check-circle text-emerald-600 mr-2"></i> QC Approval</h2>
-                    <button onclick="closeApprovalModal()" class="text-slate-400 hover:text-slate-700 text-2xl">&times;</button>
+                    <h2 class="subheading text-xl"><i class="fas fa-check-circle text-mint mr-2"></i> QC Approval</h2>
+                    <button onclick="closeApprovalModal()" class="text-white/40 hover:text-white/80 text-2xl">&times;</button>
                 </div>
-                <div class="space-y-3 text-sm text-slate-600">
-                    <p>Apakah tugas ini sudah sesuai dan layak <strong>disetujui</strong>?</p>
-                    <div class="bg-slate-50 rounded-xl p-3 text-xs">
-                        <p id="approvalTaskPreview" class="text-slate-700">—</p>
+                <div class="space-y-3 text-sm text-white/60">
+                    <p>Apakah tugas ini sudah sesuai dan layak <strong class="text-white/80">disetujui</strong>?</p>
+                    <div class="glass p-3 rounded-xl text-xs">
+                        <p id="approvalTaskPreview" class="text-white/80">—</p>
                     </div>
                     <div class="flex gap-3 pt-2">
                         <button onclick="approveTask(false)" class="btn-danger flex-1">
@@ -485,7 +995,7 @@
 
     <script>
         // ============================================================
-        //  FIREBASE CONFIG — (milik Anda)
+        //  FIREBASE CONFIG
         // ============================================================
         const firebaseConfig = {
             apiKey: "AIzaSyAmuHB9vZIk-SsJnmXktH8HMRJ2NeaBH9s",
@@ -525,7 +1035,7 @@
         // ============================================================
         //  STATE GLOBAL
         // ============================================================
-        let currentUserRole = 'anggota'; // 'ketua' | 'kabid' | 'anggota'
+        let currentUserRole = 'anggota';
         let currentUserDivision = null;
         let currentUserDivisionCode = null;
         let currentFilter = 'all';
@@ -534,6 +1044,23 @@
         let allTasks = [];
         let editingTaskId = null;
         let unsubscribeTasks = null;
+
+        // GAMIFICATION
+        let userXP = 0;
+        let userLevel = 1;
+        let userStreak = 0;
+        let userBadges = [];
+        const XP_PER_LEVEL = 100;
+        const BADGE_DEFS = [
+            { id: 'first_task', name: 'Pemula', icon: '🌱', desc: 'Selesaikan tugas pertama', threshold: 1 },
+            { id: 'task_5', name: 'Rajin', icon: '📚', desc: 'Selesaikan 5 tugas', threshold: 5 },
+            { id: 'task_10', name: 'Pekerja Keras', icon: '💪', desc: 'Selesaikan 10 tugas', threshold: 10 },
+            { id: 'task_25', name: 'Legenda', icon: '🏆', desc: 'Selesaikan 25 tugas', threshold: 25 },
+            { id: 'streak_3', name: 'Konsisten', icon: '🔥', desc: 'Streak 3 hari berturut-turut', threshold: 3 },
+            { id: 'streak_7', name: 'Tak Terhentikan', icon: '⚡', desc: 'Streak 7 hari berturut-turut', threshold: 7 },
+            { id: 'level_5', name: 'Pahlawan', icon: '🦸', desc: 'Capai level 5', threshold: 5 },
+            { id: 'level_10', name: 'Maha Karya', icon: '👑', desc: 'Capai level 10', threshold: 10 },
+        ];
 
         // ============================================================
         //  DOM REFS
@@ -547,6 +1074,9 @@
         const toast = $('toast');
         const btnAddTask = $('btnAddTask');
 
+        // ============================================================
+        //  TOAST
+        // ============================================================
         function showToast(msg, type = 'info') {
             toast.textContent = msg;
             toast.className = 'toast show ' + type;
@@ -555,10 +1085,218 @@
         }
 
         // ============================================================
-        //  COUNTDOWN (14 November 2025)
+        //  CONFETTI
+        // ============================================================
+        const canvas = document.getElementById('confettiCanvas');
+        const ctx = canvas.getContext('2d');
+        let confettiPieces = [];
+        let confettiRunning = false;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class ConfettiPiece {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height - canvas.height;
+                this.w = Math.random() * 8 + 3;
+                this.h = Math.random() * 5 + 2;
+                const colors = ['#4b6eff', '#00d4ff', '#7cffcb', '#ab7cff', '#fbbf24', '#f472b6'];
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+                this.vy = Math.random() * 5 + 2;
+                this.vx = (Math.random() - 0.5) * 3;
+                this.rotation = Math.random() * 360;
+                this.rotSpeed = (Math.random() - 0.5) * 6;
+                this.opacity = 1;
+            }
+            update() {
+                this.y += this.vy;
+                this.x += this.vx;
+                this.rotation += this.rotSpeed;
+                this.vy += 0.05;
+                if (this.y > canvas.height + 50) this.opacity = 0;
+            }
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate((this.rotation * Math.PI) / 180);
+                ctx.globalAlpha = this.opacity;
+                ctx.fillStyle = this.color;
+                ctx.fillRect(-this.w / 2, -this.h / 2, this.w, this.h);
+                ctx.restore();
+            }
+        }
+
+        function fireConfetti(count = 100) {
+            if (confettiRunning) return;
+            confettiRunning = true;
+            for (let i = 0; i < count; i++) confettiPieces.push(new ConfettiPiece());
+            let frames = 0;
+            const maxFrames = 160;
+
+            function animateConfetti() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                let alive = false;
+                for (const p of confettiPieces) {
+                    p.update();
+                    if (p.opacity > 0) { p.draw();
+                        alive = true; }
+                }
+                confettiPieces = confettiPieces.filter(p => p.opacity > 0);
+                frames++;
+                if (alive && frames < maxFrames) requestAnimationFrame(animateConfetti);
+                else { ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    confettiPieces = [];
+                    confettiRunning = false; }
+            }
+            animateConfetti();
+        }
+
+        // ============================================================
+        //  CELEBRATION
+        // ============================================================
+        function showCelebration(msg, sub = '+10 XP 🏆') {
+            const el = document.getElementById('celebrationText');
+            document.getElementById('celebrationMsg').textContent = msg;
+            document.getElementById('celebrationSub').textContent = sub;
+            el.classList.add('show');
+            fireConfetti(120);
+            setTimeout(() => el.classList.remove('show'), 2800);
+        }
+
+        // ============================================================
+        //  GAMIFICATION HELPERS
+        // ============================================================
+        function getCompletedCount() {
+            return allTasks.filter(t => t.status === 'done' || t.status === 'approved' || t.status === 'archived').length;
+        }
+
+        function getStreak() {
+            const today = new Date().toDateString();
+            const lastDate = localStorage.getItem('streakLastDate');
+            let streak = parseInt(localStorage.getItem('streakCount') || '0');
+            if (lastDate === today) {}
+            else if (lastDate) {
+                const yesterday = new Date();
+                yesterday.setDate(yesterday.getDate() - 1);
+                if (lastDate !== yesterday.toDateString()) streak = 0;
+            }
+            return streak;
+        }
+
+        function updateStreak() {
+            const today = new Date().toDateString();
+            const lastDate = localStorage.getItem('streakLastDate');
+            let streak = parseInt(localStorage.getItem('streakCount') || '0');
+            if (lastDate !== today) {
+                const yesterday = new Date();
+                yesterday.setDate(yesterday.getDate() - 1);
+                if (lastDate === yesterday.toDateString()) streak++;
+                else streak = 1;
+                localStorage.setItem('streakLastDate', today);
+                localStorage.setItem('streakCount', String(streak));
+            }
+            return streak;
+        }
+
+        function checkBadges() {
+            const completed = getCompletedCount();
+            const streak = getStreak();
+            const level = userLevel;
+            const earned = [];
+            for (const badge of BADGE_DEFS) {
+                let unlocked = false;
+                if (badge.id === 'first_task' && completed >= 1) unlocked = true;
+                else if (badge.id === 'task_5' && completed >= 5) unlocked = true;
+                else if (badge.id === 'task_10' && completed >= 10) unlocked = true;
+                else if (badge.id === 'task_25' && completed >= 25) unlocked = true;
+                else if (badge.id === 'streak_3' && streak >= 3) unlocked = true;
+                else if (badge.id === 'streak_7' && streak >= 7) unlocked = true;
+                else if (badge.id === 'level_5' && level >= 5) unlocked = true;
+                else if (badge.id === 'level_10' && level >= 10) unlocked = true;
+                if (unlocked && !userBadges.includes(badge.id)) {
+                    userBadges.push(badge.id);
+                    showToast(`🏅 Badge baru: ${badge.icon} ${badge.name}!`, 'success');
+                    setTimeout(() => showCelebration(`🏅 ${badge.icon} ${badge.name}!`, badge.desc), 400);
+                }
+            }
+            localStorage.setItem('userBadges', JSON.stringify(userBadges));
+            renderBadges();
+        }
+
+        function addXP(amount = 10) {
+            userXP += amount;
+            while (userXP >= XP_PER_LEVEL) {
+                userXP -= XP_PER_LEVEL;
+                userLevel++;
+                showToast(`🎉 Level up! Level ${userLevel} 🚀`, 'success');
+                setTimeout(() => showCelebration(`🎉 Level ${userLevel}!`, '🚀 Terus semangat!'), 400);
+                checkBadges();
+            }
+            localStorage.setItem('userXP', String(userXP));
+            localStorage.setItem('userLevel', String(userLevel));
+            updateXPUI();
+            checkBadges();
+        }
+
+        function updateXPUI() {
+            const pct = Math.min((userXP / XP_PER_LEVEL) * 100, 100);
+            document.getElementById('xpBarFill').style.width = pct + '%';
+            document.getElementById('xpText').textContent = `${userXP} / ${XP_PER_LEVEL} XP`;
+            document.getElementById('levelNum').textContent = userLevel;
+            document.getElementById('userLevel').textContent = `Lv.${userLevel}`;
+            document.getElementById('userPoints').textContent = `${userXP} XP`;
+        }
+
+        function renderBadges() {
+            const container = document.getElementById('badgeContainer');
+            const grid = document.getElementById('badgesGrid');
+            container.querySelectorAll('.badge-icon').forEach(el => el.remove());
+
+            const earnedBadges = userBadges.map(id => BADGE_DEFS.find(b => b.id === id)).filter(Boolean);
+            const displayBadges = earnedBadges.slice(-4);
+            for (const b of displayBadges) {
+                const el = document.createElement('span');
+                el.className = 'badge-icon earned text-xs';
+                el.style.width = '28px';
+                el.style.height = '28px';
+                el.style.fontSize = '0.9rem';
+                el.title = `${b.icon} ${b.name}`;
+                el.textContent = b.icon;
+                container.appendChild(el);
+            }
+            if (earnedBadges.length === 0) {
+                const el = document.createElement('span');
+                el.className = 'text-[10px] text-white/20';
+                el.textContent = 'Belum ada badge. Selesaikan tugas!';
+                container.appendChild(el);
+            }
+
+            grid.innerHTML = '';
+            for (const b of BADGE_DEFS) {
+                const earned = userBadges.includes(b.id);
+                const div = document.createElement('div');
+                div.className =
+                    `glass-card p-3 text-center ${earned ? 'border-cyan/20' : 'border-white/5 opacity-40'}`;
+                div.innerHTML = `
+                    <div class="badge-icon ${earned ? 'earned' : 'locked'} mx-auto mb-1.5">${b.icon}</div>
+                    <div class="text-xs font-bold text-white/80">${b.name}</div>
+                    <div class="text-[10px] text-white/30">${b.desc}</div>
+                    ${earned ? '<span class="text-[10px] text-mint font-bold">✅</span>' : '<span class="text-[10px] text-white/10">🔒</span>'}
+                `;
+                grid.appendChild(div);
+            }
+        }
+
+        // ============================================================
+        //  COUNTDOWN (14 November 2026)
         // ============================================================
         function updateCountdown() {
-            const target = new Date('2025-11-14T00:00:00').getTime();
+            const target = new Date('2026-11-14T00:00:00').getTime();
             const now = new Date().getTime();
             let diff = target - now;
             if (diff < 0) diff = 0;
@@ -575,12 +1313,12 @@
         updateCountdown();
 
         // ============================================================
-        //  MOCK DATA (dengan divisi baru)
+        //  MOCK DATA — 10 DIVISI DARI PROPOSAL
         // ============================================================
         function loadMockData() {
             if (allDivisions.length === 0) {
                 allDivisions = [
-                    { id: 'chair', code: 'CHR', name: 'Chairman', password: 'chair123', isChair: true },
+                    { id: 'chr', code: 'CHR', name: 'Chairman', password: 'chair123', isChair: true },
                     { id: 'hr', code: 'HR', name: 'Human Resources', password: 'hr123', kabidPassword: 'hrkabid',
                         memberPassword: 'hr123', isChair: false },
                     { id: 'fin', code: 'FIN', name: 'Finance', password: 'fin123', kabidPassword: 'finkabid',
@@ -609,8 +1347,8 @@
             nextWeek.setDate(now.getDate() + 7);
             const sample = [{
                 id: 'task-1',
-                title: 'Menyusun proposal',
-                description: 'Proposal acara IMD 2026',
+                title: 'Menyusun proposal acara',
+                description: 'Proposal untuk IMD 2026',
                 divisionId: 'evt',
                 deadline: nextWeek.toISOString().slice(0, 10),
                 status: 'pending',
@@ -620,8 +1358,8 @@
                 updatedAt: now.toISOString()
             }, {
                 id: 'task-2',
-                title: 'Desain backdrop panggung',
-                description: 'Konsep visual panggung utama',
+                title: 'Desain visual & branding',
+                description: 'Konsep visual untuk seluruh acara',
                 divisionId: 'crt',
                 deadline: tomorrow.toISOString().slice(0, 10),
                 status: 'in_progress',
@@ -631,8 +1369,8 @@
                 updatedAt: now.toISOString()
             }, {
                 id: 'task-3',
-                title: 'Rapat koordinasi vendor',
-                description: 'Koordinasi teknis dan harga',
+                title: 'Koordinasi anggaran',
+                description: 'Rekapitulasi dan validasi anggaran',
                 divisionId: 'fin',
                 deadline: now.toISOString().slice(0, 10),
                 status: 'done',
@@ -642,12 +1380,19 @@
                 updatedAt: now.toISOString()
             }];
 
-            if (currentUserRole === 'ketua') {
-                allTasks = sample;
-            } else {
-                allTasks = sample.filter(t => t.divisionId === currentUserDivision);
-            }
+            if (currentUserRole === 'ketua') allTasks = sample;
+            else allTasks = sample.filter(t => t.divisionId === currentUserDivision);
+
+            loadGamificationState();
             renderAll();
+        }
+
+        function loadGamificationState() {
+            userXP = parseInt(localStorage.getItem('userXP') || '0');
+            userLevel = parseInt(localStorage.getItem('userLevel') || '1');
+            userBadges = JSON.parse(localStorage.getItem('userBadges') || '[]');
+            updateXPUI();
+            renderBadges();
         }
 
         // ============================================================
@@ -774,6 +1519,7 @@
             userRoleDisplay.textContent = `${roleLabel} (${code})`;
             btnAddTask.style.display = (role === 'anggota') ? 'none' : 'inline-flex';
 
+            loadGamificationState();
             loadDivisionsAndTasks();
             showToast(`Selamat datang ${roleLabel}! 🎉`, 'success');
         }
@@ -819,6 +1565,7 @@
 
                 unsubscribeTasks = query.onSnapshot((snapshot) => {
                     allTasks = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+                    loadGamificationState();
                     renderAll();
                 }, (error) => {
                     console.error('Listener error:', error);
@@ -835,16 +1582,32 @@
         // ============================================================
         //  RENDER
         // ============================================================
-        function renderAll() { renderFilters();
+        function renderAll() {
+            renderFilters();
             renderTasks();
-            updateTaskCount(); }
+            updateTaskCount();
+            updateXPUI();
+            renderBadges();
+
+            // Show/hide tabs
+            const isInfo = currentTab === 'info';
+            const isBadges = currentTab === 'badges';
+            document.getElementById('infoTabContent').classList.toggle('hidden', !isInfo);
+            document.getElementById('badgesTabContent').classList.toggle('hidden', !isBadges);
+            if (isInfo || isBadges) {
+                taskListContainer.classList.add('hidden');
+                emptyState.classList.add('hidden');
+            } else {
+                taskListContainer.classList.remove('hidden');
+            }
+        }
 
         function renderFilters() {
             filterContainer.innerHTML = '';
             if (currentUserRole === 'ketua') {
                 const allBtn = document.createElement('button');
                 allBtn.className =
-                    `tag-pill all text-xs px-3 py-1 rounded-full transition ${currentFilter === 'all' ? 'ring-2 ring-cyan-700 ring-offset-1' : ''}`;
+                    `tag-pill text-xs px-3 py-1 rounded-full transition ${currentFilter === 'all' ? 'ring-2 ring-cyan ring-offset-1' : ''}`;
                 allBtn.textContent = 'All';
                 allBtn.onclick = () => { currentFilter = 'all';
                     renderAll(); };
@@ -858,7 +1621,7 @@
                 const btn = document.createElement('button');
                 const isActive = currentFilter === div.id;
                 btn.className =
-                    `tag-pill text-xs px-3 py-1 rounded-full transition ${isActive ? 'ring-2 ring-cyan-700 ring-offset-1 bg-cyan-100' : 'bg-slate-100/70'}`;
+                    `tag-pill text-xs px-3 py-1 rounded-full transition ${isActive ? 'ring-2 ring-cyan ring-offset-1 bg-blue/10' : ''}`;
                 btn.textContent = `${div.code} • ${div.name}`;
                 btn.onclick = () => { currentFilter = div.id;
                     renderAll(); };
@@ -870,9 +1633,9 @@
             const filtered = allTasks.filter(task => {
                 if (currentTab === 'active') {
                     if (task.status === 'archived' || task.status === 'approved') return false;
-                } else {
+                } else if (currentTab === 'archive') {
                     if (task.status !== 'archived' && task.status !== 'approved') return false;
-                }
+                } else return false;
                 if (currentFilter !== 'all' && task.divisionId !== currentFilter) return false;
                 return true;
             });
@@ -901,84 +1664,83 @@
                 if (currentUserRole === 'anggota' && !isDone && task.status !== 'archived') {
                     if (task.status === 'pending' || task.status === 'in_progress') {
                         actionsHtml +=
-                            `<button onclick="markDone('${task.id}')" class="text-xs bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-lg hover:bg-emerald-100 transition flex items-center gap-1.5"><i class="fas fa-check-circle"></i> Selesai</button>`;
+                            `<button onclick="markDone('${task.id}')" class="btn-success text-xs py-1.5 px-3"><i class="fas fa-check-circle"></i> Selesai</button>`;
                     }
                     if (task.status === 'done' && !hasEvidence) {
                         actionsHtml +=
-                            `<button onclick="openEvidenceModal('${task.id}')" class="text-xs bg-blue-50 text-blue-700 px-3 py-1.5 rounded-lg hover:bg-blue-100 transition flex items-center gap-1.5"><i class="fas fa-link"></i> Kirim Bukti</button>`;
+                            `<button onclick="openEvidenceModal('${task.id}')" class="btn-primary text-xs py-1.5 px-3"><i class="fas fa-link"></i> Bukti</button>`;
                     }
                 }
 
-                // Kabid: mark done + kirim bukti + edit/hapus di divisi sendiri
+                // Kabid
                 if (currentUserRole === 'kabid' && !isDone && task.status !== 'archived') {
                     if (task.status === 'pending' || task.status === 'in_progress') {
                         actionsHtml +=
-                            `<button onclick="markDone('${task.id}')" class="text-xs bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-lg hover:bg-emerald-100 transition flex items-center gap-1.5"><i class="fas fa-check-circle"></i> Selesai</button>`;
+                            `<button onclick="markDone('${task.id}')" class="btn-success text-xs py-1.5 px-3"><i class="fas fa-check-circle"></i> Selesai</button>`;
                     }
                     if (task.status === 'done' && !hasEvidence) {
                         actionsHtml +=
-                            `<button onclick="openEvidenceModal('${task.id}')" class="text-xs bg-blue-50 text-blue-700 px-3 py-1.5 rounded-lg hover:bg-blue-100 transition flex items-center gap-1.5"><i class="fas fa-link"></i> Kirim Bukti</button>`;
+                            `<button onclick="openEvidenceModal('${task.id}')" class="btn-primary text-xs py-1.5 px-3"><i class="fas fa-link"></i> Bukti</button>`;
                     }
                     if (task.divisionId === currentUserDivision) {
                         actionsHtml +=
-                            `<button onclick="editTask('${task.id}')" class="text-xs bg-slate-50 text-slate-600 px-3 py-1.5 rounded-lg hover:bg-slate-100 transition flex items-center gap-1.5"><i class="fas fa-pen"></i></button>`;
+                            `<button onclick="editTask('${task.id}')" class="btn-secondary text-xs py-1.5 px-3"><i class="fas fa-pen"></i></button>`;
                         actionsHtml +=
-                            `<button onclick="deleteTask('${task.id}')" class="text-xs bg-red-50 text-red-600 px-3 py-1.5 rounded-lg hover:bg-red-100 transition flex items-center gap-1.5"><i class="fas fa-trash-alt"></i></button>`;
+                            `<button onclick="deleteTask('${task.id}')" class="btn-danger text-xs py-1.5 px-3"><i class="fas fa-trash-alt"></i></button>`;
                     }
                 }
 
-                // Ketua: QC, edit, arsip, hapus
+                // Ketua
                 if (currentUserRole === 'ketua') {
                     if (task.status === 'done' && hasEvidence) {
                         actionsHtml +=
-                            `<button onclick="openApprovalModal('${task.id}')" class="text-xs bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-lg hover:bg-indigo-100 transition flex items-center gap-1.5"><i class="fas fa-clipboard-check"></i> QC</button>`;
+                            `<button onclick="openApprovalModal('${task.id}')" class="btn-purple text-xs py-1.5 px-3"><i class="fas fa-clipboard-check"></i> QC</button>`;
                     }
                     if (task.status !== 'archived' && task.status !== 'approved') {
                         actionsHtml +=
-                            `<button onclick="editTask('${task.id}')" class="text-xs bg-slate-50 text-slate-600 px-3 py-1.5 rounded-lg hover:bg-slate-100 transition flex items-center gap-1.5"><i class="fas fa-pen"></i></button>`;
-                        // Tombol arsip (jika status sudah selesai atau approved)
+                            `<button onclick="editTask('${task.id}')" class="btn-secondary text-xs py-1.5 px-3"><i class="fas fa-pen"></i></button>`;
                         if (task.status === 'done' || task.status === 'approved') {
                             actionsHtml +=
-                                `<button onclick="archiveTask('${task.id}')" class="text-xs bg-cyan-50 text-cyan-700 px-3 py-1.5 rounded-lg hover:bg-cyan-100 transition flex items-center gap-1.5"><i class="fas fa-archive"></i> Arsip</button>`;
+                                `<button onclick="archiveTask('${task.id}')" class="btn-primary text-xs py-1.5 px-3"><i class="fas fa-archive"></i> Arsip</button>`;
                         }
                         actionsHtml +=
-                            `<button onclick="deleteTask('${task.id}')" class="text-xs bg-red-50 text-red-600 px-3 py-1.5 rounded-lg hover:bg-red-100 transition flex items-center gap-1.5"><i class="fas fa-trash-alt"></i></button>`;
+                            `<button onclick="deleteTask('${task.id}')" class="btn-danger text-xs py-1.5 px-3"><i class="fas fa-trash-alt"></i></button>`;
                     }
                 }
 
                 if (task.status === 'approved' || task.status === 'archived') {
                     actionsHtml =
-                        `<span class="text-xs text-emerald-600 font-medium flex items-center gap-1.5"><i class="fas fa-check-circle"></i> ${task.status === 'archived' ? 'Diarsipkan' : 'Disetujui'}</span>`;
+                        `<span class="text-xs text-mint font-medium flex items-center gap-1.5 glass px-3 py-1.5 rounded-full"><i class="fas fa-check-circle"></i> ${task.status === 'archived' ? '📦 Diarsipkan' : '✅ Disetujui'}</span>`;
                 }
 
                 let evidenceHtml = hasEvidence ?
-                    `<span class="text-xs text-blue-600 flex items-center gap-1"><i class="fas fa-paperclip"></i> ${task.evidenceLink.substring(0, 30)}${task.evidenceLink.length > 30 ? '...' : ''}</span>` :
+                    `<span class="text-xs text-cyan flex items-center gap-1 bg-blue/5 px-2 py-0.5 rounded-full border border-blue/10"><i class="fas fa-paperclip"></i> ${task.evidenceLink.substring(0, 25)}${task.evidenceLink.length > 25 ? '...' : ''}</span>` :
                     '';
                 let deadlineBadge = '';
                 if (showWarning) deadlineBadge =
-                    `<span class="deadline-warning text-xs bg-amber-100 text-amber-800 px-2.5 py-0.5 rounded-full flex items-center gap-1.5 font-medium"><i class="fas fa-clock"></i> ${daysLeft} hari lagi</span>`;
+                    `<span class="deadline-warning text-xs bg-yellow-500/10 text-yellow-400 px-2.5 py-0.5 rounded-full flex items-center gap-1.5 font-medium border border-yellow-500/10"><i class="fas fa-clock"></i> ${daysLeft} hari lagi</span>`;
                 else if (isOver && !isDone && task.status !== 'archived') deadlineBadge =
-                    `<span class="text-xs bg-red-100 text-red-700 px-2.5 py-0.5 rounded-full flex items-center gap-1.5 font-medium"><i class="fas fa-exclamation-circle"></i> Terlambat!</span>`;
+                    `<span class="text-xs bg-red-500/10 text-red-400 px-2.5 py-0.5 rounded-full flex items-center gap-1.5 font-medium border border-red-500/10"><i class="fas fa-exclamation-circle"></i> Terlambat!</span>`;
 
                 html += `
-                    <div class="glass-card rounded-xl p-4 border border-slate-200/60 shadow-sm fade-in">
+                    <div class="glass-card p-4 task-card fade-in">
                         <div class="flex flex-col md:flex-row md:items-start gap-3">
                             <div class="flex-1 min-w-0">
                                 <div class="flex items-center gap-2 flex-wrap mb-1">
-                                    <span class="text-sm font-semibold text-slate-800">${task.title}</span>
-                                    <span class="tag-pill bg-cyan-100 text-dark text-[0.6rem]">${divCode}</span>
+                                    <span class="text-sm font-semibold text-white/90">${task.title}</span>
+                                    <span class="tag-pill text-[0.55rem]">${divCode}</span>
                                     <span class="${getStatusBadgeClass(task.status)}">${statusLabel}</span>
                                     ${deadlineBadge}
                                 </div>
-                                ${task.description ? `<p class="text-sm text-slate-500 mb-1.5">${task.description}</p>` : ''}
-                                <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-400">
-                                    <span><i class="far fa-calendar-alt mr-1"></i> Deadline: ${formatDate(task.deadline)}</span>
+                                ${task.description ? `<p class="text-sm text-white/40 mb-1.5">${task.description}</p>` : ''}
+                                <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-white/30">
+                                    <span><i class="far fa-calendar-alt mr-1"></i> ${formatDate(task.deadline)}</span>
                                     ${task.assignedTo ? `<span><i class="far fa-user mr-1"></i> ${task.assignedTo}</span>` : ''}
                                     ${evidenceHtml}
-                                    ${task.status === 'done' && !hasEvidence ? `<span class="text-amber-600"><i class="fas fa-exclamation-triangle mr-1"></i> Belum ada bukti</span>` : ''}
+                                    ${task.status === 'done' && !hasEvidence ? `<span class="text-yellow-400/60 flex items-center gap-1"><i class="fas fa-exclamation-triangle"></i> Belum ada bukti</span>` : ''}
                                 </div>
                             </div>
-                            <div class="flex items-center gap-2 flex-wrap md:flex-nowrap">${actionsHtml}</div>
+                            <div class="flex items-center gap-1.5 flex-wrap md:flex-nowrap">${actionsHtml}</div>
                         </div>
                     </div>
                 `;
@@ -1014,9 +1776,13 @@
         // ============================================================
         //  TAB
         // ============================================================
-        function setTab(tab) { currentTab = tab;
-            document.querySelectorAll('.tab-btn').forEach(el => el.classList.toggle('tab-active', el.dataset.tab === tab));
-            renderTasks(); }
+        function setTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.toggle('tab-active', el.dataset.tab === tab);
+            });
+            renderAll();
+        }
 
         // ============================================================
         //  CRUD
@@ -1050,7 +1816,7 @@
                 const task = allTasks.find(t => t.id === taskId);
                 if (!task) return;
                 editingTaskId = taskId;
-                title.innerHTML = '<i class="fas fa-pen text-slate-600 mr-2"></i> Edit Tugas';
+                title.innerHTML = '<i class="fas fa-pen text-white/60 mr-2"></i> Edit Tugas';
                 $('taskId').value = taskId;
                 $('taskTitle').value = task.title;
                 $('taskDesc').value = task.description || '';
@@ -1135,7 +1901,6 @@
             } catch (err) { showToast('Gagal hapus.', 'error'); }
         }
 
-        // ===== ARSIP (khusus ketua) =====
         async function archiveTask(taskId) {
             if (currentUserRole !== 'ketua') {
                 showToast('Hanya Ketua yang dapat mengarsipkan tugas.', 'error');
@@ -1157,18 +1922,39 @@
         }
 
         // ============================================================
-        //  MARK DONE
+        //  MARK DONE + GAMIFICATION
         // ============================================================
         async function markDone(taskId) {
             try {
                 const task = allTasks.find(t => t.id === taskId);
                 if (!task || task.status === 'done') { showToast('Sudah selesai.', 'info'); return; }
+
                 const update = { status: 'done', updatedAt: new Date().toISOString() };
-                if (db) { await db.collection('tasks').doc(taskId).update(update); } else { task.status = 'done';
+                if (db) {
+                    await db.collection('tasks').doc(taskId).update(update);
+                } else {
+                    task.status = 'done';
                     task.updatedAt = update.updatedAt;
-                    renderAll(); }
-                showToast('Tugas selesai! ✅', 'success');
-            } catch (err) { showToast('Gagal update.', 'error'); }
+                }
+
+                addXP(10);
+                const streak = updateStreak();
+                if (streak > 0) showToast(`🔥 Streak ${streak} hari berturut-turut!`, 'success');
+                checkBadges();
+
+                const card = document.querySelector(`[data-task-id="${taskId}"]`);
+                if (card) { card.classList.add('completing');
+                    setTimeout(() => card.classList.remove('completing'), 600); }
+
+                const msgs = ['Luar Biasa! 💪', 'Keren banget! 🌟', 'Mantap! 🚀', 'Hebat! 🎉', 'Semangat terus! 🔥', 'Kamu juara! 🏆'];
+                showCelebration(msgs[Math.floor(Math.random() * msgs.length)], `+10 XP 🔥 Streak ${streak || 1}`);
+
+                renderAll();
+
+            } catch (err) {
+                console.error(err);
+                showToast('Gagal update.', 'error');
+            }
         }
 
         // ============================================================
@@ -1233,6 +2019,7 @@
                 }
                 closeApprovalModal();
                 showToast(approved ? 'Tugas disetujui! 🎉' : 'Tugas ditolak.', 'info');
+                if (approved) fireConfetti(80);
             } catch (err) { showToast('Gagal approval.', 'error'); }
         }
 
@@ -1264,6 +2051,7 @@
             const roleLabel = savedRole === 'ketua' ? '👑 Ketua' : savedRole === 'kabid' ? '📋 Kabid' : '👤 Anggota';
             userRoleDisplay.textContent = `${roleLabel} (${savedCode || ''})`;
             btnAddTask.style.display = (savedRole === 'anggota') ? 'none' : 'inline-flex';
+            loadGamificationState();
             loadDivisionsAndTasks();
         } else {
             if (useMock && allDivisions.length === 0) loadMockData();
@@ -1271,17 +2059,22 @@
             $('app').classList.remove('visible');
         }
 
+        // Set default tab aktif
         document.querySelector('.tab-btn[data-tab="active"]')?.classList.add('tab-active');
+
+        // Close modals on outside click
         document.querySelectorAll('.modal-overlay').forEach(modal => {
             modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.add('hidden'); });
         });
+
+        // Escape key
         document.addEventListener('keydown', (e) => { if (e.key === 'Escape') document.querySelectorAll(
                 '.modal-overlay:not(.hidden)').forEach(m => m.classList.add('hidden')); });
 
-        console.log('🎉 IMD 2026 Task Tracker siap!');
-        console.log('👑 Ketua: CHR / chair123');
-        console.log('📋 Kabid: [HR, FIN, ADM, EVT, CMP, OPS, STR, CRT, FLD] / <kode>kabid');
-        console.log('👤 Anggota: <kode> / <kode>123');
+        console.log('🧬 IMD 2026 Task Tracker siap!');
+        console.log('👑 CHR/chair123 | 📋 HR/hrkabid | 👤 HR/hr123');
+        console.log('🎮 Selesaikan tugas → +XP → naik level → buka badge!');
+        console.log('📋 Divisi: CHR, HR, FIN, ADM, EVT, CMP, OPS, STR, CRT, FLD');
     </script>
 
 </body>
