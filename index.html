@@ -18,7 +18,7 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
-    <!-- Google Font (Helvetica fallback) -->
+    <!-- Google Font (Helvetica) -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
 
     <style>
@@ -29,9 +29,9 @@
             --mint: #7cffcb;
             --purple: #ab7cff;
             --dark: #0a0e27;
-            --glass-bg: rgba(255, 255, 255, 0.12);
-            --glass-border: rgba(255, 255, 255, 0.18);
-            --glass-shadow: 0 8px 40px rgba(0, 0, 0, 0.2);
+            --glass-bg: rgba(255, 255, 255, 0.10);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --glass-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
             --radius: 20px;
         }
 
@@ -43,9 +43,9 @@
         body {
             background: var(--dark);
             background-image:
-                radial-gradient(ellipse at 10% 20%, rgba(75, 110, 255, 0.15) 0%, transparent 50%),
-                radial-gradient(ellipse at 90% 80%, rgba(171, 124, 255, 0.12) 0%, transparent 50%),
-                radial-gradient(ellipse at 50% 50%, rgba(0, 212, 255, 0.06) 0%, transparent 70%);
+                radial-gradient(ellipse at 10% 20%, rgba(75, 110, 255, 0.12) 0%, transparent 50%),
+                radial-gradient(ellipse at 90% 80%, rgba(171, 124, 255, 0.10) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(0, 212, 255, 0.05) 0%, transparent 70%);
             min-height: 100vh;
             padding: 0;
             margin: 0;
@@ -59,33 +59,33 @@
             backdrop-filter: blur(24px) saturate(180%);
             -webkit-backdrop-filter: blur(24px) saturate(180%);
             border: 1px solid var(--glass-border);
-            box-shadow: var(--glass-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            box-shadow: var(--glass-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.06);
             border-radius: var(--radius);
         }
 
         .glass-heavy {
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.06);
             backdrop-filter: blur(32px) saturate(200%);
             -webkit-backdrop-filter: blur(32px) saturate(200%);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            box-shadow: 0 8px 48px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 48px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.04);
             border-radius: var(--radius);
         }
 
         .glass-card {
-            background: rgba(255, 255, 255, 0.06);
+            background: rgba(255, 255, 255, 0.04);
             backdrop-filter: blur(16px) saturate(180%);
             -webkit-backdrop-filter: blur(16px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
             border-radius: 16px;
             transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
         .glass-card:hover {
             transform: translateY(-3px);
-            border-color: rgba(0, 212, 255, 0.2);
-            box-shadow: 0 12px 48px rgba(75, 110, 255, 0.10);
+            border-color: rgba(0, 212, 255, 0.15);
+            box-shadow: 0 12px 48px rgba(75, 110, 255, 0.08);
         }
 
         /* ===== TYPOGRAPHY ===== */
@@ -105,20 +105,20 @@
             letter-spacing: -0.01em;
         }
         .stinger {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.12em;
             color: var(--cyan);
-            background: rgba(0, 212, 255, 0.10);
+            background: rgba(0, 212, 255, 0.08);
             padding: 0.2rem 0.8rem;
             border-radius: 9999px;
             display: inline-block;
-            border: 1px solid rgba(0, 212, 255, 0.15);
+            border: 1px solid rgba(0, 212, 255, 0.08);
         }
         .body-text {
             font-size: 0.95rem;
-            color: rgba(255, 255, 255, 0.65);
+            color: rgba(255, 255, 255, 0.55);
             line-height: 1.7;
         }
 
@@ -132,7 +132,7 @@
             font-size: 0.875rem;
             border: none;
             transition: all 0.25s ease;
-            box-shadow: 0 4px 20px rgba(75, 110, 255, 0.3);
+            box-shadow: 0 4px 20px rgba(75, 110, 255, 0.25);
             cursor: pointer;
             display: inline-flex;
             align-items: center;
@@ -140,13 +140,13 @@
         }
         .btn-primary:hover {
             transform: scale(0.97);
-            box-shadow: 0 6px 28px rgba(75, 110, 255, 0.4);
+            box-shadow: 0 6px 28px rgba(75, 110, 255, 0.35);
         }
 
         .btn-secondary {
             background: rgba(255, 255, 255, 0.06);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             color: #fff;
             padding: 0.6rem 1.6rem;
             border-radius: 14px;
@@ -211,11 +211,11 @@
             font-weight: 700;
             padding: 0.2rem 0.8rem;
             border-radius: 9999px;
-            background: rgba(75, 110, 255, 0.15);
+            background: rgba(75, 110, 255, 0.12);
             color: var(--cyan);
             letter-spacing: 0.02em;
             backdrop-filter: blur(4px);
-            border: 1px solid rgba(75, 110, 255, 0.15);
+            border: 1px solid rgba(75, 110, 255, 0.08);
         }
         .tag-pill.all {
             background: linear-gradient(135deg, var(--blue), var(--purple));
@@ -233,29 +233,29 @@
             backdrop-filter: blur(4px);
         }
         .status-badge.pending {
-            background: rgba(251, 191, 36, 0.15);
+            background: rgba(251, 191, 36, 0.12);
             color: #fbbf24;
-            border: 1px solid rgba(251, 191, 36, 0.15);
+            border: 1px solid rgba(251, 191, 36, 0.08);
         }
         .status-badge.in_progress {
-            background: rgba(75, 110, 255, 0.15);
+            background: rgba(75, 110, 255, 0.12);
             color: var(--blue);
-            border: 1px solid rgba(75, 110, 255, 0.15);
+            border: 1px solid rgba(75, 110, 255, 0.08);
         }
         .status-badge.done {
-            background: rgba(124, 255, 203, 0.12);
+            background: rgba(124, 255, 203, 0.10);
+            color: var(--mint);
+            border: 1px solid rgba(124, 255, 203, 0.08);
+        }
+        .status-badge.approved {
+            background: rgba(124, 255, 203, 0.15);
             color: var(--mint);
             border: 1px solid rgba(124, 255, 203, 0.12);
         }
-        .status-badge.approved {
-            background: rgba(124, 255, 203, 0.18);
-            color: var(--mint);
-            border: 1px solid rgba(124, 255, 203, 0.2);
-        }
         .status-badge.archived {
-            background: rgba(255, 255, 255, 0.05);
-            color: rgba(255, 255, 255, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.04);
+            color: rgba(255, 255, 255, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.04);
         }
 
         .deadline-warning {
@@ -293,7 +293,7 @@
 
         /* ===== COUNTDOWN ===== */
         .countdown-box {
-            background: rgba(255, 255, 255, 0.06);
+            background: rgba(255, 255, 255, 0.04);
             backdrop-filter: blur(12px);
             border-radius: 16px;
             padding: 0.4rem 1rem;
@@ -302,10 +302,10 @@
             display: inline-flex;
             align-items: center;
             gap: 0.4rem;
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.04);
         }
         .countdown-box span {
-            background: rgba(255, 255, 255, 0.06);
+            background: rgba(255, 255, 255, 0.04);
             backdrop-filter: blur(4px);
             padding: 0.15rem 0.5rem;
             border-radius: 8px;
@@ -315,7 +315,7 @@
             font-variant-numeric: tabular-nums;
         }
         .countdown-box .label {
-            color: rgba(255, 255, 255, 0.4);
+            color: rgba(255, 255, 255, 0.25);
             font-size: 0.7rem;
             font-weight: 400;
         }
@@ -337,8 +337,8 @@
         select,
         textarea {
             transition: all 0.2s ease;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(8px);
             border-radius: 14px;
             padding: 0.75rem 1rem;
@@ -348,14 +348,14 @@
         }
         input::placeholder,
         textarea::placeholder {
-            color: rgba(255, 255, 255, 0.3);
+            color: rgba(255, 255, 255, 0.2);
         }
         input:focus,
         select:focus,
         textarea:focus {
             outline: none;
             border-color: var(--cyan);
-            box-shadow: 0 0 0 4px rgba(0, 212, 255, 0.08);
+            box-shadow: 0 0 0 4px rgba(0, 212, 255, 0.06);
             background: rgba(255, 255, 255, 0.06);
         }
         select option {
@@ -395,20 +395,20 @@
             transform: translateY(20px) scale(0.96);
             transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             pointer-events: none;
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.04);
         }
         .toast.show {
             opacity: 1;
             transform: translateY(0) scale(1);
         }
         .toast.success {
-            background: rgba(124, 255, 203, 0.15);
-            border-color: rgba(124, 255, 203, 0.2);
+            background: rgba(124, 255, 203, 0.12);
+            border-color: rgba(124, 255, 203, 0.12);
             color: var(--mint);
         }
         .toast.error {
-            background: rgba(239, 68, 68, 0.15);
-            border-color: rgba(239, 68, 68, 0.2);
+            background: rgba(239, 68, 68, 0.12);
+            border-color: rgba(239, 68, 68, 0.12);
             color: #fca5a5;
         }
 
@@ -416,7 +416,7 @@
         .xp-bar {
             height: 4px;
             border-radius: 9999px;
-            background: rgba(255, 255, 255, 0.06);
+            background: rgba(255, 255, 255, 0.04);
             overflow: hidden;
         }
         .xp-bar-fill {
@@ -435,17 +435,17 @@
             align-items: center;
             justify-content: center;
             font-size: 1rem;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.04);
             backdrop-filter: blur(4px);
             transition: all 0.3s ease;
         }
         .badge-icon.earned {
-            background: linear-gradient(135deg, rgba(124, 255, 203, 0.15), rgba(0, 212, 255, 0.10));
-            border-color: rgba(124, 255, 203, 0.2);
+            background: linear-gradient(135deg, rgba(124, 255, 203, 0.12), rgba(0, 212, 255, 0.08));
+            border-color: rgba(124, 255, 203, 0.12);
         }
         .badge-icon.locked {
-            opacity: 0.3;
+            opacity: 0.25;
             filter: grayscale(0.8);
         }
 
@@ -460,67 +460,103 @@
             z-index: 9999;
         }
 
-        /* ===== CELEBRATION OVERLAY ===== */
-        .celebration-text {
+        /* ===== CELEBRATION OVERLAY (POP-UP) ===== */
+        .celebration-popup {
             position: fixed;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%) scale(0.5);
-            font-size: 2.5rem;
-            font-weight: 900;
-            color: white;
-            text-shadow: 0 4px 40px rgba(0, 0, 0, 0.3);
+            transform: translate(-50%, -50%) scale(0.7);
+            background: rgba(10, 14, 39, 0.85);
+            backdrop-filter: blur(32px) saturate(200%);
+            -webkit-backdrop-filter: blur(32px) saturate(200%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            border-radius: 32px;
+            padding: 2.5rem 3rem;
             z-index: 10000;
             opacity: 0;
             pointer-events: none;
-            transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
             text-align: center;
-            background: rgba(10, 14, 39, 0.6);
-            backdrop-filter: blur(24px);
-            padding: 2rem 3rem;
-            border-radius: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            max-width: 90%;
+            width: 420px;
         }
-        .celebration-text.show {
+        .celebration-popup.show {
             opacity: 1;
             transform: translate(-50%, -50%) scale(1);
+            pointer-events: auto;
         }
-        .celebration-text .sub {
-            font-size: 0.9rem;
-            font-weight: 500;
-            opacity: 0.6;
-            display: block;
-            margin-top: 0.5rem;
+        .celebration-popup .icon {
+            font-size: 3.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .celebration-popup .title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 0.25rem;
+        }
+        .celebration-popup .sub {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+        .celebration-popup .xp-gain {
+            display: inline-block;
+            background: rgba(124, 255, 203, 0.10);
+            border: 1px solid rgba(124, 255, 203, 0.10);
+            border-radius: 9999px;
+            padding: 0.3rem 1.2rem;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--mint);
+            margin-top: 0.75rem;
+        }
+        .celebration-popup .btn-close-popup {
+            margin-top: 1.25rem;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: #fff;
+            padding: 0.5rem 2rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .celebration-popup .btn-close-popup:hover {
+            background: rgba(255, 255, 255, 0.12);
         }
 
         /* ===== RESPONSIVE ===== */
         @media (max-width: 640px) {
             .countdown-box {
-                font-size: 0.75rem;
-                padding: 0.3rem 0.8rem;
+                font-size: 0.7rem;
+                padding: 0.2rem 0.6rem;
             }
             .countdown-box span {
-                min-width: 1.6rem;
-                padding: 0.1rem 0.3rem;
+                min-width: 1.4rem;
+                padding: 0.05rem 0.3rem;
             }
-            .celebration-text {
-                font-size: 1.8rem;
-                padding: 1.5rem 2rem;
+            .celebration-popup {
+                padding: 2rem 1.5rem;
+                width: 90%;
             }
-            .celebration-text .sub {
-                font-size: 0.8rem;
+            .celebration-popup .title {
+                font-size: 1.4rem;
             }
-            .glass {
-                border-radius: 16px;
-            }
-            .glass-card {
-                border-radius: 14px;
+            .celebration-popup .icon {
+                font-size: 2.8rem;
             }
             .heading {
                 font-size: 1.5rem;
             }
             .subheading {
                 font-size: 1rem;
+            }
+            .glass {
+                border-radius: 16px;
+            }
+            .glass-card {
+                border-radius: 14px;
             }
         }
 
@@ -532,7 +568,7 @@
             background: transparent;
         }
         ::-webkit-scrollbar-thumb {
-            background: rgba(0, 212, 255, 0.2);
+            background: rgba(0, 212, 255, 0.15);
             border-radius: 9999px;
         }
 
@@ -542,7 +578,7 @@
         }
         .task-card:hover {
             transform: translateY(-3px);
-            border-color: rgba(0, 212, 255, 0.15);
+            border-color: rgba(0, 212, 255, 0.10);
         }
         .task-card.completing {
             animation: taskComplete 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -552,68 +588,58 @@
                 transform: scale(1);
             }
             30% {
-                transform: scale(1.03);
-                background: rgba(124, 255, 203, 0.05);
-                border-color: rgba(124, 255, 203, 0.2);
+                transform: scale(1.02);
+                background: rgba(124, 255, 203, 0.04);
+                border-color: rgba(124, 255, 203, 0.12);
             }
             100% {
                 transform: scale(1);
             }
         }
 
-        /* ===== INFO GRID ===== */
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
+        /* ===== INFO LINKS ===== */
+        .info-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
         }
-        .info-item {
-            padding: 1rem;
+        .info-links a {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
             background: rgba(255, 255, 255, 0.03);
             border-radius: 12px;
             border: 1px solid rgba(255, 255, 255, 0.04);
-        }
-        .info-item .label {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: rgba(255, 255, 255, 0.3);
-        }
-        .info-item .value {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: all 0.2s;
             font-size: 0.95rem;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.9);
-            margin-top: 0.2rem;
         }
-
-        /* Timeline */
-        .timeline-item {
+        .info-links a:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(0, 212, 255, 0.10);
+            color: #fff;
+        }
+        .info-links a .icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
             display: flex;
-            gap: 1rem;
-            padding: 0.75rem 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-        }
-        .timeline-item:last-child {
-            border-bottom: none;
-        }
-        .timeline-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            margin-top: 0.4rem;
+            align-items: center;
+            justify-content: center;
+            background: rgba(75, 110, 255, 0.08);
+            color: var(--cyan);
+            font-size: 1rem;
             flex-shrink: 0;
         }
-        .timeline-dot.blue {
-            background: var(--blue);
+        .info-links a .label {
+            font-weight: 500;
         }
-        .timeline-dot.cyan {
-            background: var(--cyan);
-        }
-        .timeline-dot.mint {
-            background: var(--mint);
-        }
-        .timeline-dot.purple {
-            background: var(--purple);
+        .info-links a .desc {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.25);
+            margin-left: auto;
         }
     </style>
 </head>
@@ -622,11 +648,13 @@
     <!-- ===== CONFETTI CANVAS ===== -->
     <canvas id="confettiCanvas"></canvas>
 
-    <!-- ===== CELEBRATION TEXT ===== -->
-    <div id="celebrationText" class="celebration-text">
-        🎉
-        <span id="celebrationMsg">Luar Biasa!</span>
-        <span class="sub" id="celebrationSub">+10 XP 🏆</span>
+    <!-- ===== CELEBRATION POP-UP ===== -->
+    <div id="celebrationPopup" class="celebration-popup">
+        <div class="icon" id="popupIcon">🎉</div>
+        <div class="title" id="popupTitle">Luar Biasa!</div>
+        <div class="sub" id="popupSub">Semangat terus! 🔥</div>
+        <div class="xp-gain" id="popupXp">+10 XP</div>
+        <button class="btn-close-popup" onclick="closePopup()">Lanjutkan</button>
     </div>
 
     <!-- ===== TOAST ===== -->
@@ -638,21 +666,21 @@
             <div class="text-center mb-6">
                 <div class="text-5xl mb-3">🧬</div>
                 <h1 class="heading text-3xl">IMD 2026</h1>
-                <p class="text-sm text-white/40 mt-1">Task Tracker · Kepanitiaan</p>
-                <div class="mt-3 flex items-center justify-center gap-2 text-xs text-white/30">
+                <p class="text-sm text-white/30 mt-1">Task Tracker · Kepanitiaan</p>
+                <div class="mt-3 flex items-center justify-center gap-2 text-xs text-white/20">
                     <i class="fas fa-calendar-alt"></i>
-                    <span>14 November 2025</span>
+                    <span>14 November 2026</span>
                     <span class="w-px h-3 bg-white/10"></span>
                     <span>🏛️ ITB Ganesha</span>
                 </div>
             </div>
             <form id="loginForm" onsubmit="loginWithDivision(event)" class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium text-white/60 mb-1.5">Kode Divisi</label>
+                    <label class="block text-sm font-medium text-white/50 mb-1.5">Kode Divisi</label>
                     <input id="loginCode" type="text" required placeholder="Contoh: CHR, HR, FIN" class="w-full" />
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-white/60 mb-1.5">Password</label>
+                    <label class="block text-sm font-medium text-white/50 mb-1.5">Password</label>
                     <input id="loginPassword" type="password" required placeholder="Masukkan password" class="w-full" />
                 </div>
                 <button type="submit" class="btn-primary w-full justify-center py-3 text-base">
@@ -660,10 +688,6 @@
                 </button>
                 <div id="loginError" class="text-red-400 text-sm text-center hidden"></div>
             </form>
-            <div class="mt-4 text-[10px] text-white/20 text-center">
-                <span class="block">🔑 CHR / chair123 · HR / hr123 · FIN / fin123</span>
-                <span class="block text-white/10">Semua divisi: <kode> / <kode>123</span>
-            </div>
         </div>
     </div>
 
@@ -677,7 +701,7 @@
                     <div class="text-3xl">🧬</div>
                     <div>
                         <h1 class="heading text-xl md:text-2xl">IMD 2026</h1>
-                        <p class="text-xs text-white/40 flex items-center gap-2">
+                        <p class="text-xs text-white/30 flex items-center gap-2">
                             <span>🏆 The Great Microbial Odyssey</span>
                             <span class="stinger text-[8px]">#IMD2026</span>
                         </p>
@@ -696,16 +720,16 @@
                     <!-- XP -->
                     <div class="flex items-center gap-2 glass px-3 py-1.5 rounded-full">
                         <span class="text-xs font-bold text-cyan">⭐</span>
-                        <span id="userPoints" class="text-xs font-bold text-white/80">0 XP</span>
+                        <span id="userPoints" class="text-xs font-bold text-white/70">0 XP</span>
                         <span class="w-px h-3 bg-white/10"></span>
-                        <span id="userLevel" class="text-xs font-bold text-white/80">Lv.1</span>
+                        <span id="userLevel" class="text-xs font-bold text-white/70">Lv.1</span>
                     </div>
 
                     <!-- User -->
                     <div class="flex items-center gap-2 glass px-3 py-1.5 rounded-full">
                         <i class="fas fa-user-circle text-cyan"></i>
-                        <span id="userRoleDisplay" class="text-xs font-medium text-white/80">Ketua</span>
-                        <button onclick="logout()" class="text-[10px] text-red-400/60 hover:text-red-400 underline ml-0.5">logout</button>
+                        <span id="userRoleDisplay" class="text-xs font-medium text-white/70">Ketua</span>
+                        <button onclick="logout()" class="text-[10px] text-red-400/50 hover:text-red-400 underline ml-0.5">logout</button>
                     </div>
 
                     <button onclick="openTaskModal()" id="btnAddTask" class="btn-primary text-sm py-2 px-4">
@@ -716,16 +740,16 @@
 
             <!-- XP BAR -->
             <div class="mt-3 flex items-center gap-3">
-                <span class="text-[10px] font-bold text-white/30 w-12">Lv.<span id="levelNum">1</span></span>
+                <span class="text-[10px] font-bold text-white/20 w-12">Lv.<span id="levelNum">1</span></span>
                 <div class="xp-bar flex-1">
                     <div class="xp-bar-fill" id="xpBarFill" style="width:0%"></div>
                 </div>
-                <span class="text-[10px] font-bold text-white/30" id="xpText">0 / 100 XP</span>
+                <span class="text-[10px] font-bold text-white/20" id="xpText">0 / 100 XP</span>
             </div>
 
             <!-- BADGES -->
             <div class="mt-2 flex gap-1.5 flex-wrap items-center" id="badgeContainer">
-                <span class="text-[10px] text-white/20 mr-1">🏅</span>
+                <span class="text-[10px] text-white/15 mr-1">🏅</span>
             </div>
         </header>
 
@@ -747,15 +771,15 @@
 
         <!-- ===== FILTER ===== -->
         <div class="glass p-3 md:p-4 mb-5 flex flex-wrap items-center gap-2">
-            <div class="flex items-center gap-1.5 text-xs text-white/40 mr-1">
+            <div class="flex items-center gap-1.5 text-xs text-white/30 mr-1">
                 <i class="fas fa-tags"></i>
                 <span>Divisi:</span>
             </div>
             <div id="filterContainer" class="flex flex-wrap gap-1"></div>
-            <div class="ml-auto flex items-center gap-2 text-xs text-white/30">
+            <div class="ml-auto flex items-center gap-2 text-xs text-white/20">
                 <span>|</span>
-                <span id="taskCount" class="text-white/60 font-medium">0 tugas</span>
-                <button onclick="refreshData()" class="text-white/20 hover:text-white/60 transition">
+                <span id="taskCount" class="text-white/50 font-medium">0 tugas</span>
+                <button onclick="refreshData()" class="text-white/15 hover:text-white/50 transition">
                     <i class="fas fa-sync-alt text-xs"></i>
                 </button>
             </div>
@@ -764,9 +788,9 @@
         <!-- ===== TASK LIST ===== -->
         <div id="taskListContainer" class="space-y-3 fade-in"></div>
         <div id="emptyState" class="hidden text-center py-16">
-            <div class="text-5xl text-white/10 mb-4">📭</div>
-            <h3 class="text-white/40 font-medium">✨ Belum ada tugas</h3>
-            <p class="text-white/20 text-sm mt-1">Buat tugas baru dengan tombol di atas</p>
+            <div class="text-5xl text-white/8 mb-4">📭</div>
+            <h3 class="text-white/30 font-medium">✨ Belum ada tugas</h3>
+            <p class="text-white/15 text-sm mt-1">Buat tugas baru dengan tombol di atas</p>
         </div>
 
         <!-- ===== BADGES TAB ===== -->
@@ -778,121 +802,46 @@
         <!-- ===== INFO TAB ===== -->
         <div id="infoTabContent" class="hidden glass p-6 space-y-6">
             <div>
-                <span class="stinger">TENTANG ACARA</span>
-                <h2 class="heading text-2xl mt-2">International Microorganism Day 2026</h2>
-                <p class="body-text mt-2 max-w-2xl">
-                    <strong class="text-white/80">"The Great Microbial Odyssey: Decoding the Earth's Dark Matter to Orchestrate a Sustainable Future"</strong>
-                    — Mengajak seluruh elemen masyarakat untuk mengeksplorasi keberagaman mikroorganisme yang hingga saat ini sebagian besar masih belum teridentifikasi (microbial dark matter).
-                </p>
+                <span class="stinger">TAUTAN PENTING</span>
+                <h2 class="heading text-2xl mt-2">Informasi & Sumber Daya</h2>
+                <p class="body-text mt-2">Akses semua tautan penting terkait IMD 2026 di sini.</p>
             </div>
 
-            <div class="info-grid">
-                <div class="info-item">
-                    <div class="label">📅 Tanggal</div>
-                    <div class="value">14–15 November 2025</div>
-                </div>
-                <div class="info-item">
-                    <div class="label">📍 Tempat</div>
-                    <div class="value">ITB Kampus Ganesha</div>
-                </div>
-                <div class="info-item">
-                    <div class="label">👥 Peserta</div>
-                    <div class="value">SMA/sederajat & Mahasiswa S1</div>
-                </div>
-                <div class="info-item">
-                    <div class="label">🎯 Tema</div>
-                    <div class="value" style="font-size:0.8rem;">Decoding Earth's Dark Matter</div>
-                </div>
+            <div class="info-links">
+                <a href="#" target="_blank">
+                    <span class="icon"><i class="fas fa-globe"></i></span>
+                    <span class="label">Website Resmi IMD 2026</span>
+                    <span class="desc">imd.itb.ac.id</span>
+                </a>
+                <a href="#" target="_blank">
+                    <span class="icon"><i class="fab fa-instagram"></i></span>
+                    <span class="label">Instagram @imd.itb</span>
+                    <span class="desc">Ikuti update terbaru</span>
+                </a>
+                <a href="#" target="_blank">
+                    <span class="icon"><i class="fab fa-tiktok"></i></span>
+                    <span class="label">TikTok @imd.itb</span>
+                    <span class="desc">Konten seru seputar mikroba</span>
+                </a>
+                <a href="#" target="_blank">
+                    <span class="icon"><i class="fab fa-twitter"></i></span>
+                    <span class="label">X @Archaea_ITB</span>
+                    <span class="desc">Twitter resmi</span>
+                </a>
+                <a href="#" target="_blank">
+                    <span class="icon"><i class="fas fa-file-alt"></i></span>
+                    <span class="label">Proposal IMD 2026</span>
+                    <span class="desc">Dokumen lengkap</span>
+                </a>
+                <a href="#" target="_blank">
+                    <span class="icon"><i class="fas fa-users"></i></span>
+                    <span class="label">Pendaftaran Kompetisi</span>
+                    <span class="desc">Daftar sekarang!</span>
+                </a>
             </div>
 
-            <div>
-                <span class="stinger">RANGKAIAN ACARA</span>
-                <div class="mt-3 space-y-1">
-                    <div class="timeline-item">
-                        <div class="timeline-dot purple"></div>
-                        <div>
-                            <div class="text-white/80 font-semibold text-sm">Pre-Event · Petri Dish Art</div>
-                            <div class="text-white/30 text-xs">26 September 2026 · Lab SITH ITB</div>
-                        </div>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-dot blue"></div>
-                        <div>
-                            <div class="text-white/80 font-semibold text-sm">Opening Ceremony</div>
-                            <div class="text-white/30 text-xs">14 November 2026 · Aula Barat ITB</div>
-                        </div>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-dot cyan"></div>
-                        <div>
-                            <div class="text-white/80 font-semibold text-sm">Final Pitching · SPC & NEC</div>
-                            <div class="text-white/30 text-xs">14 November 2026 · Ruang Seminar & Sidang SITH</div>
-                        </div>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-dot mint"></div>
-                        <div>
-                            <div class="text-white/80 font-semibold text-sm">Microbiology Olympiad Final</div>
-                            <div class="text-white/30 text-xs">14 November 2026 · Lab SITH ITB</div>
-                        </div>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-dot purple"></div>
-                        <div>
-                            <div class="text-white/80 font-semibold text-sm">ITB Day · Fun Games & Eksplorasi</div>
-                            <div class="text-white/30 text-xs">15 November 2026 · Landmark ITB</div>
-                        </div>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-dot blue"></div>
-                        <div>
-                            <div class="text-white/80 font-semibold text-sm">Exhibition & Symposium</div>
-                            <div class="text-white/30 text-xs">15 November 2026 · Multipurpose Hall CRCS</div>
-                        </div>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-dot cyan"></div>
-                        <div>
-                            <div class="text-white/80 font-semibold text-sm">Gala Dinner & Awarding Night</div>
-                            <div class="text-white/30 text-xs">15 November 2026 · Multipurpose Hall CRCS</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div>
-                <span class="stinger">KOMPETISI</span>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-3">
-                    <div class="info-item">
-                        <div class="value text-cyan">🧪 Microbiology Olympiad</div>
-                        <div class="text-white/30 text-xs">SMA/sederajat · Teori & Praktik</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="value text-mint">🔬 Science Project Competition</div>
-                        <div class="text-white/30 text-xs">SMA/sederajat · Prototype Inovasi</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="value text-purple">📝 National Essay Competition</div>
-                        <div class="text-white/30 text-xs">Mahasiswa S1 · Esai Ilmiah</div>
-                    </div>
-                </div>
-                <div class="text-white/20 text-xs mt-2">
-                    <i class="fas fa-calendar-alt"></i> Registrasi: 1–31 Juli 2026
-                </div>
-            </div>
-
-            <div>
-                <span class="stinger">KEPANITIAAN</span>
-                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 mt-3 text-xs">
-                    <div><span class="text-white/30">Project Manager</span><br><span class="text-white/70">Dzakiy Muhammad Urwah</span></div>
-                    <div><span class="text-white/30">Director of Finance</span><br><span class="text-white/70">Ida Ayu Purnabawati</span></div>
-                    <div><span class="text-white/30">Director of Admin</span><br><span class="text-white/70">Nathanael Manzo</span></div>
-                    <div><span class="text-white/30">Director of HR</span><br><span class="text-white/70">Celeste Widiastuti</span></div>
-                    <div><span class="text-white/30">Director of Event</span><br><span class="text-white/70">Lourdes Kayla</span></div>
-                    <div><span class="text-white/30">Director of Competition</span><br><span class="text-white/70">M. Kevin Rizsya</span></div>
-                    <div><span class="text-white/30">Director of Operational</span><br><span class="text-white/70">M. Raia Rafid</span></div>
-                    <div><span class="text-white/30">Director of Relation</span><br><span class="text-white/70">Hazkia Adhwaa</span></div>
-                </div>
+            <div class="text-xs text-white/20 mt-2">
+                <i class="fas fa-calendar-alt"></i> Jadwal: 14-15 November 2026 · ITB Ganesha
             </div>
         </div>
 
@@ -905,32 +854,32 @@
                     <h2 id="modalTitle" class="subheading text-xl">
                         <i class="fas fa-plus-circle text-cyan mr-2"></i> Tugas Baru
                     </h2>
-                    <button onclick="closeTaskModal()" class="text-white/40 hover:text-white/80 text-2xl">&times;</button>
+                    <button onclick="closeTaskModal()" class="text-white/30 hover:text-white/70 text-2xl">&times;</button>
                 </div>
                 <form id="taskForm" onsubmit="saveTask(event)" class="space-y-4">
                     <input type="hidden" id="taskId" value="" />
                     <div>
-                        <label class="block text-sm font-medium text-white/60 mb-1.5">Judul Tugas <span class="text-red-400">*</span></label>
+                        <label class="block text-sm font-medium text-white/50 mb-1.5">Judul Tugas <span class="text-red-400">*</span></label>
                         <input id="taskTitle" type="text" required placeholder="Contoh: Finalisasi Proposal" />
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-white/60 mb-1.5">Deskripsi</label>
+                        <label class="block text-sm font-medium text-white/50 mb-1.5">Deskripsi</label>
                         <textarea id="taskDesc" rows="2" placeholder="Detail tugas..."></textarea>
                     </div>
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="block text-sm font-medium text-white/60 mb-1.5">Divisi <span class="text-red-400">*</span></label>
+                            <label class="block text-sm font-medium text-white/50 mb-1.5">Divisi <span class="text-red-400">*</span></label>
                             <select id="taskDivision" required>
                                 <option value="">Pilih divisi</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-white/60 mb-1.5">Deadline <span class="text-red-400">*</span></label>
+                            <label class="block text-sm font-medium text-white/50 mb-1.5">Deadline <span class="text-red-400">*</span></label>
                             <input id="taskDeadline" type="date" required />
                         </div>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-white/60 mb-1.5">Ditugaskan ke</label>
+                        <label class="block text-sm font-medium text-white/50 mb-1.5">Ditugaskan ke</label>
                         <input id="taskAssigned" type="text" placeholder="Nama anggota" />
                     </div>
                     <div class="flex justify-end gap-3 pt-2">
@@ -948,14 +897,14 @@
             <div class="modal-content glass-heavy w-full max-w-md p-6" style="border-radius: 28px;">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="subheading text-xl"><i class="fas fa-link text-cyan mr-2"></i> Kirim Bukti</h2>
-                    <button onclick="closeEvidenceModal()" class="text-white/40 hover:text-white/80 text-2xl">&times;</button>
+                    <button onclick="closeEvidenceModal()" class="text-white/30 hover:text-white/70 text-2xl">&times;</button>
                 </div>
                 <form onsubmit="submitEvidence(event)" class="space-y-4">
                     <input type="hidden" id="evidenceTaskId" value="" />
                     <div>
-                        <label class="block text-sm font-medium text-white/60 mb-1.5">Bukti (Link atau Tulisan) <span class="text-red-400">*</span></label>
+                        <label class="block text-sm font-medium text-white/50 mb-1.5">Bukti (Link atau Tulisan) <span class="text-red-400">*</span></label>
                         <input id="evidenceLink" type="text" required placeholder="https://... atau deskripsi bukti" />
-                        <p class="text-xs text-white/20 mt-1.5">📎 Masukkan link dokumen, foto, atau tulis keterangan bukti</p>
+                        <p class="text-xs text-white/15 mt-1.5">📎 Masukkan link dokumen, foto, atau tulis keterangan bukti</p>
                     </div>
                     <div class="flex justify-end gap-3 pt-2">
                         <button type="button" onclick="closeEvidenceModal()" class="btn-secondary">Batal</button>
@@ -972,12 +921,12 @@
             <div class="modal-content glass-heavy w-full max-w-md p-6" style="border-radius: 28px;">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="subheading text-xl"><i class="fas fa-check-circle text-mint mr-2"></i> QC Approval</h2>
-                    <button onclick="closeApprovalModal()" class="text-white/40 hover:text-white/80 text-2xl">&times;</button>
+                    <button onclick="closeApprovalModal()" class="text-white/30 hover:text-white/70 text-2xl">&times;</button>
                 </div>
-                <div class="space-y-3 text-sm text-white/60">
+                <div class="space-y-3 text-sm text-white/50">
                     <p>Apakah tugas ini sudah sesuai dan layak <strong class="text-white/80">disetujui</strong>?</p>
                     <div class="glass p-3 rounded-xl text-xs">
-                        <p id="approvalTaskPreview" class="text-white/80">—</p>
+                        <p id="approvalTaskPreview" class="text-white/70">—</p>
                     </div>
                     <div class="flex gap-3 pt-2">
                         <button onclick="approveTask(false)" class="btn-danger flex-1">
@@ -1131,7 +1080,7 @@
             }
         }
 
-        function fireConfetti(count = 100) {
+        function fireConfetti(count = 80) {
             if (confettiRunning) return;
             confettiRunning = true;
             for (let i = 0; i < count; i++) confettiPieces.push(new ConfettiPiece());
@@ -1157,15 +1106,30 @@
         }
 
         // ============================================================
-        //  CELEBRATION
+        //  CELEBRATION POP-UP (GAMIFIKASI)
         // ============================================================
-        function showCelebration(msg, sub = '+10 XP 🏆') {
-            const el = document.getElementById('celebrationText');
-            document.getElementById('celebrationMsg').textContent = msg;
-            document.getElementById('celebrationSub').textContent = sub;
-            el.classList.add('show');
-            fireConfetti(120);
-            setTimeout(() => el.classList.remove('show'), 2800);
+        let popupTimeout = null;
+
+        function showCelebrationPopup(icon, title, sub, xpGain = '+10 XP') {
+            const popup = document.getElementById('celebrationPopup');
+            document.getElementById('popupIcon').textContent = icon;
+            document.getElementById('popupTitle').textContent = title;
+            document.getElementById('popupSub').textContent = sub;
+            document.getElementById('popupXp').textContent = xpGain;
+            popup.classList.add('show');
+            fireConfetti(100);
+
+            // Auto close after 5 seconds if not clicked
+            if (popupTimeout) clearTimeout(popupTimeout);
+            popupTimeout = setTimeout(() => {
+                closePopup();
+            }, 6000);
+        }
+
+        function closePopup() {
+            document.getElementById('celebrationPopup').classList.remove('show');
+            if (popupTimeout) { clearTimeout(popupTimeout);
+                popupTimeout = null; }
         }
 
         // ============================================================
@@ -1221,7 +1185,6 @@
                 if (unlocked && !userBadges.includes(badge.id)) {
                     userBadges.push(badge.id);
                     showToast(`🏅 Badge baru: ${badge.icon} ${badge.name}!`, 'success');
-                    setTimeout(() => showCelebration(`🏅 ${badge.icon} ${badge.name}!`, badge.desc), 400);
                 }
             }
             localStorage.setItem('userBadges', JSON.stringify(userBadges));
@@ -1230,17 +1193,19 @@
 
         function addXP(amount = 10) {
             userXP += amount;
+            let leveledUp = false;
             while (userXP >= XP_PER_LEVEL) {
                 userXP -= XP_PER_LEVEL;
                 userLevel++;
+                leveledUp = true;
                 showToast(`🎉 Level up! Level ${userLevel} 🚀`, 'success');
-                setTimeout(() => showCelebration(`🎉 Level ${userLevel}!`, '🚀 Terus semangat!'), 400);
                 checkBadges();
             }
             localStorage.setItem('userXP', String(userXP));
             localStorage.setItem('userLevel', String(userLevel));
             updateXPUI();
             checkBadges();
+            return leveledUp;
         }
 
         function updateXPUI() {
@@ -1271,7 +1236,7 @@
             }
             if (earnedBadges.length === 0) {
                 const el = document.createElement('span');
-                el.className = 'text-[10px] text-white/20';
+                el.className = 'text-[10px] text-white/15';
                 el.textContent = 'Belum ada badge. Selesaikan tugas!';
                 container.appendChild(el);
             }
@@ -1281,11 +1246,11 @@
                 const earned = userBadges.includes(b.id);
                 const div = document.createElement('div');
                 div.className =
-                    `glass-card p-3 text-center ${earned ? 'border-cyan/20' : 'border-white/5 opacity-40'}`;
+                    `glass-card p-3 text-center ${earned ? 'border-cyan/15' : 'border-white/5 opacity-30'}`;
                 div.innerHTML = `
                     <div class="badge-icon ${earned ? 'earned' : 'locked'} mx-auto mb-1.5">${b.icon}</div>
-                    <div class="text-xs font-bold text-white/80">${b.name}</div>
-                    <div class="text-[10px] text-white/30">${b.desc}</div>
+                    <div class="text-xs font-bold text-white/70">${b.name}</div>
+                    <div class="text-[10px] text-white/25">${b.desc}</div>
                     ${earned ? '<span class="text-[10px] text-mint font-bold">✅</span>' : '<span class="text-[10px] text-white/10">🔒</span>'}
                 `;
                 grid.appendChild(div);
@@ -1313,30 +1278,30 @@
         updateCountdown();
 
         // ============================================================
-        //  MOCK DATA — 10 DIVISI DARI PROPOSAL
+        //  MOCK DATA — 10 DIVISI DENGAN PASSWORD BERBEDA
         // ============================================================
         function loadMockData() {
             if (allDivisions.length === 0) {
                 allDivisions = [
-                    { id: 'chr', code: 'CHR', name: 'Chairman', password: 'chair123', isChair: true },
-                    { id: 'hr', code: 'HR', name: 'Human Resources', password: 'hr123', kabidPassword: 'hrkabid',
+                    { id: 'chr', code: 'CHR', name: 'Chairman', password: 'imd2026', isChair: true },
+                    { id: 'hr', code: 'HR', name: 'Human Resources', password: 'archaea123', kabidPassword: 'kabidhr',
                         memberPassword: 'hr123', isChair: false },
-                    { id: 'fin', code: 'FIN', name: 'Finance', password: 'fin123', kabidPassword: 'finkabid',
-                        memberPassword: 'fin123', isChair: false },
-                    { id: 'adm', code: 'ADM', name: 'Administration', password: 'adm123', kabidPassword: 'admkabid',
-                        memberPassword: 'adm123', isChair: false },
-                    { id: 'evt', code: 'EVT', name: 'Event', password: 'evt123', kabidPassword: 'evtkabid',
-                        memberPassword: 'evt123', isChair: false },
-                    { id: 'cmp', code: 'CMP', name: 'Competitions', password: 'cmp123', kabidPassword: 'cmpkabid',
-                        memberPassword: 'cmp123', isChair: false },
-                    { id: 'ops', code: 'OPS', name: 'Operation', password: 'ops123', kabidPassword: 'opskabid',
-                        memberPassword: 'ops123', isChair: false },
-                    { id: 'str', code: 'STR', name: 'Strategic Relations', password: 'str123', kabidPassword: 'strkabid',
-                        memberPassword: 'str123', isChair: false },
-                    { id: 'crt', code: 'CRT', name: 'Creative', password: 'crt123', kabidPassword: 'crtkabid',
-                        memberPassword: 'crt123', isChair: false },
-                    { id: 'fld', code: 'FLD', name: 'Field', password: 'fld123', kabidPassword: 'fldkabid',
-                        memberPassword: 'fld123', isChair: false },
+                    { id: 'fin', code: 'FIN', name: 'Finance', password: 'microbe456', kabidPassword: 'kabidfin',
+                        memberPassword: 'fin456', isChair: false },
+                    { id: 'adm', code: 'ADM', name: 'Administration', password: 'sith789', kabidPassword: 'kabidadm',
+                        memberPassword: 'adm789', isChair: false },
+                    { id: 'evt', code: 'EVT', name: 'Event', password: 'odyssey321', kabidPassword: 'kabidevt',
+                        memberPassword: 'evt321', isChair: false },
+                    { id: 'cmp', code: 'CMP', name: 'Competitions', password: 'micro654', kabidPassword: 'kabidcmp',
+                        memberPassword: 'cmp654', isChair: false },
+                    { id: 'ops', code: 'OPS', name: 'Operation', password: 'darkmatter987', kabidPassword: 'kabidops',
+                        memberPassword: 'ops987', isChair: false },
+                    { id: 'str', code: 'STR', name: 'Strategic Relations', password: 'sustain234', kabidPassword: 'kabidstr',
+                        memberPassword: 'str234', isChair: false },
+                    { id: 'crt', code: 'CRT', name: 'Creative', password: 'art876', kabidPassword: 'kabidcrt',
+                        memberPassword: 'crt876', isChair: false },
+                    { id: 'fld', code: 'FLD', name: 'Field', password: 'field543', kabidPassword: 'kabidfld',
+                        memberPassword: 'fld543', isChair: false },
                 ];
             }
 
@@ -1478,25 +1443,25 @@
 
         async function seedDivisions() {
             const defaults = [
-                { code: 'CHR', name: 'Chairman', password: 'chair123', isChair: true },
-                { code: 'HR', name: 'Human Resources', password: 'hr123', isChair: false, kabidPassword: 'hrkabid',
+                { code: 'CHR', name: 'Chairman', password: 'imd2026', isChair: true },
+                { code: 'HR', name: 'Human Resources', password: 'archaea123', isChair: false, kabidPassword: 'kabidhr',
                     memberPassword: 'hr123' },
-                { code: 'FIN', name: 'Finance', password: 'fin123', isChair: false, kabidPassword: 'finkabid',
-                    memberPassword: 'fin123' },
-                { code: 'ADM', name: 'Administration', password: 'adm123', isChair: false, kabidPassword: 'admkabid',
-                    memberPassword: 'adm123' },
-                { code: 'EVT', name: 'Event', password: 'evt123', isChair: false, kabidPassword: 'evtkabid',
-                    memberPassword: 'evt123' },
-                { code: 'CMP', name: 'Competitions', password: 'cmp123', isChair: false, kabidPassword: 'cmpkabid',
-                    memberPassword: 'cmp123' },
-                { code: 'OPS', name: 'Operation', password: 'ops123', isChair: false, kabidPassword: 'opskabid',
-                    memberPassword: 'ops123' },
-                { code: 'STR', name: 'Strategic Relations', password: 'str123', isChair: false, kabidPassword: 'strkabid',
-                    memberPassword: 'str123' },
-                { code: 'CRT', name: 'Creative', password: 'crt123', isChair: false, kabidPassword: 'crtkabid',
-                    memberPassword: 'crt123' },
-                { code: 'FLD', name: 'Field', password: 'fld123', isChair: false, kabidPassword: 'fldkabid',
-                    memberPassword: 'fld123' },
+                { code: 'FIN', name: 'Finance', password: 'microbe456', isChair: false, kabidPassword: 'kabidfin',
+                    memberPassword: 'fin456' },
+                { code: 'ADM', name: 'Administration', password: 'sith789', isChair: false, kabidPassword: 'kabidadm',
+                    memberPassword: 'adm789' },
+                { code: 'EVT', name: 'Event', password: 'odyssey321', isChair: false, kabidPassword: 'kabidevt',
+                    memberPassword: 'evt321' },
+                { code: 'CMP', name: 'Competitions', password: 'micro654', isChair: false, kabidPassword: 'kabidcmp',
+                    memberPassword: 'cmp654' },
+                { code: 'OPS', name: 'Operation', password: 'darkmatter987', isChair: false, kabidPassword: 'kabidops',
+                    memberPassword: 'ops987' },
+                { code: 'STR', name: 'Strategic Relations', password: 'sustain234', isChair: false,
+                    kabidPassword: 'kabidstr', memberPassword: 'str234' },
+                { code: 'CRT', name: 'Creative', password: 'art876', isChair: false, kabidPassword: 'kabidcrt',
+                    memberPassword: 'crt876' },
+                { code: 'FLD', name: 'Field', password: 'field543', isChair: false, kabidPassword: 'kabidfld',
+                    memberPassword: 'fld543' },
             ];
             for (const d of defaults) {
                 await db.collection('divisions').add(d);
@@ -1515,7 +1480,7 @@
             $('loginScreen').classList.add('hidden');
             $('app').classList.add('visible');
 
-            const roleLabel = role === 'ketua' ? '👑 Ketua' : role === 'kabid' ? '📋 Kabid' : '👤 Anggota';
+            const roleLabel = role === 'ketua' ? '👑 Chairman' : role === 'kabid' ? '📋 Kabid' : '👤 Anggota';
             userRoleDisplay.textContent = `${roleLabel} (${code})`;
             btnAddTask.style.display = (role === 'anggota') ? 'none' : 'inline-flex';
 
@@ -1589,7 +1554,6 @@
             updateXPUI();
             renderBadges();
 
-            // Show/hide tabs
             const isInfo = currentTab === 'info';
             const isBadges = currentTab === 'badges';
             document.getElementById('infoTabContent').classList.toggle('hidden', !isInfo);
@@ -1690,7 +1654,7 @@
                     }
                 }
 
-                // Ketua
+                // Ketua (Chairman)
                 if (currentUserRole === 'ketua') {
                     if (task.status === 'done' && hasEvidence) {
                         actionsHtml +=
@@ -1732,12 +1696,12 @@
                                     <span class="${getStatusBadgeClass(task.status)}">${statusLabel}</span>
                                     ${deadlineBadge}
                                 </div>
-                                ${task.description ? `<p class="text-sm text-white/40 mb-1.5">${task.description}</p>` : ''}
-                                <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-white/30">
+                                ${task.description ? `<p class="text-sm text-white/35 mb-1.5">${task.description}</p>` : ''}
+                                <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-white/25">
                                     <span><i class="far fa-calendar-alt mr-1"></i> ${formatDate(task.deadline)}</span>
                                     ${task.assignedTo ? `<span><i class="far fa-user mr-1"></i> ${task.assignedTo}</span>` : ''}
                                     ${evidenceHtml}
-                                    ${task.status === 'done' && !hasEvidence ? `<span class="text-yellow-400/60 flex items-center gap-1"><i class="fas fa-exclamation-triangle"></i> Belum ada bukti</span>` : ''}
+                                    ${task.status === 'done' && !hasEvidence ? `<span class="text-yellow-400/50 flex items-center gap-1"><i class="fas fa-exclamation-triangle"></i> Belum ada bukti</span>` : ''}
                                 </div>
                             </div>
                             <div class="flex items-center gap-1.5 flex-wrap md:flex-nowrap">${actionsHtml}</div>
@@ -1789,7 +1753,7 @@
         // ============================================================
         function openTaskModal(taskId) {
             if (currentUserRole === 'anggota') {
-                showToast('Hanya Ketua & Kabid yang dapat menambah tugas.', 'error');
+                showToast('Hanya Chairman & Kabid yang dapat menambah tugas.', 'error');
                 return;
             }
             const modal = $('taskModal');
@@ -1805,6 +1769,7 @@
             if (currentUserRole === 'kabid' && currentUserDivision) {
                 divisionsToShow = allDivisions.filter(d => d.id === currentUserDivision);
             }
+            // Chairman bisa pilih semua divisi
             divisionsToShow.forEach(d => {
                 const opt = document.createElement('option');
                 opt.value = d.id;
@@ -1901,9 +1866,10 @@
             } catch (err) { showToast('Gagal hapus.', 'error'); }
         }
 
+        // ===== ARSIP (sudah diperbaiki) =====
         async function archiveTask(taskId) {
             if (currentUserRole !== 'ketua') {
-                showToast('Hanya Ketua yang dapat mengarsipkan tugas.', 'error');
+                showToast('Hanya Chairman yang dapat mengarsipkan tugas.', 'error');
                 return;
             }
             if (!confirm('Arsipkan tugas ini?')) return;
@@ -1922,8 +1888,21 @@
         }
 
         // ============================================================
-        //  MARK DONE + GAMIFICATION
+        //  MARK DONE + GAMIFICATION (dengan afirmasi berbeda-beda)
         // ============================================================
+        const affirmationMessages = [
+            { icon: '🌟', title: 'Luar Biasa!', sub: 'Semangat terus! Kamu hebat! 🔥' },
+            { icon: '🚀', title: 'Keren Banget!', sub: 'Teruslah berinovasi! 🌍' },
+            { icon: '💪', title: 'Mantap!', sub: 'Setiap langkah kecil berarti besar! 🌱' },
+            { icon: '🎯', title: 'Tepat Sasaran!', sub: 'Kamu semakin dekat dengan mimpi! ✨' },
+            { icon: '🏆', title: 'Juara!', sub: 'Kerja kerasmu hari ini luar biasa! ⭐' },
+            { icon: '🔥', title: 'Semangat Membara!', sub: 'Jangan pernah menyerah! 💪' },
+            { icon: '🌿', title: 'Selaras dengan Alam!', sub: 'Seperti mikroba, kamu terus berkembang! 🧬' },
+            { icon: '🌈', title: 'Berwarna!', sub: 'Hari ini penuh dengan kemenangan! 🎨' },
+            { icon: '⚡', title: 'Penuh Energi!', sub: 'Kamu menginspirasi banyak orang! ✨' },
+            { icon: '🎉', title: 'Selamat!', sub: 'Pencapaian hari ini patut dirayakan! 🥳' },
+        ];
+
         async function markDone(taskId) {
             try {
                 const task = allTasks.find(t => t.id === taskId);
@@ -1937,17 +1916,21 @@
                     task.updatedAt = update.updatedAt;
                 }
 
-                addXP(10);
+                // Gamifikasi
+                const leveledUp = addXP(10);
                 const streak = updateStreak();
                 if (streak > 0) showToast(`🔥 Streak ${streak} hari berturut-turut!`, 'success');
                 checkBadges();
 
+                // Animasi card
                 const card = document.querySelector(`[data-task-id="${taskId}"]`);
                 if (card) { card.classList.add('completing');
                     setTimeout(() => card.classList.remove('completing'), 600); }
 
-                const msgs = ['Luar Biasa! 💪', 'Keren banget! 🌟', 'Mantap! 🚀', 'Hebat! 🎉', 'Semangat terus! 🔥', 'Kamu juara! 🏆'];
-                showCelebration(msgs[Math.floor(Math.random() * msgs.length)], `+10 XP 🔥 Streak ${streak || 1}`);
+                // Pilih afirmasi acak
+                const aff = affirmationMessages[Math.floor(Math.random() * affirmationMessages.length)];
+                const xpMsg = leveledUp ? '+10 XP & LEVEL UP! 🎉' : '+10 XP';
+                showCelebrationPopup(aff.icon, aff.title, aff.sub, xpMsg);
 
                 renderAll();
 
@@ -2019,7 +2002,7 @@
                 }
                 closeApprovalModal();
                 showToast(approved ? 'Tugas disetujui! 🎉' : 'Tugas ditolak.', 'info');
-                if (approved) fireConfetti(80);
+                if (approved) fireConfetti(60);
             } catch (err) { showToast('Gagal approval.', 'error'); }
         }
 
@@ -2048,7 +2031,7 @@
             currentFilter = (savedRole === 'ketua') ? 'all' : savedDivision;
             $('loginScreen').classList.add('hidden');
             $('app').classList.add('visible');
-            const roleLabel = savedRole === 'ketua' ? '👑 Ketua' : savedRole === 'kabid' ? '📋 Kabid' : '👤 Anggota';
+            const roleLabel = savedRole === 'ketua' ? '👑 Chairman' : savedRole === 'kabid' ? '📋 Kabid' : '👤 Anggota';
             userRoleDisplay.textContent = `${roleLabel} (${savedCode || ''})`;
             btnAddTask.style.display = (savedRole === 'anggota') ? 'none' : 'inline-flex';
             loadGamificationState();
@@ -2059,7 +2042,7 @@
             $('app').classList.remove('visible');
         }
 
-        // Set default tab aktif
+        // Set default tab
         document.querySelector('.tab-btn[data-tab="active"]')?.classList.add('tab-active');
 
         // Close modals on outside click
@@ -2068,12 +2051,12 @@
         });
 
         // Escape key
-        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') document.querySelectorAll(
-                '.modal-overlay:not(.hidden)').forEach(m => m.classList.add('hidden')); });
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closePopup();
+                document.querySelectorAll('.modal-overlay:not(.hidden)').forEach(m => m.classList.add('hidden')); } });
 
         console.log('🧬 IMD 2026 Task Tracker siap!');
-        console.log('👑 CHR/chair123 | 📋 HR/hrkabid | 👤 HR/hr123');
-        console.log('🎮 Selesaikan tugas → +XP → naik level → buka badge!');
+        console.log('👑 CHR/imd2026 | 📋 HR/kabidhr | 👤 HR/hr123');
+        console.log('🎮 Selesaikan tugas → +XP → level up → badge!');
         console.log('📋 Divisi: CHR, HR, FIN, ADM, EVT, CMP, OPS, STR, CRT, FLD');
     </script>
 
