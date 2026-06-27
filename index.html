@@ -1199,7 +1199,7 @@
                     title: t.title || t.judul || t.nama_tugas || 'Untitled Task',
                     description: t.description || t.deskripsi || '',
                     divisionId: finalDivId,
-                    deadline: t.deadline || t.tenggat || new Date().toISOString().split('T')[0],
+                    deadline: t.deadline || new Date().toISOString().split('T')[0],
                     assignedTo: t.assignedTo || t.pic || t.penanggung_jawab || '',
                     status: 'pending',
                     evidenceLink: '',

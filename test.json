@@ -1,0 +1,37 @@
+[
+  {
+    "divisionId": "chr",
+    "title": "Finalisasi RAB dan RAM",
+    "description": "Koordinasi seluruh bidang untuk RAB dan RAM final",
+    "deadline": "2026-06-15",
+    "assignedTo": "Dzakiy M. Urwah"
+  },
+  {
+    "divisionId": "fin",
+    "title": "Menyusun Proposal Sponsorship",
+    "description": "Membuat pitch deck dan proposal untuk calon sponsor",
+    "deadline": "2026-06-20",
+    "assignedTo": "Putranda Renanta"
+  },
+  {
+    "divisionId": "adm",
+    "title": "Mengurus Perizinan Aula Barat",
+    "description": "Surat peminjaman Gedung Aula Barat ITB",
+    "deadline": "2026-07-15",
+    "assignedTo": "Nathanael Manzo H.W."
+  },
+  {
+    "divisionId": "hr",
+    "title": "Open Recruitment Panitia",
+    "description": "Membuka pendaftaran dan seleksi calon panitia",
+    "deadline": "2026-07-20",
+    "assignedTo": "Celeste Widiastuti"
+  },
+  {
+    "divisionId": "evt",
+    "title": "Merancang Workshop Petri Dish Art",
+    "description": "Modul dan teknis workshop seni cawan petri",
+    "deadline": "2026-08-15",
+    "assignedTo": "Moh. Aqid Satria Utama"
+  }
+]
