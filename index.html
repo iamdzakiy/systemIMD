@@ -743,7 +743,7 @@
         const EMAILJS_SERVICE_ID = "service_jiacqvx";
         const EMAILJS_TEMPLATE_ID = "template_homxq4a";
 
-        let isEmailJSEnabled = true;
+        let isEmailJSEnabled = false;
 
         function initEmailJS() {
             if (typeof emailjs !== 'undefined' && EMAILJS_PUBLIC_KEY !== "YOUR_PUBLIC_KEY") {
@@ -765,14 +765,15 @@
             }
 
             const templateParams = {
-                to_email: division.kabidEmail,
-                to_name: `Kabid ${division.code} (${division.name})`,
-                task_title: task.title,
-                task_description: task.description || 'Tidak ada deskripsi',
-                task_deadline: task.deadline,
-                task_pic: task.assignedTo || 'Belum ditunjuk',
-                division_name: division.name,
-                message: `Halo Kabid ${division.code},\n\nTugas baru telah ditambahkan untuk divisi ${division.name}:\n\nJudul: ${task.title}\nDeskripsi: ${task.description}\nDeadline: ${task.deadline}\nPIC: ${task.assignedTo}\n\nSegera cek dan koordinasikan dengan tim Anda di IMD Task Tracker Hub!`
+                    to_email: division.kabidEmail,
+                    to_name: `Kabid ${division.code} (${division.name})`,
+                    task_title: task.title,
+                    task_description: task.description || 'Tidak ada deskripsi',
+                    task_deadline: task.deadline,
+                    task_pic: picName,
+                    division_name: division.name,
+                    // Pesan yang jauh lebih suportif, penuh afirmasi, dan langsung menyemangati PIC
+                    message: `Hai! Semangat ya ngerjain tugasnya buat ${picName}! ✨ Ingat kalau proses kita di IMD 2026 ini adalah tempat untuk terus bertumbuh dan berubah jadi lebih keren setiap harinya. Break a leg, you've got this! Kami tahu kamu pasti bisa melewatinya dengan luar biasa! 🚀`
             };
 
             emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
@@ -826,13 +827,15 @@
         function loadMockData() {
             allDivisions = [
                 { id: 'chr', code: 'CHR', name: 'Chairman', password: 'chair123', isChair: true, kabidEmail: 'fadzaro10@gmail.com' },
-                { id: 'hr', code: 'HR', name: 'Human Resources', kabidPassword: 'hrkabid77', memberPassword: 'hr123', isChair: false, kabidEmail: 'muchammadfahd@gmail.com' },
-                { id: 'fin', code: 'FIN', name: 'Finance', kabidPassword: 'finkabid12', memberPassword: 'fin123', isChair: false, kabidEmail: 'kabid.fin@imd2026.com' },
-                { id: 'adm', code: 'ADM', name: 'Administration', kabidPassword: 'admkabid85', memberPassword: 'adm123', isChair: false, kabidEmail: 'kabid.adm@imd2026.com' },
-                { id: 'evt', code: 'EVT', name: 'Event', kabidPassword: 'evtkabid99', memberPassword: 'evt123', isChair: false, kabidEmail: 'kabid.evt@imd2026.com' },
-                { id: 'cmp', code: 'CMP', name: 'Competitions', kabidPassword: 'cmpkabid43', memberPassword: 'cmp123', isChair: false, kabidEmail: 'kabid.cmp@imd2026.com' },
-                { id: 'ops', code: 'OPS', name: 'Operation', kabidPassword: 'opskabid31', memberPassword: 'ops123', isChair: false, kabidEmail: 'kabid.ops@imd2026.com' },
-                { id: 'fld', code: 'FLD', name: 'Field', kabidPassword: 'fldkabid55', memberPassword: 'field123', isChair: false, kabidEmail: 'kabid.fld@imd2026.com' }
+                { id: 'hr', code: 'HR', name: 'Human Resources', kabidPassword: 'hrkabid77', memberPassword: 'hr123', isChair: false, kabidEmail: 'celestewdst@gmail.com' },
+                { id: 'fin', code: 'FIN', name: 'Finance', kabidPassword: 'finkabid12', memberPassword: 'fin123', isChair: false, kabidEmail: 'purnabawati@gmail.com' },
+                { id: 'adm', code: 'ADM', name: 'Administration', kabidPassword: 'admkabid85', memberPassword: 'adm123', isChair: false, kabidEmail: 'nathanaelmanzo1@gmail.com' },
+                { id: 'evt', code: 'EVT', name: 'Event', kabidPassword: 'evtkabid99', memberPassword: 'evt123', isChair: false, kabidEmail: 'kaylabasuki2005@gmail.com' },
+                { id: 'cmp', code: 'CMP', name: 'Competitions', kabidPassword: 'cmpkabid43', memberPassword: 'cmp123', isChair: false, kabidEmail: 'kevinrizsya04@gmail.com' },
+                { id: 'ops', code: 'OPS', name: 'Operation', kabidPassword: 'opskabid31', memberPassword: 'ops123', isChair: false, kabidEmail: 'rafidraia@gmail.com' },
+                { id: 'fld', code: 'FLD', name: 'Field', kabidPassword: 'fldkabid55', memberPassword: 'field123', isChair: false, kabidEmail: 'anayaforjobs@gmail.com' },       
+                { id: 'str', code: 'STR', name: 'Strategic Relation', kabidPassword: 'strkabid88', memberPassword: 'str123', isChair: false, kabidEmail: 'hazkia.aauliyya@gmail.com' }, 
+                { id: 'cre', code: 'CRE', name: 'Creative (Design & Socmed)', kabidPassword: 'crekabid66', memberPassword: 'cre123', isChair: false, kabidEmail: 'cantikadamayanti04@gmail.com' }
             ];
 
             if(allTasks.length === 0) {
