@@ -10,7 +10,6 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
-    <!-- EMAILJS SDK FOR AUTO-EMAIL NOTIFICATION -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
@@ -80,7 +79,7 @@
             box-shadow: 0 8px 24px rgba(0, 229, 255, 0.1);
         }
 
-        /* ===== TYPOGRAPHY & WARNA SERU ===== */
+        /* ===== TYPOGRAPHY ===== */
         .heading {
             font-weight: 800;
             letter-spacing: -0.02em;
@@ -293,7 +292,7 @@
             border-radius: 24px;
             box-shadow: 0 0 50px rgba(0, 229, 255, 0.4);
             width: 90%;
-            max-w-md;
+            max-w: md;
         }
         .celebration-text.show {
             opacity: 1;
@@ -356,7 +355,7 @@
             </form>
             <div class="mt-6 p-3 bg-white/5 rounded-xl text-[10px] text-white/40 text-left space-y-1 border border-white/5">
                 <span class="block font-semibold text-cyan">💡 Petunjuk Akses:</span>
-                <span class="block">👤 Semua Anggota (Sama): &lt;KODE&gt; / &lt;kode&gt;123 (Contoh: HR / hr123)</span>
+                <span class="block">👤 Semua Anggota (Sama): &lt;KODE&gt; / &lt;kode&gt123 (Contoh: HR / hr123)</span>
             </div>
         </div>
     </div>
@@ -391,7 +390,6 @@
                         <button onclick="logout()" class="text-red-400 font-bold hover:underline ml-1">LOGOUT</button>
                     </div>
 
-                    <!-- NEW: IMPORT BUTTON -->
                     <button onclick="document.getElementById('importFileInput').click()" class="btn-secondary text-xs font-bold flex items-center gap-1.5">
                         <i class="fas fa-file-import"></i> IMPORT
                     </button>
@@ -449,7 +447,6 @@
             <div id="badgesGrid" class="grid grid-cols-2 sm:grid-cols-4 gap-4"></div>
         </div>
 
-        <!-- ===== INFO TAB ===== -->
         <div id="infoTabContent" class="hidden glass p-6 space-y-8">
             <div>
                 <span class="stinger">TENTANG ACARA</span>
@@ -737,7 +734,7 @@
         }
 
         // ============================================================
-        //  EMAILJS CONFIGURATION (AUTO-EMAIL TO PIC BIDANG)
+        //  EMAILJS CONFIGURATION
         // ============================================================
         const EMAILJS_PUBLIC_KEY = "-Mihb7oso38ruk5-n"; 
         const EMAILJS_SERVICE_ID = "service_jiacqvx";
@@ -770,10 +767,9 @@
                     task_title: task.title,
                     task_description: task.description || 'Tidak ada deskripsi',
                     task_deadline: task.deadline,
-                    task_pic: picName,
+                    task_pic: task.assignedTo || 'Belum diisi',
                     division_name: division.name,
-                    // Pesan yang jauh lebih suportif, penuh afirmasi, dan langsung menyemangati PIC
-                    message: `Hai! Semangat ya ngerjain tugasnya buat ${picName}! ✨ Ingat kalau proses kita di IMD 2026 ini adalah tempat untuk terus bertumbuh dan berubah jadi lebih keren setiap harinya. Break a leg, you've got this! Kami tahu kamu pasti bisa melewatinya dengan luar biasa! 🚀`
+                    message: `Hai! Semangat ya ngerjain tugasnya buat ${task.assignedTo || 'Tim'}! ✨ Ingat kalau proses kita di IMD 2026 ini adalah tempat untuk terus bertumbuh dan berubah jadi lebih keren setiap harinya. Break a leg, you've got this! Kami tahu kamu pasti bisa melewatinya dengan luar biasa! 🚀`
             };
 
             emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
@@ -809,9 +805,7 @@
             "Keren Pol! Kecepatan dan ketepatan kerjamu patut diacungi jempol! ⚡🎯",
             "Kerja Bagus! Istirahat sejenak setelah ini, lalu mari taklukkan target selanjutnya! 🌱🔋",
             "Hebat! Pekerjaan diselesaikan dengan sangat rapi dan terstruktur! 📚💎",
-            "Gokil! Kontribusimu membuat beban kerja tim terasa jauh lebih ringan! 🤝❤️",
-            "Bravo! Langkah kecil yang konsisten ini akan membangun kesuksesan besar IMD! 🗺️💫",
-            "Super! Energi pengerjaanmu menular ke seluruh panitia, terus bersinar! 🌟🌈"
+            "Gokil! Kontribusimu membuat beban kerja tim terasa jauh lebih ringan! 🤝❤️"
         ];
 
         const BADGE_DEFS = [
@@ -822,7 +816,7 @@
         ];
 
         // ============================================================
-        //  MOCK DATA & DIVISIONS (WITH KABID EMAILS)
+        //  MOCK DATA
         // ============================================================
         function loadMockData() {
             allDivisions = [
@@ -847,9 +841,6 @@
             renderAll();
         }
 
-        // ============================================================
-        //  FIRESTORE REAL-TIME LISTENER
-        // ============================================================
         function initFirestoreListeners() {
             if (!db || useMock) return;
 
@@ -869,7 +860,7 @@
         }
 
         // ============================================================
-        //  UI CONTROLLER LOGIC & UTILITIES
+        //  UI CONTROLLER LOGIC
         // ============================================================
         const _ = id => document.getElementById(id);
 
@@ -929,7 +920,6 @@
 
             const label = detectedRole === 'ketua' ? '👑 Chairman' : detectedRole === 'kabid' ? '📋 Kabid' : '👤 Anggota';
             _('userRoleDisplay').textContent = `${label} (${code})`;
-            _('btnAddTask').style.display = (detectedRole === 'anggota') ? 'none' : 'inline-flex';
 
             renderAll();
             showToast("Verifikasi berhasil, selamat bekerja!");
@@ -943,7 +933,7 @@
         }
 
         // ============================================================
-        //  BUSINESS LOGIC & INTERACTIVE RENDERING
+        //  BUSINESS LOGIC & RENDERING
         // ============================================================
         function renderAll() {
             renderFilters();
@@ -1000,15 +990,23 @@
                 div.className = 'glass-card p-4 space-y-3';
                 
                 let actionButtons = '';
-                if((t.status === 'pending' || t.status === 'in_progress')) {
+
+                // SEMUA USER (Anggota, Kabid, Chairman) Bisa Tekan "Selesai" jika status masih pending/in_progress
+                if(t.status === 'pending' || t.status === 'in_progress') {
                     actionButtons += `<button onclick="markDone('${t.id}')" class="btn-success text-xs font-bold"><i class="fas fa-check-circle mr-1"></i>Selesai</button>`;
                 }
-                if(t.status === 'done' && !t.evidenceLink && currentUserRole !== 'ketua') {
-                    actionButtons += `<button onclick="openEvidenceModal('${t.id}')" class="btn-primary text-xs"><i class="fas fa-link mr-1"></i>Lampirkan Bukti</button>`;
+
+                // SEMUA USER Bisa "Lampirkan Bukti" jika status sudah done tapi link bukti masih kosong
+                if(t.status === 'done' && !t.evidenceLink) {
+                    actionButtons += `<button onclick="openEvidenceModal('${t.id}')" class="btn-primary text-xs font-bold"><i class="fas fa-link mr-1"></i>Lampirkan Bukti</button>`;
                 }
+
+                // HANYA CHAIRMAN yang bisa melakukan Quality Control Approval jika status 'done' DAN bukti link ada
                 if(currentUserRole === 'ketua' && t.status === 'done' && t.evidenceLink) {
                     actionButtons += `<button onclick="openApprovalModal('${t.id}')" class="btn-purple text-xs font-bold"><i class="fas fa-clipboard-check mr-1"></i>QC Approval</button>`;
                 }
+
+                // Otoritas Hapus Tugas untuk Chairman & Kabid
                 if(currentUserRole === 'ketua' || (currentUserRole === 'kabid' && t.divisionId === currentUserDivision)) {
                     if(t.status !== 'approved' && t.status !== 'archived') {
                         actionButtons += `<button onclick="deleteTask('${t.id}')" class="text-red-400 hover:text-red-300 text-xs px-2"><i class="fas fa-trash"></i></button>`;
@@ -1024,10 +1022,10 @@
                                 <span class="status-badge ${t.status}">${t.status.toUpperCase()}</span>
                             </div>
                             <p class="text-xs text-white/50 mt-1">${t.description || 'Tidak ada deskripsi tambahan.'}</p>
-                            <div class="flex items-center gap-4 text-[11px] text-white/40 mt-2">
+                            <div class="flex flex-wrap items-center gap-4 text-[11px] text-white/40 mt-2">
                                 <span><i class="far fa-calendar-alt mr-1"></i> Deadline: ${t.deadline}</span>
                                 <span><i class="far fa-user mr-1"></i> PIC: ${t.assignedTo || 'Belum diisi'}</span>
-                                ${t.evidenceLink ? `<span class="text-cyan"><i class="fas fa-paperclip mr-1"></i> Bukti: ${t.evidenceLink}</span>` : ''}
+                                ${t.evidenceLink ? `<span class="text-cyan font-semibold"><i class="fas fa-paperclip mr-1"></i> Bukti: <a href="${t.evidenceLink}" target="_blank" class="underline hover:text-cyan/80">${t.evidenceLink}</a></span>` : ''}
                             </div>
                         </div>
                         <div class="flex items-center gap-2 self-end sm:self-center">${actionButtons}</div>
@@ -1038,7 +1036,7 @@
         }
 
         // ============================================================
-        //  MODAL INTERACTIVE ACTION SYSTEM
+        //  MODAL SYSTEM ACTIONS
         // ============================================================
         function openTaskModal() {
             const sel = _('taskDivision');
@@ -1080,7 +1078,7 @@
 
             if (db && !useMock) {
                 db.collection('tasks').add(newTask).then((docRef) => {
-                    showToast("Tugas Baru Berhasil Dialokasikan & Disimpan ke Cloud!");
+                    showToast("Tugas Baru Berhasil Disimpan ke Cloud!");
                     if (isEmailJSEnabled) {
                         sendEmailToKabid({ ...newTask, id: docRef.id });
                     }
@@ -1105,7 +1103,7 @@
         }
 
         // ============================================================
-        //  AUTOMATIC TASK IMPORT (CSV / JSON)
+        //  IMPORT ENGINE
         // ============================================================
         function handleFileImport(event) {
             const file = event.target.files[0];
@@ -1122,13 +1120,13 @@
                         if (Array.isArray(data)) {
                             importedTasks = parseImportedData(data);
                         } else {
-                            showToast("Format JSON harus berupa array of objects!", false);
+                            showToast("Format JSON harus berupa array!", false);
                             return;
                         }
                     } else if (file.name.endsWith('.csv')) {
                         const lines = content.split(/\r?\n/).filter(line => line.trim() !== '');
                         if (lines.length < 2) {
-                            showToast("File CSV kosong atau tidak ada data!", false);
+                            showToast("File CSV kosong!", false);
                             return;
                         }
                         
@@ -1142,9 +1140,6 @@
                             importedTasks.push(obj);
                         }
                         importedTasks = parseImportedData(importedTasks);
-                    } else {
-                        showToast("Format file tidak didukung. Gunakan .csv atau .json", false);
-                        return;
                     }
 
                     if (importedTasks.length > 0) {
@@ -1156,32 +1151,18 @@
                             });
                             batch.commit().then(() => {
                                 showToast(`${importedTasks.length} tugas berhasil diimpor ke Cloud!`, true);
-                                if (isEmailJSEnabled) {
-                                    importedTasks.forEach(t => sendEmailToKabid(t));
-                                }
                             }).catch(err => {
-                                console.error(err);
-                                showToast("Gagal impor ke cloud, disimpan lokal.", false);
                                 allTasks = [...importedTasks, ...allTasks];
                                 renderAll();
-                                if (isEmailJSEnabled) {
-                                    importedTasks.forEach(t => sendEmailToKabid(t));
-                                }
                             });
                         } else {
                             allTasks = [...importedTasks, ...allTasks];
                             renderAll();
                             showToast(`${importedTasks.length} tugas berhasil diimpor!`, true);
-                            if (isEmailJSEnabled) {
-                                importedTasks.forEach(t => sendEmailToKabid(t));
-                            }
                         }
-                    } else {
-                        showToast("Tidak ada tugas valid yang ditemukan dalam file.", false);
                     }
                 } catch (err) {
-                    console.error(err);
-                    showToast("Gagal memproses file. Pastikan format sesuai!", false);
+                    showToast("Gagal memproses file.", false);
                 }
             };
             reader.readAsText(file);
@@ -1195,21 +1176,21 @@
                 const finalDivId = divObj ? divObj.id : divCode;
 
                 return {
-                    id: 'imported-' + Date.now() + '-' + index + '-' + Math.random().toString(36).substr(2, 5),
-                    title: t.title || t.judul || t.nama_tugas || 'Untitled Task',
+                    id: 'imported-' + Date.now() + '-' + index,
+                    title: t.title || t.judul || 'Untitled Task',
                     description: t.description || t.deskripsi || '',
                     divisionId: finalDivId,
                     deadline: t.deadline || new Date().toISOString().split('T')[0],
-                    assignedTo: t.assignedTo || t.pic || t.penanggung_jawab || '',
+                    assignedTo: t.assignedTo || t.pic || '',
                     status: 'pending',
                     evidenceLink: '',
                     createdAt: new Date().toISOString()
                 };
-            }).filter(t => t.title && t.title !== 'Untitled Task' && t.divisionId); 
+            }).filter(t => t.title && t.divisionId); 
         }
 
         // ============================================================
-        //  GAMIFICATION POP-UP
+        //  GAMIFICATION & ACTIONS
         // ============================================================
         function markDone(id) {
             const task = allTasks.find(t => t.id === id);
@@ -1230,11 +1211,10 @@
 
             const pop = _('celebrationText');
             _('celebrationMsg').textContent = randomAffirmation;
-            _('celebrationSub').textContent = "+25 XP Diterima! 🏆 Level Terkini: " + userLevel;
+            _('celebrationSub').textContent = "+25 XP Diterima! 🏆 Level: " + userLevel;
             pop.classList.add('show');
             
             fireConfetti();
-            
             setTimeout(() => { pop.classList.remove('show'); }, 3500);
         }
 
@@ -1266,7 +1246,8 @@
                 renderAll();
             }
             closeEvidenceModal();
-            showToast("Lampiran Bukti Dikirim Ke Chairman.");
+            _('evidenceLink').value = '';
+            showToast("Lampiran Bukti Berhasil Dikirim!");
         }
 
         function openApprovalModal(id) {
@@ -1276,6 +1257,7 @@
             _('approvalModal').setAttribute('data-id', id);
             _('approvalModal').classList.remove('hidden');
         }
+        
         function closeApprovalModal() { _('approvalModal').classList.add('hidden'); }
         
         function approveTask(isValid) {
@@ -1297,9 +1279,6 @@
 
         function refreshData() { showToast("Sinkronisasi Workspace Selesai."); renderAll(); }
 
-        // ============================================================
-        //  GAMIFICATION SAVER & LOCAL STORAGE FALLBACKS
-        // ============================================================
         function saveGamificationState() {
             localStorage.setItem('imd_xp', userXP);
             localStorage.setItem('imd_lvl', userLevel);
@@ -1334,7 +1313,7 @@
         }
 
         // ============================================================
-        //  CELEBRATION ENGINE: DYNAMIC CONFETTI PARTICLE SYSTEM
+        //  CONFETTI ENGINE
         // ============================================================
         const canvas = _('confettiCanvas');
         const ctx = canvas.getContext('2d');
@@ -1369,7 +1348,6 @@
             draw();
         }
 
-        // SETUP STARTUP ENGINE INITIALIZATION
         loadGamificationState();
         initEmailJS();
         setTab('active');
